@@ -1,19 +1,27 @@
 package com.payline.payment.slimpay.service;
 
-import com.payline.payment.slimpay.bean.common.Mandate;
-import com.payline.payment.slimpay.bean.common.Payment;
-import com.payline.payment.slimpay.bean.common.Signatory;
-import com.payline.payment.slimpay.bean.common.SlimPayOrderItem;
+import com.payline.payment.slimpay.bean.common.*;
+import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
+import com.payline.pmapi.bean.refund.request.RefundRequest;
 
 public interface BeanAssemblerService {
-    Payment assemblePayin (PaymentRequest paymentRequest);
+    public Payment assemblePayin (PaymentRequest paymentRequest);
 
-    Payment assemblePayout (PaymentRequest paymentRequest);
+    public Payment assemblePayout (RefundRequest refundRequest);
 
-    SlimPayOrderItem assembleOrderItem (PaymentRequest paymentRequest);
+    public SlimPayOrderItem assembleOrderItem (PaymentRequest paymentRequest);
 
-    Mandate assembleMandate (PaymentRequest paymentRequest);
+    public SlimPayOrderItem assembleOrderItemMandate (PaymentRequest paymentRequest);
 
-    Signatory assembleSignatory(PaymentRequest paymentRequest);
-}
+    public SlimPayOrderItem assembleOrderItemPayment (PaymentRequest paymentRequest);
+
+    public Mandate assembleMandate (PaymentRequest paymentRequest);
+
+    public Signatory assembleSignatory(PaymentRequest paymentRequest);
+
+    public BillingAddress assembleBillingAddress(PaymentRequest paymentRequest);
+
+    public SlimpayOrderRequest assembleSlimPayOrderRequest(PaymentRequest paymentRequest);
+
+    }

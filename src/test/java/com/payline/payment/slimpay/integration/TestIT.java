@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
-public class TestIt extends AbstractPaymentIntegration {
+public class TestIT extends AbstractPaymentIntegration {
     private PaymentServiceImpl paymentService = new PaymentServiceImpl();
     private PaymentWithRedirectionServiceImpl paymentWithRedirectionService = new PaymentWithRedirectionServiceImpl();
 

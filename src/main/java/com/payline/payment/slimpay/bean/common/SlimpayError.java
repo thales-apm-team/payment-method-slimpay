@@ -17,4 +17,5 @@ public class SlimpayError extends SlimpayBean{
         this.code = code;
         this.message = message;
     }
+
 }

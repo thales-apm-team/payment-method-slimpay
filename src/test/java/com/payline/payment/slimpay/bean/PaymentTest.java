@@ -15,7 +15,7 @@ public class PaymentTest {
                 .withScheme("SEPA.DIRECT_DEBIT.CORE")
                 .withDirection("IN")
                 .withAction("create")
-                .withAmount(100F)
+                .withAmount("100")
                 .withCurrency("EUR")
                 .withLabel("the label")
                 .build();

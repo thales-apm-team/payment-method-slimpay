@@ -86,10 +86,6 @@ public class SlimPayOrderItem extends SlimpayBean {
 
         public SlimPayOrderItem.Builder verifyIntegrity() {
 
-            //to do logger les champs manquants obligatoire ??
-            if (this.action == null) {
-                LOGGER.warn ("SlimPayOrderItem must have a action when built");
-            }
             if (this.type == null) {
                 LOGGER.warn ("SlimPayOrderItem must have a type when built");
             }

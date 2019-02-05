@@ -1,4 +1,103 @@
 package com.payline.payment.slimpay.bean.common;
 
-public class Signatory {
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class Signatory extends SlimpayBean{
+
+    private static final transient Logger LOGGER = LogManager.getLogger(Signatory.class);
+
+    private String honorificPrefix; //Mr/Miss/Mrs
+    private String familyName;
+    private String givenName;
+    private String email;
+    private String telephone; //must a start by +
+    private BillingAddress billingAddress;
+
+    public String getHonorificPrefix() {
+        return honorificPrefix;
+    }
+
+    public String getfamilyName() {
+        return familyName;
+    }
+
+    public String getGivenName() {
+        return givenName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public BillingAddress getBillingAddress() {
+        return billingAddress;
+    }
+
+    public Signatory(Signatory.Builder builder) {
+        this.honorificPrefix = builder.honorificPrefix;
+        this.familyName = builder.familyName;
+        this.givenName = builder.givenName;
+        this.email = builder.email;
+        this.telephone = builder.telephone;
+        this.billingAddress = builder.billingAddress;
+    }
+
+    public static class Builder{
+        private String honorificPrefix; //Mr/Miss/Mrs
+        private String familyName;
+        private String givenName;
+        private String email;
+        private String telephone; //must a start by +
+        private BillingAddress billingAddress;
+
+        public static Signatory.Builder aSignatoryBuilder(){
+            return new Signatory.Builder();
+        }
+
+        public Signatory.Builder withHonorificPrefix(String honorificPrefix){
+            this.honorificPrefix = honorificPrefix;
+            return this;
+        }
+        public Signatory.Builder withfamilyName(String familyName){
+            this.familyName = familyName;
+            return this;
+        }
+        public Signatory.Builder withGivenName(String givenName){
+            this.givenName = givenName;
+            return this;
+        }
+        public Signatory.Builder withEmail(String email){
+            this.email = email;
+            return this;
+        }
+        public Signatory.Builder withTelephone(String telephone){
+            this.telephone = telephone;
+            return this;
+        }
+        public Signatory.Builder withBilingAddress(BillingAddress billingAddress){
+            this.billingAddress = billingAddress;
+            return this;
+        }
+
+        private Signatory.Builder verifyIntegrity(){
+
+            //to do logger les champs manquants obligatoire ??
+            if (this.familyName == null) {
+                LOGGER.warn ("Signatory must have a familyName when built");
+            }
+            if (this.givenName == null) {
+                LOGGER.warn ("Signatory must have a givenName when built");
+            }
+
+            return this;
+        }
+
+        public Signatory build(){ return new Signatory(this.verifyIntegrity());}
+
+    }
 }

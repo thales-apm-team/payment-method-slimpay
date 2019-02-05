@@ -44,6 +44,26 @@ public class SlimpayConstants {
 
     public static final String APP_SECRET ="appSecret" ;
     public static final String APP_SECRET_MESSAGE_ERROR ="app.secret.message.error" ;
+    //URLS
+    public static final String API_URL ="appUrl" ;
+    public static final String API_PROFILE ="apiProfile" ;
+    public static final String API_NS ="apiNs" ;
+
+
+
+    //OTHER FIELDS
+    public static final String MANDATE_STANDARD ="SEPA" ;
+
+    //REQUESTS
+    //todo rel ou appel http classique ?
+    public static final String CREATE_ORDER_URL ="#create-order" ;
+    public static final String CREATE_PAYOUT_URL ="create-payout" ;
+    public static final String GET_ORDER_URL ="#get-order" ;
+    public static final String CANCEL_PAYMENT_URL ="#get-order" ;
+    public static final String GET_PAYMENT_URL ="SEPA" ;
+
+
+
 
     private SlimpayConstants(){
         //ras

@@ -22,6 +22,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
+
 
 /**
  * Class with method to generate mock easier
@@ -67,26 +69,32 @@ public class TestUtils {
 
 
     private static final Map<String, String> PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
-        // TODO
-        put("KEY", "VALUE");
+
+        put(APP_KEY, "monextreferral01");
     }};
 
 
     private static final Map<String, String> SENSITIVE_PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
-        // TODO
-        put("KEY", "VALUE");
+        put(APP_SECRET, "n32cXdaS0ZOACV8688ltKovAO6lquL4wKjZHnvyO");
+
     }};
 
     public static final ContractConfiguration CONTRACT_CONFIGURATION = new ContractConfiguration(MDP_IDENTIFIER, new HashMap<String, ContractProperty>() {{
-        // TODO
-        put("KEY", new ContractProperty("VALUE"));
+        put(CREDITOR_REFERENCE_KEY, new ContractProperty("paylinemerchanttest1"));
+        put(FIRST_PAYMENT_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
+        put(MANDATE_PAYIN_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
+        put(SIGNATURE_APPROVAL_METHOD, new ContractProperty("otp"));
+        put(PAYMENT_PROCESSOR, new ContractProperty("slimpay"));
     }}
     );
 
 
     private static final Map<String, String> ACCOUNT_INFO = new HashMap<String, String>() {{
-        // TODO
-        put("KEY", "VALUE");
+        put(CREDITOR_REFERENCE_KEY, "paylinemerchanttest1");
+        put(FIRST_PAYMENT_SCHEME,"SEPA.DIRECT_DEBIT.CORE");
+        put(MANDATE_PAYIN_SCHEME, ("SEPA.DIRECT_DEBIT.CORE"));
+        put(SIGNATURE_APPROVAL_METHOD, "otp");
+        put(PAYMENT_PROCESSOR, "slimpay");
     }};
 
     public static final PartnerConfiguration PARTNER_CONFIGURATION = new PartnerConfiguration(PARTNER_CONFIGURATION_MAP, SENSITIVE_PARTNER_CONFIGURATION_MAP);

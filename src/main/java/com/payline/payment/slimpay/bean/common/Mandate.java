@@ -16,6 +16,38 @@ public class Mandate extends SlimpayBean {
     private String standard;
     private String dateSigned; //DateTime, ISO8601,
 
+    public String getReference() {
+        return reference;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public boolean isAutoGenReference() {
+        return autoGenReference;
+    }
+
+    public Signatory getSignatory() {
+        return signatory;
+    }
+
+    public String getPaymentScheme() {
+        return paymentScheme;
+    }
+
+    public String getCreateSequenceType() {
+        return createSequenceType;
+    }
+
+    public String getStandard() {
+        return standard;
+    }
+
+    public String getDateSigned() {
+        return dateSigned;
+    }
+
     private  Mandate(){}
 
     private Mandate(Mandate.Builder builder) {
@@ -88,7 +120,6 @@ public class Mandate extends SlimpayBean {
 
         public Mandate.Builder verifyIntegrity() {
 
-            //to do logger les champs manquants obligatoire ??
             if (this.reference == null) {
                 LOGGER.warn ("Mandate must have a reference when built");
             }
@@ -99,15 +130,8 @@ public class Mandate extends SlimpayBean {
             if (this.paymentScheme == null) {
                 LOGGER.warn ("Mandate must have a paymentScheme when built");
             }
-            if (this.action == null) {
-                LOGGER.warn ("Mandate must have a action when built");
-            }
-            if (this.createSequenceType == null) {
-                LOGGER.warn ("Mandate must have a createSequenceType when built");
-            }
-
-            if (this.action != null && ( this.action !="sign" || this.action !="amendBankAccount") ) {
-                LOGGER.warn ("Mandate action value must be 'sign' or 'amendBankAccount' ");
+            if (this.standard == null) {
+                LOGGER.warn ("Mandate must have a standard when built");
             }
 
             return this;

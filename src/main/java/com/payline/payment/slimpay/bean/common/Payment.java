@@ -15,7 +15,7 @@ public class Payment extends SlimpayBean {
     private String scheme;
     private String direction;
     private String category;
-    private Float amount;
+    private String  amount;
     private String currency;
     private String executionDate;
     public String capture; //DateTime, ISO8601, Read-Only.
@@ -45,7 +45,7 @@ public class Payment extends SlimpayBean {
         private String scheme;
         private String direction;
         private String category;
-        private Float amount;
+        private String  amount;
         private String currency;
         private String executionDate;
         public String capture;
@@ -84,7 +84,7 @@ public class Payment extends SlimpayBean {
             return this;
         }
 
-        public Payment.Builder withAmount (Float amount ){
+        public Payment.Builder withAmount (String amount ){
             this.amount = amount;
             return this;
         }
@@ -133,7 +133,7 @@ public class Payment extends SlimpayBean {
                 LOGGER.warn ("Payment must have a direction when built");
             }
 
-            if (this.direction != null && ( this.direction !="IN" || this.direction !="OUT") ) {
+            if (this.direction != null && ( this.direction !="IN" && this.direction !="OUT") ) {
                 LOGGER.warn ("Payment direction value must be 'IN' or 'OUT' ");
             }
 
