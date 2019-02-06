@@ -52,7 +52,7 @@ public class TestUtils {
     private static final Locale LOCALE_FR = Locale.FRANCE;
     public static final String CURRENCY_EUR = "EUR";
 
-    private static String TEST_PHONE_NUMBER = "0600000000";
+    private static String TEST_PHONE_NUMBER = "+33600000000";
     /**
      * ou
      * "+32" + RandomStringUtils.random(10, false, true)
