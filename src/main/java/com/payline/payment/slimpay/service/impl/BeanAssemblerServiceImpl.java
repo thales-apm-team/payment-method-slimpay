@@ -66,7 +66,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     public Mandate assembleMandate(PaymentRequest paymentRequest) {
         return Mandate.Builder.aMandateBuilder()
                 .withReference(paymentRequest.getTransactionId())
-                .withStandard(paymentRequest.getContractConfiguration().getProperty(MANDATE_STANDARD).getValue())
+                .withStandard(paymentRequest.getContractConfiguration().getProperty(MANDATE_STANDARD_KEY).getValue())
                 .withAction("create")
                 .withPaymentScheme(paymentRequest.getContractConfiguration().getProperty(MANDATE_PAYIN_SCHEME).getValue())
                 .withSignatory(assembleSignatory(paymentRequest))

@@ -83,6 +83,7 @@ public class TestUtils {
         put(CREDITOR_REFERENCE_KEY, new ContractProperty("paylinemerchanttest1"));
         put(FIRST_PAYMENT_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
         put(MANDATE_PAYIN_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
+        put(MANDATE_STANDARD_KEY, new ContractProperty("SEPA"));
         put(SIGNATURE_APPROVAL_METHOD, new ContractProperty("otp"));
         put(PAYMENT_PROCESSOR, new ContractProperty("slimpay"));
     }}

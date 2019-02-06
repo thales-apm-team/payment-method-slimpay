@@ -52,6 +52,7 @@ public class SlimpayConstants {
 
 
     //OTHER FIELDS
+    public static final String MANDATE_STANDARD_KEY ="mandateStandard" ;
     public static final String MANDATE_STANDARD ="SEPA" ;
 
     //REQUESTS
