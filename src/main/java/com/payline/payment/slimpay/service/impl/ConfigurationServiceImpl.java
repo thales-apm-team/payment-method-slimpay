@@ -95,7 +95,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 
         //
-        RequestConfigServiceImpl.INSTANCE.getParameterValue(contractParametersCheckRequest, "KEY");
+//        RequestConfigServiceImpl.INSTANCE.getParameterValue(contractParametersCheckRequest, "KEY"); //todo voir ce quil faut faire de cette ligne
 
         // CreditoReference
         final String creditoReference = accountInfo.get(CREDITOR_REFERENCE_KEY);

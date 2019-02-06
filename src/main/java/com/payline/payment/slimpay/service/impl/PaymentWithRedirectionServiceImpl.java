@@ -1,7 +1,6 @@
 package com.payline.payment.slimpay.service.impl;
 
 
-import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
@@ -14,11 +13,7 @@ import org.apache.logging.log4j.Logger;
 public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirectionService {
 
     private static final Logger LOGGER = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
-    private SlimpayHttpClient httpClient;
 
-    public PaymentWithRedirectionServiceImpl() {
-        this.httpClient = SlimpayHttpClient.getInstance();
-    }
 
     @Override
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {

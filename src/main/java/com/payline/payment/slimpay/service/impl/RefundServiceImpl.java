@@ -1,7 +1,6 @@
 package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.utils.SlimpayErrorHandler;
-import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
@@ -11,12 +10,8 @@ import org.apache.logging.log4j.Logger;
 
 public class RefundServiceImpl implements RefundService {
 
-    private SlimpayHttpClient httpClient;
     private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
 
-    public RefundServiceImpl() {
-        this.httpClient = SlimpayHttpClient.getInstance();
-    }
 
     @Override
     public RefundResponse refundRequest(RefundRequest refundRequest) {

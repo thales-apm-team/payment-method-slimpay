@@ -1,6 +1,5 @@
 package com.payline.payment.slimpay.service.impl;
 
-import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
@@ -13,14 +12,9 @@ import static com.payline.payment.slimpay.utils.SlimpayErrorHandler.getPaymentRe
 
 public class PaymentServiceImpl implements PaymentService {
 
-    private SlimpayHttpClient httpClient;
 
     private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
 
-
-    public PaymentServiceImpl() {
-        this.httpClient = SlimpayHttpClient.getInstance();
-    }
 
     @Override
     public PaymentResponse paymentRequest(PaymentRequest paymentRequest) {

@@ -57,7 +57,8 @@ public class SlimpayConstants {
 
     //REQUESTS
     //todo rel ou appel http classique ?
-    public static final String CREATE_ORDER_URL ="#create-order" ;
+    public static final String TOKEN_ENDPOINT = "/oauth/token";
+    public static final String CREATE_ORDER_URL ="#create-orders" ;
     public static final String CREATE_PAYOUT_URL ="create-payout" ;
     public static final String GET_ORDER_URL ="#get-order" ;
     public static final String CANCEL_PAYMENT_URL ="#get-order" ;

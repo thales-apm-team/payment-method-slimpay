@@ -69,6 +69,9 @@ public class TestUtils {
 
 
     private static final Map<String, String> PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
+        put(API_URL, "https://api.preprod.slimpay.com");
+        put(API_PROFILE,"https://api.slimpay.net/alps/v1" );
+        put(API_NS, "https://api.slimpay.net/alps");
 
         put(APP_KEY, "monextreferral01");
     }};

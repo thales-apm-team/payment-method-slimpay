@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-@PrepareForTest(AbstractHttpClient.class)
+@PrepareForTest(SlimpayHttpClient.class)
 public class SlimpayHttpClientTest {
 
 
@@ -34,7 +34,6 @@ public class SlimpayHttpClientTest {
 
     @BeforeEach
     public void setup() {
-        testedClient = SlimpayHttpClient.getInstance();
         MockitoAnnotations.initMocks(this);
         Whitebox.setInternalState(client, "client", closableClient);
 
