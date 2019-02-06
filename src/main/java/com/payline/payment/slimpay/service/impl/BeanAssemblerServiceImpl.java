@@ -104,6 +104,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .withCreditor(new SlimpayOrderRequest.Creditor(paymentRequest.getContractConfiguration().getProperty(CREDITOR_REFERENCE_KEY).getValue()))
                 .withSuccessUrl(paymentRequest.getEnvironment().getRedirectionReturnURL())
                 .withFailureUrl(paymentRequest.getEnvironment().getRedirectionReturnURL())
+                .withCancelUrl(paymentRequest.getEnvironment().getRedirectionCancelURL())
                 .withLocale(paymentRequest.getLocale().getCountry())
                 .withStarted(true)
                 .withItems(new SlimPayOrderItem[]{
