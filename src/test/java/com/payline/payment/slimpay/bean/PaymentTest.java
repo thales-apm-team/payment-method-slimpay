@@ -3,7 +3,10 @@ package com.payline.payment.slimpay.bean;
 import com.payline.payment.slimpay.bean.common.Payment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PaymentTest {
 
     private Payment payment;
@@ -49,12 +52,12 @@ public class PaymentTest {
     @Test
     public void testPaymentWithWrongDirection(){
         payment = Payment.Builder.aPaymentBuilder()
-                .withDirection("Ma direction")
+                .withDirection("ouest")
                 .build();
         System.out.println(payment);
         String jsonPayment = payment.toString();
         Assertions.assertTrue(jsonPayment.contains("direction"));
-        //faire test sur les logs
+        //todo faire test sur les logs
 
     }
 }

@@ -21,9 +21,9 @@ public class SlimpayOrderResponse extends SlimpayBean {
 
 
     /**
-     * Create a PaymentResponse from a  json returned by Slimpay server
+     * Create a SlimpayPaymentResponse from a  json returned by Slimpay server
      * @param json a SlimPay payment
-     * @return a PaymentResponse
+     * @return a SlimpayPaymentResponse
      */
     public static SlimpayOrderResponse fromJson(String json) {
         Gson parser = new Gson();

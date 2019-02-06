@@ -66,7 +66,7 @@ public abstract class AbstractPaymentIntegration {
         String redirectionUrl = this.cancelOnPartnerWebsite(partnerUrl);
         if (!"http://localhost/cancelurl.com/".equals(redirectionUrl)) {
             PaymentResponse paymentResponse2 = this.handlePartnerResponse(paymentWithRedirectionService, paymentRequest, paymentResponseRedirectKO);
-            Assertions.assertTrue(paymentResponse2 instanceof PaymentResponseFailure, "PaymentResponse should be a failure since the payment has been cancelled");
+            Assertions.assertTrue(paymentResponse2 instanceof PaymentResponseFailure, "SlimpayPaymentResponse should be a failure since the payment has been cancelled");
             Assertions.assertEquals(FailureCause.CANCEL, ((PaymentResponseFailure) paymentResponse2).getFailureCause(), "PaymentResponseFailure should be a CANCEL FailureCause");
         }
 
