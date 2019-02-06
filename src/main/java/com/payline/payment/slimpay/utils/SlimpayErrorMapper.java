@@ -51,6 +51,9 @@ public class SlimpayErrorMapper {
             case 179:
             case 407:
             case 1004:
+            case 910:
+            case 908:
+            case 911:
                 paylineCause = FailureCause.INVALID_DATA;
                 break;
 
@@ -67,16 +70,6 @@ public class SlimpayErrorMapper {
                 paylineCause = FailureCause.COMMUNICATION_ERROR;
                 break;
 
-            case 103:
-            case 199:
-            case 631:
-            case 640:
-            case 638:
-            case 649:
-            case 906:
-
-                paylineCause = FailureCause.PAYMENT_PARTNER_ERROR;
-                break;
 
             case 301:
             case 632:
@@ -84,18 +77,63 @@ public class SlimpayErrorMapper {
             case 634:
             case 635:
             case 636:
-            case 641:
-            case 650:
+            case 653:
+            case 654:
+            case 655:
+            case 661:
+            case 662:
+            case 663:
+            case 664:
+            case 665:
+            case 667:
+            case 668:
+            case 901:
+            case 902:
+            case 903:
+            case 912:
+            case 913:
+            case 914:
+            case 915:
+            case 918:
+            case 920:
+            case 922:
+            case 923:
+            case 925:
+            case 158:
+            case 160:
                 paylineCause = FailureCause.REFUSED;
                 break;
 
+            case 651:
+            case 656:
+                paylineCause = FailureCause.FRAUD_DETECTED;
+                break;
+
+            case 100:
+                paylineCause = FailureCause.PARTNER_UNKNOWN_ERROR;
+                break;
+
+            case 1009:
+                paylineCause = FailureCause.CANCEL;
+                break;
+
+            case 120:
+                paylineCause = FailureCause.SESSION_EXPIRED;
+                break;
+
+            case 103:
+            case 199:
+            case 631:
+            case 640:
+            case 638:
+            case 649:
+            case 905:
+            case 906:
+            case 924:
             default:
                 paylineCause = FailureCause.PAYMENT_PARTNER_ERROR;
                 break;
         }
-
-
-
 
         return paylineCause;
 

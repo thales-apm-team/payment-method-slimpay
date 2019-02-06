@@ -3,10 +3,7 @@ package com.payline.payment.slimpay.bean;
 import com.payline.payment.slimpay.bean.common.Payment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
 public class PaymentTest {
 
     private Payment payment;
