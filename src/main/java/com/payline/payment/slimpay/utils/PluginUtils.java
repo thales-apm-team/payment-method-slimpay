@@ -57,4 +57,27 @@ public class PluginUtils {
         return value;
     }
 
+    public static String getHonorificCode(String civility) {
+
+        if (civility == null) {
+            return null;
+        }
+        switch (civility.toLowerCase()) {
+            //MR
+            case "4":
+            case "5":
+                return "Mr";
+            //MME
+            case "1":
+            case "2":
+            case "6":
+                return "Mrs";
+            //MLLE
+            case "3":
+                return "Miss";
+            default:
+                return "Mr";
+        }
+    }
+
 }

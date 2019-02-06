@@ -8,6 +8,7 @@ import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 
 import static com.payline.payment.slimpay.utils.PluginUtils.createStringAmount;
+import static com.payline.payment.slimpay.utils.PluginUtils.getHonorificCode;
 import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
 
 public class BeanAssemblerServiceImpl implements BeanAssemblerService {
@@ -78,7 +79,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         return Signatory.Builder.aSignatoryBuilder()
                 .withfamilyName(buyer.getFullName().getFirstName())
                 .withGivenName(buyer.getFullName().getLastName())
-                .withHonorificPrefix(buyer.getFullName().getCivility())
+                .withHonorificPrefix(getHonorificCode(buyer.getFullName().getCivility()))
                 .withBilingAddress(assembleBillingAddress(paymentRequest))
                 .withEmail(buyer.getEmail())
                 .withTelephone(buyer.getPhoneNumbers().get(Buyer.PhoneNumberType.CELLULAR))
