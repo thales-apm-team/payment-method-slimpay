@@ -1,13 +1,16 @@
 package com.payline.payment.slimpay.integration;
 
+import com.payline.payment.slimpay.service.impl.ConfigurationServiceImpl;
 import com.payline.payment.slimpay.service.impl.PaymentServiceImpl;
 import com.payline.payment.slimpay.service.impl.PaymentWithRedirectionServiceImpl;
 import com.payline.payment.slimpay.utils.TestUtils;
+import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.PaymentFormContext;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.integration.AbstractPaymentIntegration;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -18,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class TestIT extends AbstractPaymentIntegration {
+    private ConfigurationServiceImpl configurationService = new ConfigurationServiceImpl();
     private PaymentServiceImpl paymentService = new PaymentServiceImpl();
     private PaymentWithRedirectionServiceImpl paymentWithRedirectionService = new PaymentWithRedirectionServiceImpl();
 
@@ -82,9 +86,13 @@ public class TestIT extends AbstractPaymentIntegration {
 
     @Test
     public void fullPaymentTest() {
-        PaymentRequest request = createDefaultPaymentRequest();
-        this.fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);
+        ContractParametersCheckRequest checkRequest = TestUtils.createContractParametersCheckRequest();
 
+        Map<String, String> checkError = configurationService.check(checkRequest);
+        Assert.assertEquals(0, checkError.size());
+
+//        PaymentRequest request = createDefaultPaymentRequest();
+//        this.fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);
     }
 
 

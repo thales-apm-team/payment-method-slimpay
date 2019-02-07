@@ -1,17 +1,19 @@
 package com.payline.payment.slimpay.service.impl;
 
+import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
+import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.PluginUtils;
+import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.payment.slimpay.utils.i18n.I18nService;
 import com.payline.payment.slimpay.utils.properties.constants.ConfigurationConstants;
 import com.payline.payment.slimpay.utils.properties.service.ReleasePropertiesEnum;
-import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.ListBoxParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
-import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.service.ConfigurationService;
+import com.slimpay.hapiclient.exception.HttpException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -21,8 +23,13 @@ import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
 
 public class ConfigurationServiceImpl implements ConfigurationService {
 
+    private I18nService i18n;
+    private RequestConfigServiceImpl requestConfigService;
 
-    private I18nService i18n = I18nService.getInstance();
+    public ConfigurationServiceImpl() {
+        i18n = I18nService.getInstance();
+        requestConfigService = RequestConfigServiceImpl.INSTANCE;
+    }
 
     @Override
     public List<AbstractParameter> getParameters(Locale locale) {
@@ -85,61 +92,65 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public Map<String, String> check(ContractParametersCheckRequest contractParametersCheckRequest) {
-
         Locale locale = contractParametersCheckRequest.getLocale();
         final Map<String, String> errors = new HashMap<>();
-        PartnerConfiguration partnerConfiguration = contractParametersCheckRequest.getPartnerConfiguration();
-        ContractConfiguration contractConfiguration = contractParametersCheckRequest.getContractConfiguration();
-        //todo recuperer dans accountInfo ou contractProperties
-        final Map<String, String> accountInfo = contractParametersCheckRequest.getAccountInfo();
 
+        try {
+            // verify every mandatory fields
+            // CreditoReference
+            String creditoReference = requestConfigService.getParameterValue(contractParametersCheckRequest, CREDITOR_REFERENCE_KEY);
+            if (PluginUtils.isEmpty(creditoReference)) {
+                errors.put(CREDITOR_REFERENCE_KEY, this.i18n.getMessage(CREDITOR_REFERENCE_KEY_MESSAGE_ERROR, locale));
+            }
 
-        //
-//        RequestConfigServiceImpl.INSTANCE.getParameterValue(contractParametersCheckRequest, "KEY"); //todo voir ce quil faut faire de cette ligne
+            // paymentScheme
+            final String paymentScheme = requestConfigService.getParameterValue(contractParametersCheckRequest, FIRST_PAYMENT_SCHEME);
+            if (PluginUtils.isEmpty(paymentScheme)) {
+                errors.put(FIRST_PAYMENT_SCHEME, this.i18n.getMessage(FIRST_PAYMENT_MESSAGE_ERROR, locale));
+            }
 
-        // CreditoReference
-        final String creditoReference = accountInfo.get(CREDITOR_REFERENCE_KEY);
-        if (PluginUtils.isEmpty(creditoReference)) {
-            errors.put(CREDITOR_REFERENCE_KEY, this.i18n.getMessage(CREDITOR_REFERENCE_KEY_MESSAGE_ERROR, locale));
+            // mandateScheme
+            final String mandateScheme = requestConfigService.getParameterValue(contractParametersCheckRequest, MANDATE_PAYIN_SCHEME);
+            if (PluginUtils.isEmpty(mandateScheme)) {
+                errors.put(MANDATE_PAYIN_SCHEME, this.i18n.getMessage(MANDATE_PAYIN_MESSAGE_ERROR, locale));
+            }
+            // signatureApproval
+            final String signatureApproval = requestConfigService.getParameterValue(contractParametersCheckRequest, SIGNATURE_APPROVAL_METHOD);
+            if (PluginUtils.isEmpty(signatureApproval)) {
+                errors.put(SIGNATURE_APPROVAL_METHOD, this.i18n.getMessage(SIGNATURE_APPROVAL_METHOD_MESSAGE_ERROR, locale));
+            }
+
+            // paymentProcessor
+            final String paymentProcessor = requestConfigService.getParameterValue(contractParametersCheckRequest, PAYMENT_PROCESSOR);
+            if (PluginUtils.isEmpty(paymentProcessor)) {
+                errors.put(PAYMENT_PROCESSOR, this.i18n.getMessage(PAYMENT_PROCESSOR_MESSAGE_ERROR, locale));
+            }
+
+            // appKey
+            final String appName = requestConfigService.getParameterValue(contractParametersCheckRequest, APP_KEY);
+            if (PluginUtils.isEmpty(appName)) {
+                errors.put(APP_KEY, this.i18n.getMessage(APP_KEY_MESSAGE_ERROR, locale));
+            }
+
+            // appSecret
+            final String appSecret = requestConfigService.getParameterValue(contractParametersCheckRequest, APP_SECRET);
+            if (PluginUtils.isEmpty(appSecret)) {
+                errors.put(APP_SECRET, this.i18n.getMessage(APP_SECRET_MESSAGE_ERROR, locale));
+            }
+
+            if (errors.size() == 0){
+                // test a create order and call the API
+                SlimpayOrderRequest request = new BeanAssemblerServiceImpl().assembleSlimPayOrderRequest(contractParametersCheckRequest);
+                SlimpayHttpClient.testConnection(contractParametersCheckRequest, request.toJsonBody());
+            }
+
+        } catch (PluginTechnicalException e) {
+            e.printStackTrace();
+        } catch (HttpException e) {
+            System.out.println(e.getResponseBody());
+            // todo ajouter une entrée dans la Map d'erreur en fonction du message d'erreur
         }
 
-        // paymentScheme
-        final String paymentScheme = accountInfo.get(FIRST_PAYMENT_SCHEME);
-        if (PluginUtils.isEmpty(paymentScheme)) {
-            errors.put(FIRST_PAYMENT_SCHEME, this.i18n.getMessage(FIRST_PAYMENT_MESSAGE_ERROR, locale));
-        }
-
-        // mandateScheme
-        final String mandateScheme = accountInfo.get(MANDATE_PAYIN_SCHEME);
-        if (PluginUtils.isEmpty(mandateScheme)) {
-            errors.put(MANDATE_PAYIN_SCHEME, this.i18n.getMessage(MANDATE_PAYIN_MESSAGE_ERROR, locale));
-        }
-        // signatureApproval
-        final String signatureApproval = accountInfo.get(SIGNATURE_APPROVAL_METHOD);
-        if (PluginUtils.isEmpty(signatureApproval)) {
-            errors.put(SIGNATURE_APPROVAL_METHOD, this.i18n.getMessage(SIGNATURE_APPROVAL_METHOD_MESSAGE_ERROR, locale));
-        }
-
-        // paymentProcessor
-        final String paymentProcessor = accountInfo.get(PAYMENT_PROCESSOR);
-        if (PluginUtils.isEmpty(paymentProcessor)) {
-            errors.put(PAYMENT_PROCESSOR, this.i18n.getMessage(PAYMENT_PROCESSOR_MESSAGE_ERROR, locale));
-        }
-
-
-        //partnerConfig
-
-        // appKey
-        String appName = contractParametersCheckRequest.getPartnerConfiguration().getProperty(APP_KEY);
-        if (PluginUtils.isEmpty(appName)) {
-            errors.put(APP_KEY, this.i18n.getMessage(APP_KEY_MESSAGE_ERROR, locale));
-        }
-
-        // appSecret
-        String appSecret = contractParametersCheckRequest.getPartnerConfiguration().getProperty(APP_SECRET);
-        if (PluginUtils.isEmpty(appSecret)) {
-            errors.put(APP_SECRET, this.i18n.getMessage(APP_SECRET_MESSAGE_ERROR, locale));
-        }
 
         return errors;
     }

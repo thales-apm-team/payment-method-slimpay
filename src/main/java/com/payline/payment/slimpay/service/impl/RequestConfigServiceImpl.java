@@ -34,6 +34,14 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
     private static final Map<String, PaylineParameterType> PARAMETERS_MAP = new HashMap<String, PaylineParameterType>();
 
     static {
+        // add contract config data
+        PARAMETERS_MAP.put(SlimpayConstants.CREDITOR_REFERENCE_KEY, PaylineParameterType.CONTRACT_CONFIGURATION_PARAMETER);
+        PARAMETERS_MAP.put(SlimpayConstants.PAYMENT_PROCESSOR, PaylineParameterType.CONTRACT_CONFIGURATION_PARAMETER);
+        PARAMETERS_MAP.put(SlimpayConstants.FIRST_PAYMENT_SCHEME, PaylineParameterType.CONTRACT_CONFIGURATION_PARAMETER);
+        PARAMETERS_MAP.put(SlimpayConstants.MANDATE_PAYIN_SCHEME, PaylineParameterType.CONTRACT_CONFIGURATION_PARAMETER);
+        PARAMETERS_MAP.put(SlimpayConstants.SIGNATURE_APPROVAL_METHOD, PaylineParameterType.CONTRACT_CONFIGURATION_PARAMETER);
+
+        // add partner config data
         PARAMETERS_MAP.put(SlimpayConstants.API_URL, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
         PARAMETERS_MAP.put(SlimpayConstants.API_PROFILE, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
         PARAMETERS_MAP.put(SlimpayConstants.API_NS, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);

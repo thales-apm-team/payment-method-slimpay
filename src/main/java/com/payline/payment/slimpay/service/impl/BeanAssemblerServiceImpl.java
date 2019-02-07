@@ -2,8 +2,10 @@ package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.common.*;
 import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
+import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.service.BeanAssemblerService;
 import com.payline.pmapi.bean.common.Buyer;
+import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 
@@ -11,14 +13,21 @@ import static com.payline.payment.slimpay.utils.PluginUtils.createStringAmount;
 import static com.payline.payment.slimpay.utils.PluginUtils.getHonorificCode;
 import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
 
+// todo passer par RequestConfig pour acceder aux contract config
 public class BeanAssemblerServiceImpl implements BeanAssemblerService {
+    private final String CREATE = "create";
+    private final String PAYMENT = "payment";
+    private final String SIGN_MANDATE = "signMandate";
+    private final String IN = "IN";
+    private final String OUT = "OUT";
+
     @Override
     public Payment assemblePayin(PaymentRequest paymentRequest) {
         return Payment.Builder.aPaymentBuilder()
                 .withReference(paymentRequest.getOrder().getReference())
                 .withScheme(paymentRequest.getContractConfiguration().getProperty(FIRST_PAYMENT_SCHEME).getValue())
-                .withDirection("IN")
-                .withAction("create")
+                .withDirection(IN)
+                .withAction(CREATE)
                 .withAmount(createStringAmount(paymentRequest.getAmount().getAmountInSmallestUnit(), paymentRequest.getAmount().getCurrency()))
                 .withCurrency(paymentRequest.getAmount().getCurrency().toString())
                 .withLabel(paymentRequest.getSoftDescriptor())
@@ -30,7 +39,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         return Payment.Builder.aPaymentBuilder()
                 .withReference(paymentRequest.getOrder().getReference())
                 .withScheme(paymentRequest.getContractConfiguration().getProperty(FIRST_PAYMENT_SCHEME).getValue())
-                .withDirection("OUT")
+                .withDirection(OUT)
                 .withAmount(createStringAmount(paymentRequest.getAmount().getAmountInSmallestUnit(), paymentRequest.getAmount().getCurrency()))
                 .withCurrency(paymentRequest.getAmount().getCurrency().toString())
                 .withLabel(paymentRequest.getSoftDescriptor())
@@ -48,7 +57,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     @Override
     public SlimPayOrderItem assembleOrderItemMandate(PaymentRequest paymentRequest) {
         return SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder()
-                .withType("signMandate")
+                .withType(SIGN_MANDATE)
                 .withMandate(assembleMandate(paymentRequest))
                 .build();
 
@@ -57,7 +66,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     @Override
     public SlimPayOrderItem assembleOrderItemPayment(PaymentRequest paymentRequest) {
         return SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder()
-                .withType("payment")
+                .withType(PAYMENT)
                 .withPayin(assemblePayin(paymentRequest))
                 .build();
     }
@@ -67,7 +76,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         return Mandate.Builder.aMandateBuilder()
                 .withReference(paymentRequest.getTransactionId())
                 .withStandard(paymentRequest.getContractConfiguration().getProperty(MANDATE_STANDARD_KEY).getValue())
-                .withAction("create")
+                .withAction(CREATE)
                 .withPaymentScheme(paymentRequest.getContractConfiguration().getProperty(MANDATE_PAYIN_SCHEME).getValue())
                 .withSignatory(assembleSignatory(paymentRequest))
                 .build();
@@ -114,6 +123,42 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .build();
     }
 
+    public SlimpayOrderRequest assembleSlimPayOrderRequest(ContractParametersCheckRequest request) throws InvalidDataException {
+        final String FOO = "foo";
+        final String STREET = "street";
+        final String PREFIX = "Mr";
+        final String COUNTRY = "US";
+        final String PHONE = "+33601020304";
+        final String MAIL = "foo@bar.com";
+        final String REFERENCE = "123456789";
+
+        BillingAddress address = BillingAddress.Builder.aBillingAddressBuilder()
+                .withStreet1(STREET).withStreet2(STREET).withCity(FOO).withCountry(COUNTRY).withPostalCode(FOO).build();
+
+        Signatory signatory = Signatory.Builder.aSignatoryBuilder()
+                .withfamilyName(FOO).withGivenName(FOO).withHonorificPrefix(PREFIX).withBilingAddress(address).withEmail(MAIL).withTelephone(PHONE).build();
+
+        Mandate mandate = Mandate.Builder.aMandateBuilder()
+                .withReference(REFERENCE)
+                .withStandard(RequestConfigServiceImpl.INSTANCE.getParameterValue(request, MANDATE_STANDARD_KEY))
+                .withAction(CREATE)
+                .withPaymentScheme(RequestConfigServiceImpl.INSTANCE.getParameterValue(request, MANDATE_PAYIN_SCHEME))
+                .withSignatory(signatory)
+                .build();
+
+        return SlimpayOrderRequest.Builder.aSlimPayOrderRequestBuilder()
+                .withSubscriber(new SlimpayOrderRequest.Subscriber(FOO))
+                .withCreditor(new SlimpayOrderRequest.Creditor(request.getContractConfiguration().getProperty(CREDITOR_REFERENCE_KEY).getValue()))
+                .withSuccessUrl(request.getEnvironment().getRedirectionReturnURL())
+                .withFailureUrl(request.getEnvironment().getRedirectionReturnURL())
+                .withCancelUrl(request.getEnvironment().getRedirectionCancelURL())
+                .withLocale(request.getLocale().getCountry())
+                .withStarted(true)
+                .withItems(new SlimPayOrderItem[]{
+                        SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder().withType(SIGN_MANDATE).withMandate(mandate).build()
+                })
+                .build();
+    }
 
 }
 

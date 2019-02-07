@@ -4,8 +4,10 @@ import com.payline.payment.slimpay.bean.common.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.bean.common.response.SlimpayPaymentResponse;
 import com.payline.payment.slimpay.exception.HttpCallException;
 import com.payline.payment.slimpay.exception.InvalidDataException;
+import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.service.impl.RequestConfigServiceImpl;
 import com.payline.payment.slimpay.utils.SlimpayConstants;
+import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
@@ -24,6 +26,9 @@ public class SlimpayHttpClient {
     private static final Logger LOGGER = LogManager.getLogger(SlimpayHttpClient.class);
     private static final String EMPTY_RESPONSE_MESSAGE = "response is empty";
 
+    private SlimpayHttpClient() {
+        // ras.
+    }
 
     /**
      * Call the SlimPay API using the Slimpay hapiclient
@@ -78,7 +83,37 @@ public class SlimpayHttpClient {
      * @throws InvalidDataException
      * @throws HttpException
      */
-    public static SlimpayOrderResponse createOrder(PaymentRequest request, JsonBody body) throws InvalidDataException, HttpException, HttpCallException {
+    public static SlimpayOrderResponse testConnection(ContractParametersCheckRequest request, JsonBody body) throws PluginTechnicalException, HttpException {
+        Oauth2BasicAuthentication authentication = createAuthentication(request);
+        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL);
+        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE);
+        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS);
+        CustomRel rel = new CustomRel(ns + SlimpayConstants.CREATE_ORDER_URL);
+
+        Follow follow = new Follow.Builder(rel)
+                .setMessageBody(body)
+                .setMethod(Method.POST)
+                .build();
+
+        Resource response = request(url, profile, authentication, follow);
+        if (response != null) {
+            return SlimpayOrderResponse.fromJson(response.getState().toString());
+        } else {
+            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.testConnection");
+        }
+
+    }
+
+
+    /**
+     * create the request to call a #create-orders http request
+     *
+     * @param request the payline request
+     * @param body    the body of the http request
+     * @throws InvalidDataException
+     * @throws HttpException
+     */
+    public static SlimpayOrderResponse createOrder(PaymentRequest request, JsonBody body) throws PluginTechnicalException, HttpException {
         Oauth2BasicAuthentication authentication = createAuthentication(request);
         String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL);
         String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE);
@@ -107,7 +142,7 @@ public class SlimpayHttpClient {
      * @throws InvalidDataException
      * @throws HttpException
      */
-    public static SlimpayPaymentResponse createPayout(RefundRequest request, JsonBody body) throws InvalidDataException, HttpException, HttpCallException {
+    public static SlimpayPaymentResponse createPayout(RefundRequest request, JsonBody body) throws PluginTechnicalException, HttpException {
         Oauth2BasicAuthentication authentication = createAuthentication(request);
         CustomRel rel = new CustomRel(SlimpayConstants.CREATE_PAYOUT_URL);
         String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.APP_KEY);
@@ -122,7 +157,7 @@ public class SlimpayHttpClient {
         if (response != null) {
             return SlimpayPaymentResponse.Builder.fromJson(response.getState().toString());
         } else {
-            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.createOrder");
+            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.createPayout");
         }
     }
 
@@ -134,7 +169,7 @@ public class SlimpayHttpClient {
      * @throws InvalidDataException
      * @throws HttpException
      */
-    public static SlimpayPaymentResponse getPayment(RedirectionPaymentRequest request) throws InvalidDataException, HttpException, HttpCallException {
+    public static SlimpayPaymentResponse getPayment(RedirectionPaymentRequest request) throws PluginTechnicalException, HttpException {
         Oauth2BasicAuthentication authentication = createAuthentication(request);
         CustomRel rel = new CustomRel(SlimpayConstants.GET_PAYMENT_URL);
         String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.APP_KEY);
@@ -148,7 +183,7 @@ public class SlimpayHttpClient {
         if (response != null) {
             return SlimpayPaymentResponse.Builder.fromJson(response.getState().toString());
         } else {
-            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.createOrder");
+            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getPayment");
         }
     }
 
@@ -160,7 +195,7 @@ public class SlimpayHttpClient {
      * @throws InvalidDataException
      * @throws HttpException
      */
-    public static SlimpayOrderResponse getOrder(RedirectionPaymentRequest request) throws InvalidDataException, HttpException, HttpCallException {
+    public static SlimpayOrderResponse getOrder(RedirectionPaymentRequest request) throws PluginTechnicalException, HttpException {
         Oauth2BasicAuthentication authentication = createAuthentication(request);
         CustomRel rel = new CustomRel(SlimpayConstants.GET_ORDER_URL);
         String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.APP_KEY);
@@ -175,8 +210,22 @@ public class SlimpayHttpClient {
         if (response != null) {
             return SlimpayOrderResponse.fromJson(response.getState().toString());
         } else {
-            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.createOrder");
+            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getOrder");
         }
+    }
+
+    /**
+     * create the Oauth2BasicAuthentication object needed by the Slimpay hapiclient
+     *
+     * @param request the payline PaymentRequest containing all needed data
+     * @throws InvalidDataException
+     */
+    private static Oauth2BasicAuthentication createAuthentication(ContractParametersCheckRequest request) throws InvalidDataException {
+        return new Oauth2BasicAuthentication.Builder()
+                .setTokenEndPointUrl(SlimpayConstants.TOKEN_ENDPOINT)
+                .setUserid(RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.APP_KEY))
+                .setPassword(RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.APP_SECRET))
+                .build();
     }
 
     /**
