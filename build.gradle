@@ -24,7 +24,7 @@ configurations {
 }
 
 ext {
-    paymentMethodVersion = '1.0-RC3'
+    paymentMethodVersion = '1.0'
     powerMockVersion = '1.7.0'
     releaseDirectoryPath = 'D:/build'
 }
@@ -45,7 +45,7 @@ dependencies {
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
 
     // JUnit and Mockito
-    testImplementation "junit:junit:4.11"
+    testImplementation "junit:junit:4.12"
     testImplementation "org.mockito:mockito-core:1.+"
 
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.13.0'
@@ -56,7 +56,7 @@ dependencies {
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.0.3'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.3'
 
-    fatJarTest "junit:junit:4.11"
+    fatJarTest "junit:junit:4.12"
     fatJarTest "org.mockito:mockito-core:1.+"
     fatJarTest group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.13.0'
     fatJarTest group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.13.0'
@@ -79,6 +79,21 @@ shadowJar {
         exclude(dependency('org.seleniumhq.selenium:selenium-support:3.13.0'))
     }
 }
+
+jar {
+    manifest {
+        attributes(
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                'Built-By': System.getProperty('user.name'),
+                'Built-JDK': System.getProperty('java.version'),
+                'Build-Date': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'Source-Compatibility': project.sourceCompatibility,
+                'Target-Compatibility': project.targetCompatibility
+        )
+    }
+}
+
 
 task buildToLocal(type: Copy) {
     dependsOn shadowJar
@@ -110,4 +125,4 @@ task testJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
     configurations = [project.configurations.fatJarTest]
 }
 
-test.exclude '**/test/integration/*'
+test.exclude '**/*IT.class'
