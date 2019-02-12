@@ -1,6 +1,9 @@
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        url "http://192.168.4.78:8081/repository/maven-releases"
+    }
 }
 
 publishing {
