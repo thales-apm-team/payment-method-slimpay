@@ -42,9 +42,12 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
         PARAMETERS_MAP.put(SlimpayConstants.SIGNATURE_APPROVAL_METHOD, PaylineParameterType.CONTRACT_CONFIGURATION_PARAMETER);
 
         // add partner config data
-        PARAMETERS_MAP.put(SlimpayConstants.API_URL, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
-        PARAMETERS_MAP.put(SlimpayConstants.API_PROFILE, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
-        PARAMETERS_MAP.put(SlimpayConstants.API_NS, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
+        PARAMETERS_MAP.put(SlimpayConstants.API_URL_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
+        PARAMETERS_MAP.put(SlimpayConstants.API_PROFILE_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
+        PARAMETERS_MAP.put(SlimpayConstants.API_NS_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
+        PARAMETERS_MAP.put(SlimpayConstants.API_URL_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
+        PARAMETERS_MAP.put(SlimpayConstants.API_PROFILE_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
+        PARAMETERS_MAP.put(SlimpayConstants.API_NS_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
 
         PARAMETERS_MAP.put(SlimpayConstants.APP_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
         PARAMETERS_MAP.put(SlimpayConstants.APP_SECRET, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);

@@ -1,13 +1,12 @@
 package com.payline.payment.slimpay.bean.common.response;
 
 import com.google.gson.Gson;
-import com.payline.payment.slimpay.bean.common.SlimpayBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 //A payment order item
 //https://dev.slimpay.com/hapi/reference/order-items#order-items-representation
-public class SlimpayPaymentResponse extends SlimpayBean {
+public class SlimpayPaymentResponse extends SlimpayResponse {
 
     private static final transient Logger LOGGER = LogManager.getLogger(SlimpayPaymentResponse.class);
 
@@ -33,6 +32,54 @@ public class SlimpayPaymentResponse extends SlimpayBean {
     public String processor;
     public String correlationId;
     public String label;
+
+    public String getId() {
+        return id;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public Float getAmount() {
+        return amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getExecutionDate() {
+        return executionDate;
+    }
+
+    public String getExecutionStatus() {
+        return executionStatus;
+    }
+
+    public String getSequenceType() {
+        return sequenceType;
+    }
+
+    public Integer getReplayCount() {
+        return replayCount;
+    }
 
     private SlimpayPaymentResponse(){}
 

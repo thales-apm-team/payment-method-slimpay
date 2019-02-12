@@ -3,7 +3,6 @@ package com.payline.payment.slimpay.utils;
 
 import com.payline.payment.slimpay.bean.common.*;
 import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
-import com.payline.payment.slimpay.bean.common.request.SlimpayPaymentRequest;
 
 public class BeansUtils {
 
@@ -75,8 +74,8 @@ public class BeansUtils {
 
         return SlimpayOrderRequest.Builder.aSlimPayOrderRequestBuilder()
                 .withReference("ORDER-123")
-                .withCreditor(new SlimpayOrderRequest.Creditor("creditor1"))
-                .withSubscriber(new SlimpayOrderRequest.Subscriber("Client2"))
+                .withCreditor(new Creditor("creditor1"))
+                .withSubscriber(new Subscriber("Client2"))
                 .withItems(items)
                 .withLocale("FR")
                 .withPaymentScheme("SEPA.DIRECT_DEBIT.CORE")

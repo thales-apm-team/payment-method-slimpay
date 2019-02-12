@@ -11,7 +11,6 @@ import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
-import com.payline.pmapi.integration.AbstractPaymentIntegration;
 import com.payline.pmapi.logger.LogManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.Logger;
@@ -32,23 +31,31 @@ public class TestUtils {
     private static final Logger LOGGER = LogManager.getLogger(TestUtils.class);
 
     // FIXME
-    private static final String SUCCESS_URL = AbstractPaymentIntegration.SUCCESS_URL;
-    private static final String CANCEL_URL = "http://localhost/cancelurl.com/";
-    private static final String NOTIFICATION_URL = "http://google.com/";
+    public static final String SUCCESS_URL = "https://succesurl.com/";
+    public static final String CANCEL_URL = "http://localhost/cancelurl.com/";
+    public static final String NOTIFICATION_URL = "http://google.com/";
     private static final String MDP_IDENTIFIER = "paymentMethodIdentifier";
 
 
     private static final String SOFT_DESCRIPTOR = "softDescriptor";
-    private static final String MERCHANT_REQUEST_ID = createMerchantRequestId();
+    private static final String ORDER_REFERENCE = createMerchantRequestId();
+    private static final String PAYMENT_REFERENCE = createMerchantRequestId();
+    private static final String MANDATE_REFERENCE = createMerchantRequestId();
     public static final String CONFIRM_AMOUNT = "40800";
-    private static final String TRANSACTION_ID = "455454545415451198120";
+    //    private static final String TRANSACTION_ID = "455454545415451198120";
+    private static final String TRANSACTION_ID = "DEV-" + Calendar.getInstance().getTimeInMillis();
+    private static final String CUSTOMER_ID = "Client2";
+    private static final String ADDITIONAL_DATA  = "{mandateReference: \"MANDATE-DEV-1549638902921\",mandateId: \"Transaction01\"," +
+            "orderReference: \"ORDER-DEV-1549638902921\",orderId: \"Transaction01\"," +
+            "paymentReference: \"PAYMENT-DEV-1549638902921\",paymentId: \"Transaction01\"}";
+
     /**
      * ou
      * "141217" + Calendar.getInstance().getTimeInMillis()
      **/
     private static final String PARTNER_TRANSACTION_ID = "455454545415451198120";
 
-    private static final Environment ENVIRONMENT = new Environment("https://succesurl.com/", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
+    private static final Environment ENVIRONMENT = new Environment("https://notification.com/", "http://succesurl.com", "http://redirectionCancelURL.com", true);
     private static final Locale LOCALE_FR = Locale.FRANCE;
     public static final String CURRENCY_EUR = "EUR";
 
@@ -69,10 +76,9 @@ public class TestUtils {
 
 
     private static final Map<String, String> PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
-        put(API_URL, "https://api.preprod.slimpay.com");
-        put(API_PROFILE,"https://api.slimpay.net/alps/v1" );
-        put(API_NS, "https://api.slimpay.net/alps");
-
+        put(API_URL_KEY, "https://api.preprod.slimpay.com");
+        put(API_PROFILE_KEY, "https://api.slimpay.net/alps/v1");
+        put(API_NS_KEY, "https://api.slimpay.net/alps");
         put(APP_KEY, "monextreferral01");
     }};
 
@@ -95,19 +101,25 @@ public class TestUtils {
 
     private static final Map<String, String> ACCOUNT_INFO = new HashMap<String, String>() {{
         put(CREDITOR_REFERENCE_KEY, "paylinemerchanttest1");
-        put(FIRST_PAYMENT_SCHEME,"SEPA.DIRECT_DEBIT.CORE");
+        put(FIRST_PAYMENT_SCHEME, "SEPA.DIRECT_DEBIT.CORE");
         put(MANDATE_PAYIN_SCHEME, ("SEPA.DIRECT_DEBIT.CORE"));
         put(SIGNATURE_APPROVAL_METHOD, "otp");
+        put(MANDATE_STANDARD_KEY, "SEPA");
         put(PAYMENT_PROCESSOR, "slimpay");
     }};
 
     public static final PartnerConfiguration PARTNER_CONFIGURATION = new PartnerConfiguration(PARTNER_CONFIGURATION_MAP, SENSITIVE_PARTNER_CONFIGURATION_MAP);
 
-    public static Address createDefaultCompleteAddress() {
+    public static Address createRandomAddress() {
         return createCompleteAddress(RandomStringUtils.random(3, false, true)
                         + " rue " + RandomStringUtils.random(5, true, false),
                 "residence " + RandomStringUtils.random(9
                         , true, false), "Marseille", "13015", "FR");
+    }
+
+    public static Address createDefaultCompleteAddress() {
+        return createCompleteAddress("141 rue de la Paix",
+                "residence MNPL", "Toulouse", "33000", "FR");
     }
 
     /**
@@ -127,6 +139,24 @@ public class TestUtils {
                 .withOrder(order)
                 .withBuyer(createDefaultBuyer())
                 .withTransactionId(TRANSACTION_ID)
+                .withSoftDescriptor(SOFT_DESCRIPTOR)
+                .withEnvironment(ENVIRONMENT)
+                .withPartnerConfiguration(PARTNER_CONFIGURATION)
+                .build();
+    }
+
+    public static PaymentRequest createBadPaymentRequest() {
+        final Order order = createOrder("DEV-1549623741449");
+
+
+        return PaymentRequest.builder()
+                .withAmount(AMOUNT)
+                .withBrowser(new Browser("", LOCALE_FR))
+                .withLocale(LOCALE_FR)
+                .withContractConfiguration(CONTRACT_CONFIGURATION)
+                .withOrder(order)
+                .withBuyer(createDefaultBuyer())
+                .withTransactionId("DEV-1549623741449")
                 .withSoftDescriptor(SOFT_DESCRIPTOR)
                 .withEnvironment(ENVIRONMENT)
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
@@ -160,13 +190,26 @@ public class TestUtils {
                 .withContractConfiguration(CONTRACT_CONFIGURATION)
                 .withEnvironment(ENVIRONMENT)
                 .withTransactionId(transactionId)
-                .withPartnerTransactionId("toto")
+                .withPartnerTransactionId(TRANSACTION_ID)
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
+                .withTransactionAdditionalData(ADDITIONAL_DATA)
                 .build();
     }
 
-    public static RedirectionPaymentRequest createRedirectionPaymentRequest() {
-        return RedirectionPaymentRequest.builder().build();
+    public static RedirectionPaymentRequest createRedirectionPaymentRequest(String transactionId) {
+        return RedirectionPaymentRequest.builder()
+                .withAmount(AMOUNT)
+                .withBrowser(new Browser("", LOCALE_FR))
+                .withLocale(LOCALE_FR)
+                .withContractConfiguration(CONTRACT_CONFIGURATION)
+                .withBuyer(createDefaultBuyer())
+                .withTransactionId(transactionId)
+                .withSoftDescriptor(SOFT_DESCRIPTOR)
+                .withEnvironment(ENVIRONMENT)
+                .withOrder(createOrder(transactionId))
+                .withPartnerConfiguration(PARTNER_CONFIGURATION)
+                .build();
+
 
     }
 
@@ -290,7 +333,7 @@ public class TestUtils {
 
 
     public static Buyer.FullName createFullName() {
-        return new Buyer.FullName(RandomStringUtils.random(7, true, false), RandomStringUtils.random(10, true, false), "4");
+        return new Buyer.FullName("Jumper","Johnny", "4");
     }
 
     public static Map<Buyer.PhoneNumberType, String> createDefaultPhoneNumbers() {
@@ -337,7 +380,7 @@ public class TestUtils {
                 .withPhoneNumbers(phoneNumbers)
                 .withAddresses(addresses)
                 .withFullName(fullName)
-                .withCustomerIdentifier("subscriber12")
+                .withCustomerIdentifier(CUSTOMER_ID)
                 .withExtendedData(createDefaultExtendedData())
                 .withBirthday(getBirthdayDate())
                 .withLegalStatus(Buyer.LegalStatus.PERSON)
@@ -406,6 +449,10 @@ public class TestUtils {
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
                 .withPartnerTransactionId(PARTNER_TRANSACTION_ID)
                 .withTransactionId(TRANSACTION_ID)
+                .withTransactionAdditionalData(ADDITIONAL_DATA)
                 .build();
     }
+
+
+
 }

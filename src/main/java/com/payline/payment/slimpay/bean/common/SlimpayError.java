@@ -30,7 +30,7 @@ public class SlimpayError extends SlimpayBean{
         this.errorDscription = description;
     }
 
-    public SlimpayError fromJson(String json){
+    public static SlimpayError fromJson(String json){
         Gson parser = new Gson();
         return parser.fromJson(json, SlimpayError.class);
     }

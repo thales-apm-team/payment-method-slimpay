@@ -1,11 +1,14 @@
 package com.payline.payment.slimpay.bean.request;
 
+import com.payline.payment.slimpay.bean.common.Creditor;
 import com.payline.payment.slimpay.bean.common.SlimPayOrderItem;
+import com.payline.payment.slimpay.bean.common.Subscriber;
 import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static com.payline.payment.slimpay.utils.BeansUtils.*;
+import static com.payline.payment.slimpay.utils.BeansUtils.createDefaultOrderItemMandate;
+import static com.payline.payment.slimpay.utils.BeansUtils.createDefaultOrderItemPayment;
 
 public class SlimpayOrderRequestTest {
 
@@ -16,8 +19,8 @@ public class SlimpayOrderRequestTest {
 
         orderRequest = SlimpayOrderRequest.Builder.aSlimPayOrderRequestBuilder()
                 .withReference("ORDER-123")
-                .withCreditor(new SlimpayOrderRequest.Creditor("creditor1"))
-                .withSubscriber(new SlimpayOrderRequest.Subscriber("Client2"))
+                .withCreditor(new Creditor("creditor1"))
+                .withSubscriber(new Subscriber("Client2"))
                 .withFailureUrl("failure.url.com")
                 .withSuccessUrl("success.url.com")
                 .withItems(new SlimPayOrderItem[]{
@@ -43,8 +46,8 @@ public class SlimpayOrderRequestTest {
 
         orderRequest = SlimpayOrderRequest.Builder.aSlimPayOrderRequestBuilder()
                 .withReference("ORDER-123")
-                .withCreditor(new SlimpayOrderRequest.Creditor("creditor1"))
-                .withSubscriber(new SlimpayOrderRequest.Subscriber("Client2"))
+                .withCreditor(new Creditor("creditor1"))
+                .withSubscriber(new Subscriber("Client2"))
                 .withFailureUrl("failure.url.com")
                 .withSuccessUrl("success.url.com")
                 .withItems(new SlimPayOrderItem[]{

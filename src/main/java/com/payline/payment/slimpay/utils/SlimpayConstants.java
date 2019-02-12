@@ -38,6 +38,11 @@ public class SlimpayConstants {
     public static final String PAYMENT_PROCESSOR_MESSAGE_ERROR ="payment.processor.message.error" ;
 
 
+    public static final String MANDATE_STANDARD_KEY ="mandateStandard" ;
+    public static final String MANDATE_STANDARD_DESCRIPTION ="mandate.standard.description" ;
+    public static final String MANDATE_STANDARD_LABEL ="mandate.standard.label" ;
+    public static final String MANDATE_STANDARD_MESSAGE_ERROR ="mandate.standard.message.error";
+
     //PARTNER CONFIGURATION KEY
     public static final String APP_KEY ="appName" ;
     public static final String APP_KEY_MESSAGE_ERROR ="app.name.message.error" ;
@@ -45,24 +50,19 @@ public class SlimpayConstants {
     public static final String APP_SECRET ="appSecret" ;
     public static final String APP_SECRET_MESSAGE_ERROR ="app.secret.message.error" ;
     //URLS
-    public static final String API_URL ="appUrl" ;
-    public static final String API_PROFILE ="apiProfile" ;
-    public static final String API_NS ="apiNs" ;
+    public static final String API_URL_KEY ="appUrl" ;
+    public static final String API_PROFILE_KEY ="apiProfile" ;
+    public static final String API_NS_KEY ="apiNs" ;
 
-
-
-    //OTHER FIELDS
-    public static final String MANDATE_STANDARD_KEY ="mandateStandard" ;
-    public static final String MANDATE_STANDARD ="SEPA" ;
 
     //REQUESTS
     //todo rel ou appel http classique ?
     public static final String TOKEN_ENDPOINT = "/oauth/token";
     public static final String CREATE_ORDER_URL ="#create-orders" ;
-    public static final String CREATE_PAYOUT_URL ="create-payout" ;
-    public static final String GET_ORDER_URL ="#get-order" ;
-    public static final String CANCEL_PAYMENT_URL ="#get-order" ;
-    public static final String GET_PAYMENT_URL ="SEPA" ;
+    public static final String CREATE_PAYOUT_URL ="#create-payouts" ;
+    public static final String GET_ORDER_URL ="#get-orders" ;
+    public static final String CANCEL_PAYMENT_URL ="#cancel-payment" ;
+    public static final String GET_PAYMENT_URL ="#get-payment" ;
 
 
 

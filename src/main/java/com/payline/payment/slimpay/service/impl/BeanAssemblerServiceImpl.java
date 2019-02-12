@@ -2,6 +2,7 @@ package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.common.*;
 import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
+import com.payline.payment.slimpay.bean.common.response.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.service.BeanAssemblerService;
 import com.payline.pmapi.bean.common.Buyer;
@@ -9,8 +10,7 @@ import com.payline.pmapi.bean.configuration.request.ContractParametersCheckReque
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 
-import static com.payline.payment.slimpay.utils.PluginUtils.createStringAmount;
-import static com.payline.payment.slimpay.utils.PluginUtils.getHonorificCode;
+import static com.payline.payment.slimpay.utils.PluginUtils.*;
 import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
 
 // todo passer par RequestConfig pour acceder aux contract config
@@ -20,11 +20,33 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     private final String SIGN_MANDATE = "signMandate";
     private final String IN = "IN";
     private final String OUT = "OUT";
+    private final String PAYOUT_SCHEME = "SEPA.CREDIT_TRANSFER";
+
+
+    /**
+     * Singleton Holder
+     */
+    private static class SingletonHolder {
+        private static final BeanAssemblerServiceImpl INSTANCE = new BeanAssemblerServiceImpl();
+    }
+
+    /**
+     * @return the singleton instance
+     */
+    public static BeanAssemblerServiceImpl getInstance() {
+        return BeanAssemblerServiceImpl.SingletonHolder.INSTANCE;
+    }
+
+    /**
+     * Create a Slimplay Payment with direction IN from a Payline PaymentRequest
+     * @param paymentRequest
+     * @return a a new  Payment
+     */
 
     @Override
     public Payment assemblePayin(PaymentRequest paymentRequest) {
         return Payment.Builder.aPaymentBuilder()
-                .withReference(paymentRequest.getOrder().getReference())
+                .withReference(generatePaymentReference(paymentRequest.getOrder().getReference()))
                 .withScheme(paymentRequest.getContractConfiguration().getProperty(FIRST_PAYMENT_SCHEME).getValue())
                 .withDirection(IN)
                 .withAction(CREATE)
@@ -34,19 +56,33 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .build();
     }
 
+    /**
+     * Create a Slimplay Payment with direction OUT from a Payline PaymentRequest
+     * @param refundRequest
+     * @return a a new  Payment
+     */
     @Override
-    public Payment assemblePayout(RefundRequest paymentRequest) {
+    public Payment assemblePayout(RefundRequest refundRequest) {
+
+        //get MandateReference
+        PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.fromJson(refundRequest.getTransactionAdditionalData());
+        String mandateReference = additionalData.getMandateReference();
+
         return Payment.Builder.aPaymentBuilder()
-                .withReference(paymentRequest.getOrder().getReference())
-                .withScheme(paymentRequest.getContractConfiguration().getProperty(FIRST_PAYMENT_SCHEME).getValue())
+                .withReference(generatePaymentReference(refundRequest.getOrder().getReference()))
+                .withScheme(PAYOUT_SCHEME)
                 .withDirection(OUT)
-                .withAmount(createStringAmount(paymentRequest.getAmount().getAmountInSmallestUnit(), paymentRequest.getAmount().getCurrency()))
-                .withCurrency(paymentRequest.getAmount().getCurrency().toString())
-                .withLabel(paymentRequest.getSoftDescriptor())
-//                .withCreditor()
-//                .withSubscriber()
-//                .withCreditor()
-                .build();
+                .withAmount(createStringAmount(refundRequest.getAmount().getAmountInSmallestUnit(), refundRequest.getAmount().getCurrency()))
+                .withCurrency(refundRequest.getAmount().getCurrency().toString())
+                .withLabel(refundRequest.getSoftDescriptor())
+                .withCorrelationId(refundRequest.getPartnerTransactionId())
+//                .withSubscriber(new Subscriber(refundRequest.getBuyer().getCustomerIdentifier()))
+                .withCreditor(new Creditor(refundRequest.getContractConfiguration().getProperty(CREDITOR_REFERENCE_KEY).getValue()))
+                .withMandate(Mandate.Builder.aMandateBuilder()
+                        .withReference(mandateReference)
+                        .build())
+                        .build();
+
     }
 
     @Override
@@ -54,6 +90,11 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         return null;
     }
 
+    /**
+     * Create a SlimPayOrderItem with type signMandate and  a Mandate from a Payline PaymentRequest
+     * @param paymentRequest
+     * @return a a new  SlimPayOrderItem
+     */
     @Override
     public SlimPayOrderItem assembleOrderItemMandate(PaymentRequest paymentRequest) {
         return SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder()
@@ -62,7 +103,11 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .build();
 
     }
-
+    /**
+     * Create a SlimPayOrderItem with type payment and  a Payment (direction IN) from a Payline PaymentRequest
+     * @param paymentRequest
+     * @return a a new  SlimPayOrderItem
+     */
     @Override
     public SlimPayOrderItem assembleOrderItemPayment(PaymentRequest paymentRequest) {
         return SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder()
@@ -71,10 +116,15 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .build();
     }
 
+    /**
+     * Create a Mandate from a Payline PaymentRequest
+     * @param paymentRequest
+     * @return a new  Mandate
+     */
     @Override
     public Mandate assembleMandate(PaymentRequest paymentRequest) {
         return Mandate.Builder.aMandateBuilder()
-                .withReference(paymentRequest.getTransactionId())
+                .withReference(generateMandateReference(paymentRequest.getTransactionId()))
                 .withStandard(paymentRequest.getContractConfiguration().getProperty(MANDATE_STANDARD_KEY).getValue())
                 .withAction(CREATE)
                 .withPaymentScheme(paymentRequest.getContractConfiguration().getProperty(MANDATE_PAYIN_SCHEME).getValue())
@@ -82,6 +132,11 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .build();
     }
 
+    /**
+     * Create a Signatory from a Payline PaymentRequest
+     * @param paymentRequest
+     * @return a new  Signatory
+     */
     @Override
     public Signatory assembleSignatory(PaymentRequest paymentRequest) {
         Buyer buyer = paymentRequest.getBuyer();
@@ -94,7 +149,11 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .withTelephone(buyer.getPhoneNumbers().get(Buyer.PhoneNumberType.CELLULAR))
                 .build();
     }
-
+    /**
+     * Create a BillingAddress from a Payline PaymentRequest
+     * @param paymentRequest
+     * @return a new  BillingAddress
+     */
     public BillingAddress assembleBillingAddress(PaymentRequest paymentRequest) {
         Buyer.Address address = paymentRequest.getBuyer().getAddressForType(Buyer.AddressType.BILLING);
         return BillingAddress.Builder.aBillingAddressBuilder()
@@ -106,11 +165,16 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .build();
     }
 
+    /**
+     * Create a SlimpayOrderRequest from a Payline PaymentRequest
+     * @param paymentRequest
+     * @return a new  SlimpayOrderRequest
+     */
     public SlimpayOrderRequest assembleSlimPayOrderRequest(PaymentRequest paymentRequest) {
-
         return SlimpayOrderRequest.Builder.aSlimPayOrderRequestBuilder()
-                .withSubscriber(new SlimpayOrderRequest.Subscriber(paymentRequest.getBuyer().getCustomerIdentifier()))
-                .withCreditor(new SlimpayOrderRequest.Creditor(paymentRequest.getContractConfiguration().getProperty(CREDITOR_REFERENCE_KEY).getValue()))
+                .withReference(generateOrderReference(paymentRequest.getTransactionId()))
+                .withSubscriber(new Subscriber(paymentRequest.getBuyer().getCustomerIdentifier()))
+                .withCreditor(new Creditor(paymentRequest.getContractConfiguration().getProperty(CREDITOR_REFERENCE_KEY).getValue()))
                 .withSuccessUrl(paymentRequest.getEnvironment().getRedirectionReturnURL())
                 .withFailureUrl(paymentRequest.getEnvironment().getRedirectionReturnURL())
                 .withCancelUrl(paymentRequest.getEnvironment().getRedirectionCancelURL())
@@ -147,8 +211,8 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .build();
 
         return SlimpayOrderRequest.Builder.aSlimPayOrderRequestBuilder()
-                .withSubscriber(new SlimpayOrderRequest.Subscriber(FOO))
-                .withCreditor(new SlimpayOrderRequest.Creditor(request.getContractConfiguration().getProperty(CREDITOR_REFERENCE_KEY).getValue()))
+                .withSubscriber(new Subscriber(FOO))
+                .withCreditor(new Creditor(request.getContractConfiguration().getProperty(CREDITOR_REFERENCE_KEY).getValue()))
                 .withSuccessUrl(request.getEnvironment().getRedirectionReturnURL())
                 .withFailureUrl(request.getEnvironment().getRedirectionReturnURL())
                 .withCancelUrl(request.getEnvironment().getRedirectionCancelURL())

@@ -1,7 +1,9 @@
 package com.payline.payment.slimpay.utils.http;
 
+import com.payline.payment.slimpay.bean.common.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.common.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.bean.common.response.SlimpayPaymentResponse;
+import com.payline.payment.slimpay.bean.common.response.SlimpayResponse;
 import com.payline.payment.slimpay.exception.HttpCallException;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
@@ -25,6 +27,9 @@ import org.apache.logging.log4j.Logger;
 public class SlimpayHttpClient {
     private static final Logger LOGGER = LogManager.getLogger(SlimpayHttpClient.class);
     private static final String EMPTY_RESPONSE_MESSAGE = "response is empty";
+    private static final String USER_APPROVAL = "#user-approval";
+    private static final String CREDITOR_REFERENCE = "creditorReference";
+    private static final String REFERENCE = "reference";
 
     private SlimpayHttpClient() {
         // ras.
@@ -85,9 +90,9 @@ public class SlimpayHttpClient {
      */
     public static SlimpayOrderResponse testConnection(ContractParametersCheckRequest request, JsonBody body) throws PluginTechnicalException, HttpException {
         Oauth2BasicAuthentication authentication = createAuthentication(request);
-        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL);
-        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE);
-        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS);
+        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
+        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
+        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
         CustomRel rel = new CustomRel(ns + SlimpayConstants.CREATE_ORDER_URL);
 
         Follow follow = new Follow.Builder(rel)
@@ -113,11 +118,11 @@ public class SlimpayHttpClient {
      * @throws InvalidDataException
      * @throws HttpException
      */
-    public static SlimpayOrderResponse createOrder(PaymentRequest request, JsonBody body) throws PluginTechnicalException, HttpException {
+    public static SlimpayResponse createOrder(PaymentRequest request, JsonBody body) throws PluginTechnicalException, HttpException {
         Oauth2BasicAuthentication authentication = createAuthentication(request);
-        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL);
-        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE);
-        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS);
+        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
+        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
+        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
         CustomRel rel = new CustomRel(ns + SlimpayConstants.CREATE_ORDER_URL);
 
         Follow follow = new Follow.Builder(rel)
@@ -126,10 +131,29 @@ public class SlimpayHttpClient {
                 .build();
 
         Resource response = request(url, profile, authentication, follow);
+
+
         if (response != null) {
-            return SlimpayOrderResponse.fromJson(response.getState().toString());
+
+            if(response.getState()!=null) {
+                LOGGER.info("Order created");
+                SlimpayOrderResponse orderSuccessResponse = SlimpayOrderResponse.fromJson(response.getState().toString());
+                //add confirm url on the response
+                String confirmationUrl = response.getLink(new CustomRel(ns + USER_APPROVAL)).getHref();
+                orderSuccessResponse.setUrlApproval(confirmationUrl);
+                return orderSuccessResponse;
+
+            }
+            else {
+                //return a Failure response
+                LOGGER.info("Fail to create the order");
+                return SlimpayFailureResponse.fromJson(response.toString());
+
+            }
+
         } else {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.createOrder");
+
         }
 
     }
@@ -144,9 +168,10 @@ public class SlimpayHttpClient {
      */
     public static SlimpayPaymentResponse createPayout(RefundRequest request, JsonBody body) throws PluginTechnicalException, HttpException {
         Oauth2BasicAuthentication authentication = createAuthentication(request);
-        CustomRel rel = new CustomRel(SlimpayConstants.CREATE_PAYOUT_URL);
-        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.APP_KEY);
-        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.APP_KEY);
+        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
+        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
+        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
+        CustomRel rel = new CustomRel(ns + SlimpayConstants.CREATE_PAYOUT_URL);
 
         Follow follow = new Follow.Builder(rel)
                 .setMessageBody(body)
@@ -187,6 +212,31 @@ public class SlimpayHttpClient {
         }
     }
 
+    /**
+     * create the request to call a #get-payment http request
+     *
+     * @param request the payline RefundRequest
+     * @throws InvalidDataException
+     * @throws HttpException
+     */
+    public static SlimpayPaymentResponse getPayment(RefundRequest request) throws PluginTechnicalException, HttpException {
+        Oauth2BasicAuthentication authentication = createAuthentication(request);
+        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
+        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
+        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
+        CustomRel rel = new CustomRel(ns + SlimpayConstants.GET_PAYMENT_URL);
+
+        Follow follow = new Follow.Builder(rel)
+                .setMethod(Method.GET)
+                .build();
+
+        Resource response = request(url, profile, authentication, follow);
+        if (response != null) {
+            return SlimpayPaymentResponse.Builder.fromJson(response.getState().toString());
+        } else {
+            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getPayment");
+        }
+    }
 
     /**
      * create the request to call a #get-order http request
@@ -197,12 +247,20 @@ public class SlimpayHttpClient {
      */
     public static SlimpayOrderResponse getOrder(RedirectionPaymentRequest request) throws PluginTechnicalException, HttpException {
         Oauth2BasicAuthentication authentication = createAuthentication(request);
-        CustomRel rel = new CustomRel(SlimpayConstants.GET_ORDER_URL);
-        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.APP_KEY);
-        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.APP_KEY);
+        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
+        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
+        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
+        CustomRel rel = new CustomRel(ns + SlimpayConstants.GET_ORDER_URL);
+
+        //creditor references
+        String creditorReference = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.CREDITOR_REFERENCE_KEY);
+        //Order references
+        String reference = request.getTransactionId();
 
         Follow follow = new Follow.Builder(rel)
                 .setMethod(Method.GET)
+                .setUrlVariable(CREDITOR_REFERENCE,creditorReference)
+                .setUrlVariable(REFERENCE,reference)
                 .build();
 
         Resource response = request(url, profile, authentication, follow);

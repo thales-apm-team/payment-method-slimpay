@@ -23,10 +23,11 @@ public class SlimpayErrorHandler {
                 .build();
     }
 
-    public static PaymentResponseFailure getPaymentResponseFailure(final FailureCause failureCause, String transactionId) {
+    public static PaymentResponseFailure getPaymentResponseFailure(final FailureCause failureCause, String transactionId, String errorCode) {
         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                 .withFailureCause(failureCause)
                 .withPartnerTransactionId(transactionId)
+                .withErrorCode(errorCode)
                 .build();
     }
 
@@ -36,10 +37,11 @@ public class SlimpayErrorHandler {
                 .build();
     }
 
-    public static RefundResponseFailure geRefundResponseFailure(final FailureCause failureCause, String transactionId) {
+    public static RefundResponseFailure geRefundResponseFailure(final FailureCause failureCause, String transactionId,String errorCode) {
         return RefundResponseFailure.RefundResponseFailureBuilder.aRefundResponseFailure()
                 .withFailureCause(failureCause)
                 .withPartnerTransactionId(transactionId)
+                .withErrorCode(errorCode)
                 .build();
     }
 

@@ -52,6 +52,7 @@ public class SlimpayErrorMapper {
             case 407:
             case 1004:
             case 910:
+            case 901:
             case 908:
             case 911:
                 paylineCause = FailureCause.INVALID_DATA;
@@ -87,7 +88,6 @@ public class SlimpayErrorMapper {
             case 665:
             case 667:
             case 668:
-            case 901:
             case 902:
             case 903:
             case 912:

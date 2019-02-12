@@ -1,6 +1,8 @@
 package com.payline.payment.slimpay.utils;
 
 
+import com.payline.payment.slimpay.bean.common.SlimpayError;
+
 import java.math.BigInteger;
 import java.util.Currency;
 
@@ -79,5 +81,24 @@ public class PluginUtils {
                 return "Mr";
         }
     }
+    //generate a order reference
+    public static String generateOrderReference(String reference){
+//        return "ORDER-"+reference ;
+        return reference ;
+    }
+    //generate a mandate reference
+    public static String generateMandateReference(String reference){
+//        return "MANDATE-"+reference ;
+        return reference ;
+    }
+    //generate a payment reference
+    public static String generatePaymentReference(String reference){
+//        return "PAYMENT-"+reference ;
+        return reference ;
+    }
 
+    //MAke a
+    public static String errorToString (SlimpayError error) {
+        return error.getCode() + " - " + error.getMessage();
+     }
 }

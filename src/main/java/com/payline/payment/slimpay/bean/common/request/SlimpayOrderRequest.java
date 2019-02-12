@@ -1,7 +1,9 @@
 package com.payline.payment.slimpay.bean.common.request;
 
+import com.payline.payment.slimpay.bean.common.Creditor;
 import com.payline.payment.slimpay.bean.common.SlimPayOrderItem;
 import com.payline.payment.slimpay.bean.common.SlimpayBean;
+import com.payline.payment.slimpay.bean.common.Subscriber;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,20 +25,9 @@ public class SlimpayOrderRequest extends SlimpayBean {
     public String cancelUrl;
     public String failureUrl;
 
-    public static class Creditor {
-        public String reference;
-        public Creditor(String ref){
-            this.reference =ref;
-        }
 
-    }
 
-    public static class Subscriber {
-        public String reference;
-        public Subscriber(String ref){
-            this.reference =ref;
-        }
-    }
+
 
 
     public String getReference() {
@@ -192,9 +183,6 @@ public class SlimpayOrderRequest extends SlimpayBean {
             }
             if (this.items == null) {
                 LOGGER.warn ("SlimpayOrderRequest must have a items when built");
-            }
-            if (this.paymentScheme == null) {
-                LOGGER.warn ("SlimpayOrderRequest must have a paymentScheme when built");
             }
             if (this.successUrl == null) {
                 LOGGER.warn ("SlimpayOrderRequest must have a successUrl when built");
