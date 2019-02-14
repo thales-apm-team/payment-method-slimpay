@@ -1,5 +1,7 @@
 package com.payline.payment.slimpay.bean.common;
 
+import com.google.gson.Gson;
+
 public class CardAlias {
 
     private String id;
@@ -21,5 +23,11 @@ public class CardAlias {
 
     public String getCardExpirationDate() {
         return cardExpirationDate;
+    }
+
+
+    public static CardAlias fromJson(String json){
+        Gson parser = new Gson();
+        return parser.fromJson(json, CardAlias.class);
     }
 }

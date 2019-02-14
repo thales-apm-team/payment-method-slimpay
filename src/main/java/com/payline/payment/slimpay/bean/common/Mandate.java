@@ -137,8 +137,8 @@ public class Mandate extends SlimpayBean {
             if (this.paymentScheme == null) {
                 LOGGER.warn ("Mandate must have a paymentScheme when built");
             }
-            if (this.standard == null) {
-                LOGGER.warn ("Mandate must have a standard when built");
+            if (this.createSequenceType == null) {
+                LOGGER.warn ("Mandate must have a createSequenceType when built");
             }
 
             return this;

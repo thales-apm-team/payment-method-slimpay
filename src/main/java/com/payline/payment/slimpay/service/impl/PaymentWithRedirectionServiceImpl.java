@@ -166,19 +166,23 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                                 .withOnHoldCause(OnHoldCause.SCORING_ASYNC)
                                 .build();
 
-                    case CLOSED_ABORTED:
                     case CLOSED_ABORTED_BY_CLIENT:
                         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                                 .withPartnerTransactionId(transactionStatusRequest.getTransactionId())
                                 .withFailureCause(FailureCause.CANCEL)
                                 .build();
 
+                    case CLOSED_ABORTED:
+                    case CLOSED_ABORTED_BY_SERVER:
+                        return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
+                                .withPartnerTransactionId(transactionStatusRequest.getTransactionId())
+                                .withFailureCause(FailureCause.REFUSED)
+                                .build();
 
                     case CLOSED_COMPLETED:
                         //check statut du payment ??
                         //todo get transaction additional data (id + ref) : order mandate payment
                         //check payment state or not ??
-                        //recuperer paymentId et
                         PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.Builder
                                 .aPaymentResponseSuccessAdditionalData()
                                 .withOrderId(slimpayOrderResponse.getId())
@@ -196,7 +200,6 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                                 .build();
 
                     default:
-                        //todo find another response or return a paymentFailure
                         return PaymentResponseOnHold.PaymentResponseOnHoldBuilder.aPaymentResponseOnHold()
                                 .withPartnerTransactionId(transactionStatusRequest.getTransactionId())
                                 .withOnHoldCause(OnHoldCause.SCORING_ASYNC)

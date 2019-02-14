@@ -29,7 +29,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private RequestConfigServiceImpl requestConfigService;
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationServiceImpl.class);
     private static final String SDD_CORE = "SEPA.DIRECT_DEBIT.CORE";
-
+    private static final String UNAUTHORIZED = "401";
+    private static final String FORBIDDEN = "403";
 
 
     public ConfigurationServiceImpl() {
@@ -144,17 +145,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 errors.put(APP_SECRET, this.i18n.getMessage(APP_SECRET_MESSAGE_ERROR, locale));
             }
 
-            if (errors.size() == 0){
+            if (errors.size() == 0) {
                 // test a create order and call the API
                 SlimpayOrderRequest request = new BeanAssemblerServiceImpl().assembleSlimPayOrderRequest(contractParametersCheckRequest);
                 SlimpayHttpClient.testConnection(contractParametersCheckRequest, request.toJsonBody());
             }
 
         } catch (PluginTechnicalException | HttpException e) {
-            LOGGER.error("Error while calling the plugin {}",e);
-            //si erreur 500 ?
-
-            // todo ajouter une entrée dans la Map d'erreur en fonction du message d'erreur
+            LOGGER.error("Error while calling the plugin {}", e);
+            //si erreur 401 ?
+            String errorCode = e.getMessage();
+            if (errorCode.contains(UNAUTHORIZED) || errorCode.contains(FORBIDDEN) ) {
+                //if auth failed
+                errors.put(APP_KEY, this.i18n.getMessage(API_TEST_MESSAGE_ERROR, locale));
+                return  errors;
+            }
 
         }
 

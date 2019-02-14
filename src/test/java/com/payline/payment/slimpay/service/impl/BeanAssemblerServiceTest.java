@@ -69,7 +69,8 @@ public class BeanAssemblerServiceTest {
         Assertions.assertTrue(jsonMandate.contains("reference"));
         Assertions.assertTrue(jsonMandate.contains("signatory"));
         Assertions.assertTrue(jsonMandate.contains("paymentScheme"));
-        Assertions.assertTrue(jsonMandate.contains("standard"));
+        Assertions.assertTrue(jsonMandate.contains("action"));
+        Assertions.assertTrue(jsonMandate.contains("reference"));
         Assertions.assertTrue(jsonMandate.contains("createSequenceType"));
     }
 

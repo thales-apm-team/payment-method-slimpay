@@ -57,11 +57,9 @@ public class RefundServiceImpl implements RefundService {
                         .build();
             } else {
                 SlimpayPaymentResponse slimpayRefundResponse = (SlimpayPaymentResponse) refundResponse;
-                //fixme passer la reference du payout  ou du paiement a rembourser
                 return RefundResponseSuccess.RefundResponseSuccessBuilder
                         .aRefundResponseSuccess()
                         //    .withPartnerTransactionId(slimpayRefundResponse.getReference())
-//                        .withPartnerTransactionId(slimpayRefundResponse.getReference())
                         .withPartnerTransactionId(refundRequest.getPartnerTransactionId())
                         .withStatusCode(slimpayRefundResponse.getExecutionStatus())
                         .build();

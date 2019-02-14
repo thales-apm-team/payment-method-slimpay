@@ -54,7 +54,9 @@ dependencies {
 
     implementation group: 'com.slimpay', name: 'hapiclient', version: '1.0.2'
     //powermock ??
-    testImplementation group: 'org.powermock', name: 'powermock-mockito-release-full', version: '1.5.4'
+    compile group: 'org.powermock', name: 'powermock-mockito-release-full', version: '1.5.4'
+    
+
 
     testImplementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
     testImplementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'

@@ -84,6 +84,11 @@ public class SlimPayOrderItem extends SlimpayBean {
             return this;
         }
 
+        public  SlimPayOrderItem.Builder withCardAlias(CardAlias alias) {
+            this.cardAlias = alias;
+            return this;
+        }
+
         public SlimPayOrderItem.Builder verifyIntegrity() {
 
             if (this.type == null) {

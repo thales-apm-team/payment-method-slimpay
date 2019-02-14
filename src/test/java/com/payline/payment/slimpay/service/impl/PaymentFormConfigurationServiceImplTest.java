@@ -26,9 +26,8 @@ public class PaymentFormConfigurationServiceImplTest {
     @InjectMocks
     private PaymentFormConfigurationServiceImpl service = new PaymentFormConfigurationServiceImpl();
 
-    // TODO set xpected values
-    private final String buttonText = "buttonText";
-    private final String decription = "decription";
+    private final String buttonText = "payer avec slimpay";
+    private final String decription = "payer avec slimpay";
     private final int height = 24;
     private final int width = 24;
     private final String paymentMethodIdentifier = "paymentMethodIdentifier";
@@ -78,7 +77,6 @@ public class PaymentFormConfigurationServiceImplTest {
         // when: getLogo is called
 
         PaymentFormLogo paymentFormLogo = service.getLogo(paymentMethodIdentifier, Locale.FRANCE);
-
 
         // then: returned elements are not null
         Assertions.assertNotNull(paymentFormLogo.getFile());

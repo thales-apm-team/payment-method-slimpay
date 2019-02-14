@@ -30,7 +30,6 @@ import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
 public class TestUtils {
     private static final Logger LOGGER = LogManager.getLogger(TestUtils.class);
 
-    // FIXME
     public static final String SUCCESS_URL = "https://succesurl.com/";
     public static final String CANCEL_URL = "http://localhost/cancelurl.com/";
     public static final String NOTIFICATION_URL = "http://google.com/";
@@ -247,8 +246,9 @@ public class TestUtils {
 
 
         Map<String, String> requestData = new HashMap<>();
-        // TODO;
-
+        requestData.put(SlimpayConstants.CREDITOR_REFERENCE_KEY,"paylinemerchanttest1" );
+        requestData.put(SlimpayConstants.ORDER_REFERENCE,TRANSACTION_ID );
+        requestData.put(SlimpayConstants.ORDER_ID, "ff4ea3a6-303e-11e9-9d34-000000000000");
 
         final RequestContext requestContext = RequestContext.RequestContextBuilder
                 .aRequestContext()
@@ -267,8 +267,6 @@ public class TestUtils {
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
                 .withLocale(LOCALE_FR)
                 .withBuyer(createDefaultBuyer())
-                //propre a la redirectionPayment
-//                .withPaymentFormContext()
                 .withRequestContext(requestContext)
                 .build();
 
@@ -422,17 +420,23 @@ public class TestUtils {
     }
 
 
-    public static TransactionStatusRequest createDefaultTransactionStatusRequest() {
+
+
+    public static TransactionStatusRequest createDefaultTransactionStatusRequest(String transactionId) {
         return TransactionStatusRequest.TransactionStatusRequestBuilder
                 .aNotificationRequest()
-                .withTransactionId(TRANSACTION_ID)
+                .withTransactionId(transactionId)
                 .withAmount(AMOUNT)
                 .withContractConfiguration(CONTRACT_CONFIGURATION)
                 .withEnvironment(ENVIRONMENT)
-                .withOrder(createOrder(TRANSACTION_ID))
+                .withOrder(createOrder(transactionId))
                 .withBuyer(createDefaultBuyer())
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
                 .build();
+    }
+
+    public static TransactionStatusRequest createDefaultTransactionStatusRequest() {
+        return createDefaultTransactionStatusRequest(TRANSACTION_ID);
     }
 
     public static RefundRequest createDefaultRefundRequest() {

@@ -184,6 +184,8 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .withCancelUrl(paymentRequest.getEnvironment().getRedirectionCancelURL())
                 .withLocale(paymentRequest.getLocale().getCountry())
                 .withStarted(true)
+                //send by mail user approval link
+                .withSendUserApproval(true)
                 .withItems(new SlimPayOrderItem[]{
                         assembleOrderItemMandate(paymentRequest),
                         assembleOrderItemPayment(paymentRequest)
