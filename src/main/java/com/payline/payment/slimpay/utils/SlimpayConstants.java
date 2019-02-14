@@ -65,6 +65,11 @@ public class SlimpayConstants {
     public static final String CANCEL_PAYMENT_URL ="#cancel-payment" ;
     public static final String GET_PAYMENT_URL ="#get-payment" ;
 
+    //INTERNAL KEYS
+    public static final String ORDER_REFERENCE ="orderReference" ;
+    public static final String ORDER_ID ="orderId" ;
+
+
 
 
 

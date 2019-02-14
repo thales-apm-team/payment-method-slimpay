@@ -18,7 +18,7 @@ public class SlimpayOrderRequest extends SlimpayBean {
     private Creditor creditor;
     private Subscriber subscriber;
     private boolean started; //must be true to automatically start order after creation
-    private boolean mandateReused; //must be true to automatically start order after creation
+    private boolean mandateReused;
     private boolean sendUserApproval; // if approval link will be sent to subscriber email after finishing order
     private SlimPayOrderItem[] items;
     private String successUrl;
@@ -100,9 +100,9 @@ public class SlimpayOrderRequest extends SlimpayBean {
         private String locale;
         private Creditor creditor;
         private Subscriber subscriber;
-        private boolean started; //must be true to automatically start order after creation
+        private boolean started;
         private boolean mandateReused;
-        private boolean sendUserApproval; // if approval link will be sent to subscriber email after finishing order
+        private boolean sendUserApproval;
         private SlimPayOrderItem[] items;
         private String successUrl;
         private String cancelUrl;

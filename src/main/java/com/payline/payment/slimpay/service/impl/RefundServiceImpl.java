@@ -38,39 +38,33 @@ public class RefundServiceImpl implements RefundService {
 //        String paymentId = transactionManagerService.readAdditionalData(additionalData, "PaymentResponseSuccessAdditionalData").get("paymentId");
 
         try {
-            //get order status  to cancel order if state is open ?
+            //todo get order status  to cancel order if state is open ?
 //            SlimpayResponse orderResponse = SlimpayHttpClient.getOrder(refundRequest);
 
             //Obtenir le statut du paiement a remboursser
 
+            //Create a payment with direction from creditor to subscriber (payout)
             Payment slimpayPayoutRequest = beanAssembleService.assemblePayout(refundRequest);
             //refund a payment
             SlimpayResponse refundResponse = SlimpayHttpClient.createPayout(refundRequest, slimpayPayoutRequest.toJsonBody());
-            if (refundResponse == null) {
-                LOGGER.debug("refundRequest response is null !");
-                LOGGER.error("Refund is null");
-                return SlimpayErrorHandler.geRefundResponseFailure(FailureCause.PARTNER_UNKNOWN_ERROR, slimpayPayoutRequest.getReference(), "Empty partner response");
-
+            if (refundResponse.getClass() == SlimpayFailureResponse.class) {
+                SlimpayFailureResponse slimpayPayoutFailureResponse = (SlimpayFailureResponse) refundResponse;
+                return RefundResponseFailure.RefundResponseFailureBuilder
+                        .aRefundResponseFailure()
+                        .withErrorCode(errorToString(slimpayPayoutFailureResponse.getError()))
+                        .withFailureCause(handleSlimpayFailureResponse(slimpayPayoutFailureResponse.getError()))
+                        .withPartnerTransactionId(transactionId)
+                        .build();
             } else {
-                if (refundResponse.getClass() == SlimpayFailureResponse.class) {
-                    SlimpayFailureResponse slimpayPayoutFailureResponse = (SlimpayFailureResponse) refundResponse;
-                    return RefundResponseFailure.RefundResponseFailureBuilder
-                            .aRefundResponseFailure()
-                            .withErrorCode(errorToString(slimpayPayoutFailureResponse.getError()))
-                            .withFailureCause(handleSlimpayFailureResponse(slimpayPayoutFailureResponse.getError()))
-                            .withPartnerTransactionId(transactionId)
-                            .build();
-                } else {
-                    SlimpayPaymentResponse slimpayRefundResponse = (SlimpayPaymentResponse) refundResponse;
-                    //fixme passer la reference du payout  ou du paiement a rembourser
-                    return RefundResponseSuccess.RefundResponseSuccessBuilder
-                            .aRefundResponseSuccess()
-                            //    .withPartnerTransactionId(slimpayRefundResponse.getReference())
-                            .withPartnerTransactionId(slimpayRefundResponse.getId())
-                            .withStatusCode(slimpayRefundResponse.getExecutionStatus())
-                            .build();
-                }
-
+                SlimpayPaymentResponse slimpayRefundResponse = (SlimpayPaymentResponse) refundResponse;
+                //fixme passer la reference du payout  ou du paiement a rembourser
+                return RefundResponseSuccess.RefundResponseSuccessBuilder
+                        .aRefundResponseSuccess()
+                        //    .withPartnerTransactionId(slimpayRefundResponse.getReference())
+//                        .withPartnerTransactionId(slimpayRefundResponse.getReference())
+                        .withPartnerTransactionId(refundRequest.getPartnerTransactionId())
+                        .withStatusCode(slimpayRefundResponse.getExecutionStatus())
+                        .build();
             }
 
 
@@ -98,7 +92,8 @@ public class RefundServiceImpl implements RefundService {
     }
 
 
-    //fixme is i ti usefull ?
+    //fixme is it usefull ?
+
     /**
      * handle payment status
      * if payment must be cancelled or refunded
@@ -122,7 +117,7 @@ public class RefundServiceImpl implements RefundService {
 
                     SlimpayPaymentResponse paymentCancelled = SlimpayHttpClient.cancelPayment(refundRequest, paymentId);
                     //must be cancel
-                    return  paymentCancelled.getState();
+                    return paymentCancelled.getState();
                 } else {
                     //call refund request
                     //todo

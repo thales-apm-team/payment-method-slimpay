@@ -34,7 +34,7 @@ public class RefundServiceImplTest {
     @Test
     public void refundRequestTestOK() throws Exception {
         // TODO
-        RefundRequest request = createRefundRequest("1245");
+        RefundRequest request = createRefundRequest("c328d734-2f7a-11e9-bf72-000000000000");
         RefundResponse refundResponse = service.refundRequest(request);
 
         Assertions.assertTrue(refundResponse.getClass() == RefundResponseSuccess.class);

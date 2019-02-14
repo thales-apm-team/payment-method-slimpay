@@ -78,7 +78,6 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .withCurrency(refundRequest.getAmount().getCurrency().toString())
                 .withLabel(refundRequest.getSoftDescriptor())
                 .withCorrelationId(refundRequest.getPartnerTransactionId())
-                //fixme : use use subscriber or mandate ?
 //                .withSubscriber(new Subscriber(refundRequest.getBuyer().getCustomerIdentifier()))
                 .withCreditor(new Creditor(RequestConfigServiceImpl.INSTANCE.getParameterValue(refundRequest, CREDITOR_REFERENCE_KEY)))
                 .withMandate(Mandate.Builder.aMandateBuilder()

@@ -66,7 +66,6 @@ public class PaymentServiceImpl implements PaymentService {
                         slimpayOrderRequest.getReference(),
                         "Empty partner response");
             }
-
             //return  a paymentResponseRedirect
             else {
                 if(slimpayOrderResponse.getClass() == SlimpayFailureResponse.class)
@@ -86,14 +85,11 @@ public class PaymentServiceImpl implements PaymentService {
                             .RedirectionRequestBuilder.aRedirectionRequest()
                             .withUrl(redirectURL);
                     Map<String, String> oneyContext = new HashMap<>();
-                    //todo ajouter request context ?
                     oneyContext.put(SlimpayConstants.CREDITOR_REFERENCE_KEY, slimpayOrderRequest.getCreditor().getReference());
-                    //order reference
-                    //mandate reference
-                    //payment reference
-                    //state
-                    PaymentResponseRedirect.RedirectionRequest redirectionRequest = new PaymentResponseRedirect.RedirectionRequest(responseRedirectURL);
+                    oneyContext.put(SlimpayConstants.ORDER_REFERENCE, slimpayOrderSuccessResponse.getReference());
+                    oneyContext.put(SlimpayConstants.ORDER_ID, slimpayOrderSuccessResponse.getId());
 
+                    PaymentResponseRedirect.RedirectionRequest redirectionRequest = new PaymentResponseRedirect.RedirectionRequest(responseRedirectURL);
                     RequestContext requestContext = RequestContext.RequestContextBuilder.aRequestContext()
                             .withRequestData(oneyContext)
                             .build();
@@ -110,7 +106,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             LOGGER.error("unable to  init the payment", e);
-            //createSlimpayError
+            //create a SlimpayError
             String errorString = e.getResponseBody();
             SlimpayError error = SlimpayError.fromJson(errorString);
 
