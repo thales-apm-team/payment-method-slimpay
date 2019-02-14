@@ -23,15 +23,15 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
     private String executionStatus;
     private String sequenceType;
     private Integer replayCount;
-    public String dateCreated; //DateTime, ISO8601, Read-Only.
-    public String dateModified; //DateTime, ISO8601, Read-Only.
-    public String dateBooked; //DateTime, ISO8601, Read-Only.
-    public String dateValued; //DateTime, ISO8601, Read-Only.
-    public String capture; //DateTime, ISO8601, Read-Only.
-    public boolean confirmed;
-    public String processor;
-    public String correlationId;
-    public String label;
+    private String dateCreated; //DateTime, ISO8601, Read-Only.
+    private String dateModified; //DateTime, ISO8601, Read-Only.
+    private String dateBooked; //DateTime, ISO8601, Read-Only.
+    private String dateValued; //DateTime, ISO8601, Read-Only.
+    private String capture; //DateTime, ISO8601, Read-Only.
+    private boolean confirmed;
+    private String processor;
+    private String correlationId;
+    private String label;
 
     public String getId() {
         return id;
@@ -81,6 +81,46 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
         return replayCount;
     }
 
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public String getDateModified() {
+        return dateModified;
+    }
+
+    public String getDateBooked() {
+        return dateBooked;
+    }
+
+    public String getDateValued() {
+        return dateValued;
+    }
+
+    public String getCapture() {
+        return capture;
+    }
+
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public String getProcessor() {
+        return processor;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
     private SlimpayPaymentResponse(){}
 
     public SlimpayPaymentResponse(SlimpayPaymentResponse.Builder builder) {
@@ -102,6 +142,11 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
         this.processor = builder.processor;
         this.correlationId = builder.correlationId;
         this.label = builder.label;
+        this.dateCreated = builder.dateCreated;
+        this.dateModified = builder.dateModified;
+        this.dateBooked = builder.dateBooked;
+        this.dateValued = builder.dateValued;
+        this.capture = builder.capture;
     }
 
     /**
@@ -121,15 +166,15 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
         private String executionStatus;
         private String sequenceType;
         private Integer replayCount;
-        public String dateCreated;
-        public String dateModified;
-        public String dateBooked;
-        public String dateValued;
-        public String capture;
-        public boolean confirmed;
-        public String processor;
-        public String correlationId;
-        public String label;
+        private String dateCreated;
+        private String dateModified;
+        private String dateBooked;
+        private String dateValued;
+        private String capture;
+        private boolean confirmed;
+        private String processor;
+        private String correlationId;
+        private String label;
 
 
 

@@ -11,5 +11,7 @@ public class OrderStatus {
     public static final String  CLOSED_COMPLETED = "closed.completed";
 
 
-    public OrderStatus(){}
+    private OrderStatus(){
+        //ras
+    }
 }

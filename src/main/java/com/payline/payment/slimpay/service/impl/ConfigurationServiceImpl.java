@@ -12,8 +12,10 @@ import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.ListBoxParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
+import com.payline.pmapi.logger.LogManager;
 import com.payline.pmapi.service.ConfigurationService;
 import com.slimpay.hapiclient.exception.HttpException;
+import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +27,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     private I18nService i18n;
     private RequestConfigServiceImpl requestConfigService;
+    private static final Logger LOGGER = LogManager.getLogger(ConfigurationServiceImpl.class);
+    private static final String SDD_CORE = "SEPA.DIRECT_DEBIT.CORE";
+
+
 
     public ConfigurationServiceImpl() {
         i18n = I18nService.getInstance();
@@ -61,7 +67,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         paymentScheme.setDescription(this.i18n.getMessage(FIRST_PAYMENT_SCHEME_DESCRIPTION, locale));
         paymentScheme.setRequired(true);
         final LinkedHashMap<String, String> paymentSchemes = new LinkedHashMap<>();
-        paymentSchemes.put("SEPA.DIRECT_DEBIT.CORE", "SEPA.DIRECT_DEBIT.CORE");
+        paymentSchemes.put(SDD_CORE, SDD_CORE);
         paymentScheme.setList(paymentSchemes);
         parameters.add(paymentScheme);
 
@@ -72,7 +78,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         mandateScheme.setDescription(this.i18n.getMessage(MANDATE_PAYIN_SCHEME_DESCRIPTION, locale));
         mandateScheme.setRequired(true);
         final LinkedHashMap<String, String> mandateSchemes = new LinkedHashMap<>();
-        mandateSchemes.put("SEPA.DIRECT_DEBIT.CORE", "SEPA.DIRECT_DEBIT.CORE");
+        mandateSchemes.put(SDD_CORE, SDD_CORE);
         mandateScheme.setList(mandateSchemes);
         parameters.add(mandateScheme);
 
@@ -144,11 +150,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 SlimpayHttpClient.testConnection(contractParametersCheckRequest, request.toJsonBody());
             }
 
-        } catch (PluginTechnicalException e) {
-            e.printStackTrace();
-        } catch (HttpException e) {
-            System.out.println(e.getResponseBody());
+        } catch (PluginTechnicalException | HttpException e) {
+            LOGGER.error("Error while calling the plugin {}",e);
+            //si erreur 500 ?
+
             // todo ajouter une entrée dans la Map d'erreur en fonction du message d'erreur
+
         }
 
 

@@ -4,14 +4,11 @@ import com.payline.payment.slimpay.bean.common.SlimpayError;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
-import com.payline.pmapi.logger.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static com.payline.payment.slimpay.utils.SlimpayErrorMapper.handleSlimpayError;
 
 public class SlimpayErrorHandler {
 
-    private static final Logger LOGGER = LogManager.getLogger(SlimpayErrorHandler.class);
 
     private SlimpayErrorHandler() {
         super();

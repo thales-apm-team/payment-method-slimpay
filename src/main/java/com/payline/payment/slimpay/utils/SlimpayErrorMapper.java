@@ -139,4 +139,8 @@ public class SlimpayErrorMapper {
 
 
     }
+
+    private SlimpayErrorMapper() {
+        //ras
+    }
 }

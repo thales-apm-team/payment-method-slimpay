@@ -25,7 +25,8 @@ public class PaymentResponseSuccessAdditionalData extends SlimpayBean {
     private String orderId;
 
 
-    public PaymentResponseSuccessAdditionalData() {
+    private PaymentResponseSuccessAdditionalData() {
+        //ras
     }
 
     public String getMandateReference() {

@@ -1,6 +1,5 @@
-package com.payline.payment.slimpay.bean;
+package com.payline.payment.slimpay.bean.common;
 
-import com.payline.payment.slimpay.bean.common.SlimPayOrderItem;
 import org.junit.jupiter.api.Test;
 
 import static com.payline.payment.slimpay.utils.BeansUtils.createDefaultMandate;

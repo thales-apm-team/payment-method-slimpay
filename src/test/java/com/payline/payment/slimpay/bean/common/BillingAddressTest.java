@@ -1,6 +1,5 @@
-package com.payline.payment.slimpay.bean;
+package com.payline.payment.slimpay.bean.common;
 
-import com.payline.payment.slimpay.bean.common.BillingAddress;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

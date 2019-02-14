@@ -5,6 +5,7 @@ import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.bean.common.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.common.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.bean.common.response.SlimpayResponse;
+import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.SlimpayConstants;
 import com.payline.payment.slimpay.utils.SlimpayErrorHandler;
@@ -42,7 +43,16 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponse paymentRequest(PaymentRequest paymentRequest) {
 
-        SlimpayOrderRequest slimpayOrderRequest = beanAssembleService.assembleSlimPayOrderRequest(paymentRequest);
+        SlimpayOrderRequest slimpayOrderRequest = null;
+        try {
+            slimpayOrderRequest = beanAssembleService.assembleSlimPayOrderRequest(paymentRequest);
+        } catch (InvalidDataException e) {
+            LOGGER.error("Unable to build a orderRequest {}", e);
+            return SlimpayErrorHandler.getPaymentResponseFailure(
+                    FailureCause.INVALID_DATA,
+                    paymentRequest.getTransactionId(),
+                    "Unable to build a orderRequest");
+        }
         //make order request body
         JsonBody jsonOrderRequest = slimpayOrderRequest.toJsonBody();
         try {
@@ -76,7 +86,7 @@ public class PaymentServiceImpl implements PaymentService {
                             .RedirectionRequestBuilder.aRedirectionRequest()
                             .withUrl(redirectURL);
                     Map<String, String> oneyContext = new HashMap<>();
-                    //todo ajouter request context
+                    //todo ajouter request context ?
                     oneyContext.put(SlimpayConstants.CREDITOR_REFERENCE_KEY, slimpayOrderRequest.getCreditor().getReference());
                     //order reference
                     //mandate reference

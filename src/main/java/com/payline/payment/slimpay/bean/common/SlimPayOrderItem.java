@@ -42,8 +42,8 @@ public class SlimPayOrderItem extends SlimpayBean {
         return payin;
     }
 
-    private SlimPayOrderItem(String type) {
-        this.type = type;
+    private SlimPayOrderItem() {
+    //ras
     }
 
     public SlimPayOrderItem(SlimPayOrderItem.Builder builder) {

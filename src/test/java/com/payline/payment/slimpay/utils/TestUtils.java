@@ -43,11 +43,11 @@ public class TestUtils {
     private static final String MANDATE_REFERENCE = createMerchantRequestId();
     public static final String CONFIRM_AMOUNT = "40800";
     //    private static final String TRANSACTION_ID = "455454545415451198120";
-    private static final String TRANSACTION_ID = "DEV-" + Calendar.getInstance().getTimeInMillis();
+    private static final String TRANSACTION_ID = "HDEV-" + Calendar.getInstance().getTimeInMillis();
     private static final String CUSTOMER_ID = "Client2";
     private static final String ADDITIONAL_DATA  = "{mandateReference: \"MANDATE-DEV-1549638902921\",mandateId: \"Transaction01\"," +
             "orderReference: \"ORDER-DEV-1549638902921\",orderId: \"Transaction01\"," +
-            "paymentReference: \"PAYMENT-DEV-1549638902921\",paymentId: \"Transaction01\"}";
+            "paymentReference: \"PAYMENT-DEV-1549638902921\",paymentId: \"3072b5e8-2eab-11e9-a9a1-000000000000\"}";
 
     /**
      * ou

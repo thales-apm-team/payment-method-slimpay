@@ -13,6 +13,7 @@ public class Mandate extends SlimpayBean {
     private Signatory signatory;
     private String paymentScheme;
     private String createSequenceType;
+    private String sequenceType;
     private String standard;
     private String dateSigned; //DateTime, ISO8601,
 
@@ -48,6 +49,10 @@ public class Mandate extends SlimpayBean {
         return dateSigned;
     }
 
+    public String getSequenceType() {
+        return sequenceType;
+    }
+
     private  Mandate(){}
 
     private Mandate(Mandate.Builder builder) {
@@ -59,6 +64,7 @@ public class Mandate extends SlimpayBean {
         this.createSequenceType = builder.createSequenceType;
         this.dateSigned = builder.dateSigned;
         this.standard = builder.standard;
+        this.sequenceType = builder.sequenceType;
     }
 
     public static class Builder {
@@ -68,6 +74,7 @@ public class Mandate extends SlimpayBean {
         private Signatory signatory;
         private String paymentScheme;
         private String createSequenceType;
+        private String sequenceType;
         private String dateSigned; //DateTime, ISO8601,
         private String standard;
 
@@ -109,8 +116,8 @@ public class Mandate extends SlimpayBean {
         }
 
 
-        public Mandate.Builder withDateSigned(String dateSigned){
-            this.dateSigned = dateSigned;
+        public Mandate.Builder withSequenceType(String sequenceType){
+            this.sequenceType = sequenceType;
             return this;
         }
         public Mandate.Builder withSignatory(Signatory signatory){

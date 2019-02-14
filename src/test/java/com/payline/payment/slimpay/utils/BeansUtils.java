@@ -3,6 +3,14 @@ package com.payline.payment.slimpay.utils;
 
 import com.payline.payment.slimpay.bean.common.*;
 import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
+import com.slimpay.hapiclient.hal.CustomRel;
+import com.slimpay.hapiclient.hal.Rel;
+import com.slimpay.hapiclient.hal.Resource;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BeansUtils {
 
@@ -84,5 +92,28 @@ public class BeansUtils {
                 .build();
     }
 
+    public static Resource getMockedOrder(){
+
+                        
+        JsonObject state =  Json.createObjectBuilder()
+                .add("id", 1)
+                .add("reference", 1)
+                .add("state", 1)
+                .add("locale", 1)
+                .build()
+                ;
+
+        Map<Rel, Object> links = new HashMap<>();
+        Map<Rel, Object> embbeded = new HashMap<>();
+        links.put(new CustomRel("https://api.slimpay.net/alps#extended-user-approval"),"https://api.preprod.slimpay.com/creditors/paylinemerchanttest1/orders/HDEV-1550076312981/extended-user-approval{?mode}");
+        links.put(new CustomRel("https://api.slimpay.net/alps#cancel-order"), "https://api.preprod.slimpay.com/orders/c6542999-2fae-11e9-9d34-000000000000/cancellation");
+        links.put(new CustomRel("https://api.slimpay.net/alps#get-order-items"), "https://api.preprod.slimpay.com/orders/c6542999-2fae-11e9-9d34-000000000000/order-items");
+
+String resourceJson = "";
+
+return Resource.fromJson(resourceJson);
+
+
+    }
 
 }

@@ -43,6 +43,8 @@ public class SlimpayConstants {
     public static final String MANDATE_STANDARD_LABEL ="mandate.standard.label" ;
     public static final String MANDATE_STANDARD_MESSAGE_ERROR ="mandate.standard.message.error";
 
+    public static final String API_TEST_MESSAGE_ERROR ="api.test.message.error";
+
     //PARTNER CONFIGURATION KEY
     public static final String APP_KEY ="appName" ;
     public static final String APP_KEY_MESSAGE_ERROR ="app.name.message.error" ;
@@ -56,7 +58,6 @@ public class SlimpayConstants {
 
 
     //REQUESTS
-    //todo rel ou appel http classique ?
     public static final String TOKEN_ENDPOINT = "/oauth/token";
     public static final String CREATE_ORDER_URL ="#create-orders" ;
     public static final String CREATE_PAYOUT_URL ="#create-payouts" ;

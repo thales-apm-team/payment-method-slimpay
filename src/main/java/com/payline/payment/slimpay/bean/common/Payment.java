@@ -112,9 +112,9 @@ public class Payment extends SlimpayBean {
         private String amount;
         private String currency;
         private String executionDate;
-        public String capture;
-        public String correlationId;
-        public String label;
+        private String capture;
+        private String correlationId;
+        private String label;
         private Creditor creditor;
         private Subscriber subscriber;
         private Mandate mandate;

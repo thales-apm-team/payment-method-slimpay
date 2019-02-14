@@ -12,18 +12,18 @@ public class SlimpayOrderRequest extends SlimpayBean {
     private static final transient Logger LOGGER = LogManager.getLogger(SlimpayOrderRequest.class);
 
 
-    public String reference;
-    public String paymentScheme;
-    public String locale;
-    public Creditor creditor;
-    public Subscriber subscriber;
-    public boolean started; //must be true to automatically start order after creation
-    public boolean mandateReused; //must be true to automatically start order after creation
-    public boolean sendUserApproval; // if approval link will be sent to subscriber email after finishing order
-    public SlimPayOrderItem[] items;
-    public String successUrl;
-    public String cancelUrl;
-    public String failureUrl;
+    private String reference;
+    private String paymentScheme;
+    private String locale;
+    private Creditor creditor;
+    private Subscriber subscriber;
+    private boolean started; //must be true to automatically start order after creation
+    private boolean mandateReused; //must be true to automatically start order after creation
+    private boolean sendUserApproval; // if approval link will be sent to subscriber email after finishing order
+    private SlimPayOrderItem[] items;
+    private String successUrl;
+    private String cancelUrl;
+    private String failureUrl;
 
 
 
@@ -95,18 +95,18 @@ public class SlimpayOrderRequest extends SlimpayBean {
     }
 
     public static class Builder {
-        public String reference;
-        public String paymentScheme;
-        public String locale;
-        public Creditor creditor;
-        public Subscriber subscriber;
-        public boolean started; //must be true to automatically start order after creation
-        public boolean mandateReused;
-        public boolean sendUserApproval; // if approval link will be sent to subscriber email after finishing order
-        public SlimPayOrderItem[] items;
-        public String successUrl;
-        public String cancelUrl;
-        public String failureUrl;
+        private String reference;
+        private String paymentScheme;
+        private String locale;
+        private Creditor creditor;
+        private Subscriber subscriber;
+        private boolean started; //must be true to automatically start order after creation
+        private boolean mandateReused;
+        private boolean sendUserApproval; // if approval link will be sent to subscriber email after finishing order
+        private SlimPayOrderItem[] items;
+        private String successUrl;
+        private String cancelUrl;
+        private String failureUrl;
 
 
         public static SlimpayOrderRequest.Builder aSlimPayOrderRequestBuilder() {

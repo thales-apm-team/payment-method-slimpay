@@ -55,5 +55,10 @@ public class SlimpayHttpClientTest {
 
     }
 
+    public void cancelPaymentOK(){
+
+
+    }
+
 
 }

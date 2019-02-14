@@ -1,9 +1,8 @@
-package com.payline.payment.slimpay.bean.request;
+package com.payline.payment.slimpay.bean.common.request;
 
 import com.payline.payment.slimpay.bean.common.Creditor;
 import com.payline.payment.slimpay.bean.common.SlimPayOrderItem;
 import com.payline.payment.slimpay.bean.common.Subscriber;
-import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

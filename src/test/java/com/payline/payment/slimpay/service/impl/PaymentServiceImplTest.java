@@ -6,34 +6,50 @@ import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseRedirect;
+import com.slimpay.hapiclient.hal.Resource;
+import com.slimpay.hapiclient.http.Follow;
+import com.slimpay.hapiclient.http.HapiClient;
+import com.slimpay.hapiclient.http.Request;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 
+import static com.payline.payment.slimpay.utils.BeansUtils.getMockedOrder;
 import static com.payline.payment.slimpay.utils.TestUtils.createBadPaymentRequest;
 import static com.payline.payment.slimpay.utils.TestUtils.createDefaultPaymentRequest;
 
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PaymentServiceImplTest {
 
 
-    //    @Spy
+    @Spy
     SlimpayHttpClient httpClient;
+    @Spy
+    HapiClient hapiClient;
 
-    //    @InjectMocks
-//    PaymentServiceImpl service = new PaymentServiceImpl();
-    PaymentServiceImpl service = new PaymentServiceImpl();
+    @InjectMocks
+    PaymentServiceImpl service;
+
     private BeanAssemblerServiceImpl beanAssembleService = BeanAssemblerServiceImpl.getInstance();
 
 
-//        @BeforeAll
+    @BeforeAll
     public void setup() {
         service = new PaymentServiceImpl();
-//        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.initMocks(this);
     }
 
 
     @Test
     public void paymentRequestOK() throws Exception {
+        Resource responseMocked = getMockedOrder();
+        Mockito.doReturn(responseMocked).when(hapiClient).send(Mockito.any(Request.class));
+        Mockito.doReturn(responseMocked).when(hapiClient).send(Mockito.any(Follow.class));
 
         PaymentRequest request = createDefaultPaymentRequest();
         PaymentResponse response = service.paymentRequest(request);
@@ -44,7 +60,6 @@ public class PaymentServiceImplTest {
         //Assert we have confirmation Url
         Assertions.assertNotNull(responseRedirect.getRedirectionRequest().getUrl());
         System.out.println(responseRedirect.getRedirectionRequest().getUrl());
-
 
 
     }
@@ -58,7 +73,6 @@ public class PaymentServiceImplTest {
         Assertions.assertNotNull(responseFailure.getFailureCause());
         Assertions.assertEquals(FailureCause.INVALID_DATA, responseFailure.getFailureCause());
         Assertions.assertNotNull(responseFailure.getErrorCode());
-
 
 
     }

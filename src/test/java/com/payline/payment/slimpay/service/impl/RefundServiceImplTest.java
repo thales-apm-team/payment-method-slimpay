@@ -1,5 +1,8 @@
 package com.payline.payment.slimpay.service.impl;
 
+import com.payline.payment.slimpay.bean.common.response.SlimpayPaymentResponse;
+import com.payline.payment.slimpay.bean.common.response.SlimpayResponse;
+import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
@@ -55,5 +58,23 @@ public class RefundServiceImplTest {
         Assertions.assertNotNull(refundSuccess.getFailureCause());
     }
 
+    @Test
+    public void cancelPaymentTestOK() throws Exception {
+        // TODO
+        RefundRequest request = createRefundRequest("87785e67-2fa6-11e9-980d-000000000000");
+        SlimpayResponse payment = SlimpayHttpClient.cancelPayment(request,"87785e67-2fa6-11e9-980d-000000000000");
+
+//        RefundResponse refundResponse = service.handlePaymentStatus(request);
+
+        Assertions.assertTrue(payment.getClass() == SlimpayPaymentResponse.class);
+        SlimpayPaymentResponse cancelSuccess = (SlimpayPaymentResponse) payment;
+        System.out.println(cancelSuccess);
+//        Assertions.assertTrue(refundResponse.getClass() == RefundResponseSuccess.class);
+//        RefundResponseSuccess refundSuccess = (RefundResponseSuccess) refundResponse;
+        Assertions.assertNotNull(cancelSuccess.getExecutionStatus());
+        Assertions.assertNotNull(cancelSuccess.getState());
+
+
+    }
 
 }

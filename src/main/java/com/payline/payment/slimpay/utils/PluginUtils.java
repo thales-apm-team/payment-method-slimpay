@@ -83,17 +83,14 @@ public class PluginUtils {
     }
     //generate a order reference
     public static String generateOrderReference(String reference){
-//        return "ORDER-"+reference ;
         return reference ;
     }
     //generate a mandate reference
     public static String generateMandateReference(String reference){
-//        return "MANDATE-"+reference ;
         return reference ;
     }
     //generate a payment reference
     public static String generatePaymentReference(String reference){
-//        return "PAYMENT-"+reference ;
         return reference ;
     }
 

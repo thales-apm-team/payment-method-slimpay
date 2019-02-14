@@ -4,18 +4,18 @@ import com.google.gson.Gson;
 
 public class SlimpayOrderResponse extends SlimpayResponse {
 
-    public String reference;
-    public String id;
-    public String paymentScheme;
-    public String locale;
-    public boolean started; //must be true to automatically start order after creation
-    public String dateStarted; //DateTime, ISO8601, Read-Only.
-    public String dateCreated; //DateTime, ISO8601, Read-Only.
-    public String checkoutActor;
-    public String state;
-    public boolean sendUserApproval; // if approval link will be sent to subscriber email after finishing order
+    private String reference;
+    private String id;
+    private String paymentScheme;
+    private String locale;
+    private boolean started; //must be true to automatically start order after creation
+    private String dateStarted; //DateTime, ISO8601, Read-Only.
+    private String dateCreated; //DateTime, ISO8601, Read-Only.
+    private String checkoutActor;
+    private String state;
+    private boolean sendUserApproval; // if approval link will be sent to subscriber email after finishing order
     //User approval link
-    public transient String urlApproval; //url de confirmation
+    private transient String urlApproval; //url de confirmation
 
     public void setUrlApproval(String urlApproval) {
         this.urlApproval = urlApproval;

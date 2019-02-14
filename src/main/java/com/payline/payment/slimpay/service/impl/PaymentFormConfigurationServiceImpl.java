@@ -6,14 +6,12 @@ import com.payline.pmapi.bean.paymentform.bean.form.NoFieldForm;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
 import com.payline.pmapi.bean.paymentform.response.configuration.PaymentFormConfigurationResponse;
 import com.payline.pmapi.bean.paymentform.response.configuration.impl.PaymentFormConfigurationResponseSpecific;
-import com.payline.pmapi.logger.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Created by Thales on 27/08/2018.
  */
 public class PaymentFormConfigurationServiceImpl implements ThalesPaymentFormConfigurationService {
-    private static final Logger LOGGER = LogManager.getLogger(PaymentFormConfigurationServiceImpl.class);
+
 
     private I18nService i18n;
 

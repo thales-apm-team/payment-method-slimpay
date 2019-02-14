@@ -2,7 +2,7 @@ package com.payline.payment.slimpay.bean.common;
 
 public class Subscriber {
 
-    public String reference;
+    private String reference;
 
     public Subscriber(String ref) {
         this.reference = ref;

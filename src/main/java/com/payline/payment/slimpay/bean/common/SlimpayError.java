@@ -5,12 +5,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class SlimpayError extends SlimpayBean{
 
-    // a voir
     private int code;
     private String message;
-    // a voir
     @SerializedName("error_description")
-    private String errorDscription;
+    private String errorDescription;
 
     public int getCode() {
         return code;
@@ -21,13 +19,13 @@ public class SlimpayError extends SlimpayBean{
     }
 
     public String getErrorDescription() {
-        return errorDscription;
+        return errorDescription;
     }
 
     public SlimpayError(int code, String message,String description) {
         this.code = code;
         this.message = message;
-        this.errorDscription = description;
+        this.errorDescription = description;
     }
 
     public static SlimpayError fromJson(String json){

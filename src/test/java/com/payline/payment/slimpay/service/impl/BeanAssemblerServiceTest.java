@@ -2,6 +2,7 @@ package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.common.*;
 import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
+import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import org.junit.jupiter.api.Assertions;
@@ -18,7 +19,7 @@ public class BeanAssemblerServiceTest {
 
 
     @Test
-    public void assemblePayin() {
+    public void assemblePayin() throws InvalidDataException {
         Payment payin = assemblerService.assemblePayin(paymentRequest);
         String jsonPayin = payin.toString();
         Assertions.assertTrue(jsonPayin.contains("amount"));
@@ -29,7 +30,7 @@ public class BeanAssemblerServiceTest {
     }
 
     @Test
-    public void assemblePayout() {
+    public void assemblePayout() throws InvalidDataException {
         Payment payin = assemblerService.assemblePayout(refundRequest);
         String jsonPayin = payin.toString();
         Assertions.assertTrue(jsonPayin.contains("amount"));
@@ -44,7 +45,7 @@ public class BeanAssemblerServiceTest {
     }
 
     @Test
-    public void assembleOrderItemMandate() {
+    public void assembleOrderItemMandate() throws InvalidDataException {
         SlimPayOrderItem orderItemMandate = assemblerService.assembleOrderItemMandate(paymentRequest);
         String jsonMandate = orderItemMandate.toString();
         System.out.println(jsonMandate);
@@ -53,7 +54,7 @@ public class BeanAssemblerServiceTest {
     }
 
     @Test
-    public void assembleOrderItemPayment() {
+    public void assembleOrderItemPayment() throws InvalidDataException {
         SlimPayOrderItem orderItemPayment = assemblerService.assembleOrderItemPayment(paymentRequest);
         String jsonOrderItemPayment = orderItemPayment.toString();
         System.out.println(jsonOrderItemPayment);
@@ -62,22 +63,20 @@ public class BeanAssemblerServiceTest {
     }
 
     @Test
-    public void assembleMandate() {
+    public void assembleMandate() throws InvalidDataException {
         Mandate mandate = assemblerService.assembleMandate(paymentRequest);
         String jsonMandate = mandate.toString();
-        System.out.println(jsonMandate);
         Assertions.assertTrue(jsonMandate.contains("reference"));
         Assertions.assertTrue(jsonMandate.contains("signatory"));
         Assertions.assertTrue(jsonMandate.contains("paymentScheme"));
         Assertions.assertTrue(jsonMandate.contains("standard"));
-        Assertions.assertTrue(jsonMandate.contains("action"));
+        Assertions.assertTrue(jsonMandate.contains("createSequenceType"));
     }
 
     @Test
     public void assembleSignatory() {
         Signatory signatory = assemblerService.assembleSignatory(paymentRequest);
         String jsonSignatory = signatory.toString();
-        System.out.println(jsonSignatory);
         Assertions.assertTrue(jsonSignatory.contains("honorificPrefix"));
         Assertions.assertTrue(jsonSignatory.contains("familyName"));
         Assertions.assertTrue(jsonSignatory.contains("givenName"));
@@ -99,7 +98,7 @@ public class BeanAssemblerServiceTest {
     }
 
     @Test
-    public void assembleSlimpayOrderRequest() {
+    public void assembleSlimpayOrderRequest() throws InvalidDataException {
         SlimpayOrderRequest spOrderRequest = assemblerService.assembleSlimPayOrderRequest(paymentRequest);
         String jsonOrderRequest = spOrderRequest.toString();
         System.out.println(jsonOrderRequest);
