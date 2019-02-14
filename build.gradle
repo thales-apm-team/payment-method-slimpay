@@ -13,7 +13,7 @@ apply plugin: 'java-library'
 apply plugin: 'jacoco'
 
 
-def externalFileName = "$projectDir/.Thales"
+def externalFileName = "$projectDir/.external"
 
 if (file(externalFileName).exists()) {
     apply from: "external.gradle"
@@ -144,4 +144,7 @@ task testJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
     configurations = [project.configurations.fatJarTest]
 }
 
+test {
+    useJUnitPlatform()
+}
 test.exclude '**/*IT.class'
