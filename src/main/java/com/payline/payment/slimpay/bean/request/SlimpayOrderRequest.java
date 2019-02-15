@@ -1,4 +1,4 @@
-package com.payline.payment.slimpay.bean.common.request;
+package com.payline.payment.slimpay.bean.request;
 
 import com.payline.payment.slimpay.bean.common.Creditor;
 import com.payline.payment.slimpay.bean.common.SlimPayOrderItem;

@@ -9,7 +9,6 @@ import com.payline.pmapi.bean.payment.response.impl.PaymentResponseRedirect;
 import com.slimpay.hapiclient.hal.Resource;
 import com.slimpay.hapiclient.http.Follow;
 import com.slimpay.hapiclient.http.HapiClient;
-import com.slimpay.hapiclient.http.Request;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -48,7 +47,6 @@ public class PaymentServiceImplTest {
     @Test
     public void paymentRequestOK() throws Exception {
         Resource responseMocked = getMockedOrder();
-        Mockito.doReturn(responseMocked).when(hapiClient).send(Mockito.any(Request.class));
         Mockito.doReturn(responseMocked).when(hapiClient).send(Mockito.any(Follow.class));
 
         PaymentRequest request = createDefaultPaymentRequest();

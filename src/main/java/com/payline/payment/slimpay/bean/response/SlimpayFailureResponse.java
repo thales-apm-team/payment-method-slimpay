@@ -1,4 +1,4 @@
-package com.payline.payment.slimpay.bean.common.response;
+package com.payline.payment.slimpay.bean.response;
 
 import com.payline.payment.slimpay.bean.common.SlimpayError;
 

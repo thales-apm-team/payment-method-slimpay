@@ -1,4 +1,4 @@
-package com.payline.payment.slimpay.bean.common.response;
+package com.payline.payment.slimpay.bean.response;
 
 import com.google.gson.Gson;
 
@@ -13,7 +13,7 @@ public class SlimpayOrderResponse extends SlimpayResponse {
     private String dateCreated; //DateTime, ISO8601, Read-Only.
     private String checkoutActor;
     private String state;
-    private boolean sendUserApproval; // if approval link will be sent to subscriber email after finishing order
+    private boolean sendUserApproval; // if approval link has been sent to subscriber email
     //User approval link
     private transient String urlApproval; //url de confirmation
 

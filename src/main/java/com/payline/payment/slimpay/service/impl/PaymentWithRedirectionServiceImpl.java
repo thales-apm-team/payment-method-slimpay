@@ -2,10 +2,10 @@ package com.payline.payment.slimpay.service.impl;
 
 
 import com.payline.payment.slimpay.bean.common.SlimpayError;
-import com.payline.payment.slimpay.bean.common.response.PaymentResponseSuccessAdditionalData;
-import com.payline.payment.slimpay.bean.common.response.SlimpayFailureResponse;
-import com.payline.payment.slimpay.bean.common.response.SlimpayOrderResponse;
-import com.payline.payment.slimpay.bean.common.response.SlimpayResponse;
+import com.payline.payment.slimpay.bean.response.PaymentResponseSuccessAdditionalData;
+import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
+import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
+import com.payline.payment.slimpay.bean.response.SlimpayResponse;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
@@ -33,13 +33,15 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
     private static final Logger LOGGER = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
     private static String SUCCESS_MESSAGE = "COMMANDE_OK";
+    private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
+
 
     @Override
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {
         String transactionId = redirectionPaymentRequest.getTransactionId();
 
         try {
-            SlimpayResponse orderResponse = SlimpayHttpClient.getOrder(redirectionPaymentRequest);
+            SlimpayResponse orderResponse = httpClient.getOrder(redirectionPaymentRequest);
 
             if (orderResponse.getClass() == SlimpayFailureResponse.class) {
                 //Fail to get order
@@ -75,7 +77,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
                     case CLOSED_COMPLETED:
                         //check statut du payment ??
-                        //todo get transaction additional data (id + ref) : order mandate payment
+                        //todo get transaction additional data (id ) :  mandate payment
                         //check payment state or not ??
                         PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.Builder
                                 .aPaymentResponseSuccessAdditionalData()
@@ -140,7 +142,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
         String transactionId = transactionStatusRequest.getTransactionId();
 
         try {
-            SlimpayResponse orderResponse = SlimpayHttpClient.getOrder(transactionStatusRequest);
+            SlimpayResponse orderResponse = httpClient.getOrder(transactionStatusRequest);
 
             if (orderResponse.getClass() == SlimpayFailureResponse.class) {
                 //Fail to get order
@@ -181,7 +183,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
                     case CLOSED_COMPLETED:
                         //check statut du payment ??
-                        //todo get transaction additional data (id + ref) : order mandate payment
+                        //todo get transaction additional data (id) :  mandate payment
                         //check payment state or not ??
                         PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.Builder
                                 .aPaymentResponseSuccessAdditionalData()

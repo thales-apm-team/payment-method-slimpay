@@ -1,6 +1,6 @@
 package com.payline.payment.slimpay.service.impl;
 
-import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
+import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.PluginUtils;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
@@ -31,6 +31,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String SDD_CORE = "SEPA.DIRECT_DEBIT.CORE";
     private static final String UNAUTHORIZED = "401";
     private static final String FORBIDDEN = "403";
+
+    private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
+
 
 
     public ConfigurationServiceImpl() {
@@ -148,7 +151,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             if (errors.size() == 0) {
                 // test a create order and call the API
                 SlimpayOrderRequest request = new BeanAssemblerServiceImpl().assembleSlimPayOrderRequest(contractParametersCheckRequest);
-                SlimpayHttpClient.testConnection(contractParametersCheckRequest, request.toJsonBody());
+                httpClient.testConnection(contractParametersCheckRequest, request.toJsonBody());
             }
 
         } catch (PluginTechnicalException | HttpException e) {

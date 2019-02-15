@@ -180,10 +180,11 @@ public class TestUtils {
     }
 
 
-    public static RefundRequest createRefundRequest(String transactionId) {
+    public static RefundRequest createRefundRequest(String transactionId,String amount) {
 
+        Amount amountRefunded  = new Amount(new BigInteger(amount), Currency.getInstance(CURRENCY_EUR));
         return RefundRequest.RefundRequestBuilder.aRefundRequest()
-                .withAmount(AMOUNT)
+                .withAmount(amountRefunded)
                 .withOrder(createOrder(transactionId, AMOUNT))
                 .withBuyer(createDefaultBuyer())
                 .withContractConfiguration(CONTRACT_CONFIGURATION)

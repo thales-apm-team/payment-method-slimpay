@@ -50,8 +50,6 @@ public class PaymentWithRedirectionServiceTest {
 
     @Test
     public void finalizeRedirectionPaymentKO() throws Exception {
-        //todo mocker response
-
         PaymentWithRedirectionServiceImpl service = new PaymentWithRedirectionServiceImpl();
         RedirectionPaymentRequest request = createRedirectionPaymentRequest("ZORDER-DEV-1549638902921");
         PaymentResponse response = service.finalizeRedirectionPayment(request);
@@ -59,7 +57,6 @@ public class PaymentWithRedirectionServiceTest {
         PaymentResponseFailure failureResponse = (PaymentResponseFailure) response;
         Assertions.assertNotNull(failureResponse);
         Assertions.assertNotNull(failureResponse.getPartnerTransactionId());
-        Assertions.assertNotNull(failureResponse.getErrorCode());
         Assertions.assertNotNull(failureResponse.getFailureCause());
 
 
@@ -75,14 +72,13 @@ public class PaymentWithRedirectionServiceTest {
         PaymentResponseFailure failureResponse = (PaymentResponseFailure) response;
         Assertions.assertNotNull(failureResponse);
         Assertions.assertNotNull(failureResponse.getPartnerTransactionId());
-        Assertions.assertNotNull(failureResponse.getErrorCode());
         Assertions.assertNotNull(failureResponse.getFailureCause());
     }
 
     @Test
     public void handleSessionExpiredOk() throws Exception {
         PaymentWithRedirectionServiceImpl service = new PaymentWithRedirectionServiceImpl();
-        TransactionStatusRequest request = createDefaultTransactionStatusRequest("Y-ORDER-REF-1550138270755");
+        TransactionStatusRequest request = createDefaultTransactionStatusRequest("HDEV-1550072222649");
         PaymentResponse response = service.handleSessionExpired(request);
         Assertions.assertTrue(response instanceof PaymentResponseSuccess);
         PaymentResponseSuccess successResponse = (PaymentResponseSuccess) response;

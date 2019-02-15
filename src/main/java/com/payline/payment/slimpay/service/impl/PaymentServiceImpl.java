@@ -1,10 +1,10 @@
 package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.common.SlimpayError;
-import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
-import com.payline.payment.slimpay.bean.common.response.SlimpayFailureResponse;
-import com.payline.payment.slimpay.bean.common.response.SlimpayOrderResponse;
-import com.payline.payment.slimpay.bean.common.response.SlimpayResponse;
+import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
+import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
+import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
+import com.payline.payment.slimpay.bean.response.SlimpayResponse;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.SlimpayConstants;
@@ -38,6 +38,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
     private BeanAssemblerServiceImpl beanAssembleService = BeanAssemblerServiceImpl.getInstance();
+    private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
+
 
 
     @Override
@@ -57,7 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
         JsonBody jsonOrderRequest = slimpayOrderRequest.toJsonBody();
         try {
             //Initialise order
-            SlimpayResponse slimpayOrderResponse = SlimpayHttpClient.createOrder(paymentRequest, jsonOrderRequest);
+            SlimpayResponse slimpayOrderResponse = httpClient.createOrder(paymentRequest, jsonOrderRequest);
             if (slimpayOrderResponse == null) {
                 LOGGER.debug("createOrder response is null !");
                 LOGGER.error("Payment is null");

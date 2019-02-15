@@ -1,4 +1,4 @@
-package com.payline.payment.slimpay.bean.common.response;
+package com.payline.payment.slimpay.bean.response;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;

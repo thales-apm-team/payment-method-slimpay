@@ -148,5 +148,5 @@ task testJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
 
 test {
     useJUnitPlatform()
+    exclude('**/*IT.class')
 }
-test.exclude '**/*IT.class'

@@ -2,7 +2,7 @@ package com.payline.payment.slimpay.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.payline.payment.slimpay.bean.common.response.PaymentResponseSuccessAdditionalData;
+import com.payline.payment.slimpay.bean.response.PaymentResponseSuccessAdditionalData;
 import com.payline.pmapi.service.TransactionManagerService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

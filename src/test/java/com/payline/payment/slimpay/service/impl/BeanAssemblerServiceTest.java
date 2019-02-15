@@ -1,7 +1,7 @@
 package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.common.*;
-import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
+import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
@@ -15,7 +15,7 @@ public class BeanAssemblerServiceTest {
 
     private BeanAssemblerServiceImpl assemblerService = new BeanAssemblerServiceImpl();
     private PaymentRequest paymentRequest = createCompletePaymentBuilder().build();
-    private RefundRequest refundRequest = createRefundRequest("request");
+    private RefundRequest refundRequest = createRefundRequest("request","400");
 
 
     @Test

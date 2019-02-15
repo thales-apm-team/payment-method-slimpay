@@ -1,8 +1,8 @@
 package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.common.*;
-import com.payline.payment.slimpay.bean.common.request.SlimpayOrderRequest;
-import com.payline.payment.slimpay.bean.common.response.PaymentResponseSuccessAdditionalData;
+import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
+import com.payline.payment.slimpay.bean.response.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.service.BeanAssemblerService;
 import com.payline.pmapi.bean.common.Buyer;
@@ -21,7 +21,6 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     private static final  String OUT = "OUT";
     private static final  String PAYOUT_SCHEME = "SEPA.CREDIT_TRANSFER";
     //Type de prélèvement
-    private static final  String RECURRENT = "RCUR";
     private static final  String PONCTUEL = "OOFF";
 
 
@@ -66,7 +65,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     @Override
     public Payment assemblePayout(RefundRequest refundRequest) throws InvalidDataException {
 
-        //get MandateReference
+        //use mandate or Subscriber reference for payout
         PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.fromJson(refundRequest.getTransactionAdditionalData());
         String mandateReference = additionalData.getMandateReference();
 
