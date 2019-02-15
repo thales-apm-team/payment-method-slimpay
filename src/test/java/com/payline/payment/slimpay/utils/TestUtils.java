@@ -33,7 +33,7 @@ public class TestUtils {
     public static final String SUCCESS_URL = "https://succesurl.com/";
     public static final String CANCEL_URL = "http://localhost/cancelurl.com/";
     public static final String NOTIFICATION_URL = "http://google.com/";
-    private static final String MDP_IDENTIFIER = "paymentMethodIdentifier";
+    private static final String MDP_IDENTIFIER = "Oney";
 
 
     private static final String SOFT_DESCRIPTOR = "softDescriptor";
@@ -54,7 +54,7 @@ public class TestUtils {
      **/
     private static final String PARTNER_TRANSACTION_ID = "455454545415451198120";
 
-    private static final Environment ENVIRONMENT = new Environment("https://notification.com/", "http://succesurl.com", "http://redirectionCancelURL.com", true);
+    public static final Environment ENVIRONMENT = new Environment("https://notification.com/", "http://succesurl.com", "http://redirectionCancelURL.com", true);
     private static final Locale LOCALE_FR = Locale.FRANCE;
     public static final String CURRENCY_EUR = "EUR";
 
@@ -98,7 +98,7 @@ public class TestUtils {
     );
 
 
-    private static final Map<String, String> ACCOUNT_INFO = new HashMap<String, String>() {{
+    public static final Map<String, String> ACCOUNT_INFO = new HashMap<String, String>() {{
         put(CREDITOR_REFERENCE_KEY, "paylinemerchanttest1");
         put(FIRST_PAYMENT_SCHEME, "SEPA.DIRECT_DEBIT.CORE");
         put(MANDATE_PAYIN_SCHEME, ("SEPA.DIRECT_DEBIT.CORE"));

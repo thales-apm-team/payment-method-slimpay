@@ -3,19 +3,19 @@ package com.payline.payment.slimpay.utils.http;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.reflect.Whitebox;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-@PrepareForTest(SlimpayHttpClient.class)
+@ExtendWith(MockitoExtension.class)
 public class SlimpayHttpClientTest {
 
 
@@ -35,7 +35,7 @@ public class SlimpayHttpClientTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        Whitebox.setInternalState(client, "client", closableClient);
+        //Whitebox.setInternalState(client, "client", closableClient);
 
         params = new HashMap<>();
         //TODO

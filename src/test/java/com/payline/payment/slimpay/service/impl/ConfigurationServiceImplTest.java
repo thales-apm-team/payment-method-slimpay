@@ -1,47 +1,53 @@
 package com.payline.payment.slimpay.service.impl;
 
 
+import com.payline.payment.slimpay.exception.HttpCallException;
+import com.payline.payment.slimpay.exception.PluginTechnicalException;
+import com.payline.payment.slimpay.utils.BeansUtils;
 import com.payline.payment.slimpay.utils.SlimpayConstants;
+import com.payline.payment.slimpay.utils.TestUtils;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
-import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.Environment;
+import com.slimpay.hapiclient.exception.HttpException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(MockitoExtension.class)
 public class ConfigurationServiceImplTest {
 
     @InjectMocks
     private static ConfigurationServiceImpl service;
 
-    @Spy
-    SlimpayHttpClient httpClient;
+    @Mock
+    private SlimpayHttpClient httpClient;
 
     private Map<String, String> accountInfo = new HashMap<>();
 
     private static Environment environment;
 
     @BeforeAll
-    public static void setUp() throws Exception {
+    public static void setUp() {
         service = new ConfigurationServiceImpl();
         MockitoAnnotations.initMocks(ConfigurationServiceImplTest.class);
 
-        environment = new Environment("https://succesurl.com/", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
-
+        environment = TestUtils.ENVIRONMENT;
     }
 
     @Test
@@ -74,37 +80,9 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkOK() {
-        final ContractConfiguration contractConfiguration = new ContractConfiguration("Oney", new HashMap<String, ContractProperty>() {
-            {
-                put(CREDITOR_REFERENCE_KEY, new ContractProperty("paylinemerchanttest1"));
-                put(FIRST_PAYMENT_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
-                put(MANDATE_PAYIN_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
-                put(MANDATE_STANDARD_KEY, new ContractProperty("SEPA"));
-                put(SIGNATURE_APPROVAL_METHOD, new ContractProperty("otp"));
-                put(PAYMENT_PROCESSOR, new ContractProperty("slimpay"));
-            }
-        });
-
-        Map<String, String> partnerConfiguration = new HashMap<String, String>() {{
-            put(API_URL_KEY, "https://api.preprod.slimpay.com");
-            put(API_PROFILE_KEY, "https://api.slimpay.net/alps/v1");
-            put(API_NS_KEY, "https://api.slimpay.net/alps");
-            put(APP_KEY, "monextreferral01");
-        }};
-
-        Map<String, String> sensitivePartnerConfiguration = new HashMap<String, String>(){{
-            put(APP_SECRET, "n32cXdaS0ZOACV8688ltKovAO6lquL4wKjZHnvyO");
-        }};
-
-        ContractParametersCheckRequest contractParametersCheckRequest = ContractParametersCheckRequest.CheckRequestBuilder
-                .aCheckRequest()
-                .withAccountInfo(accountInfo)
-                .withLocale(Locale.FRANCE)
-                .withPartnerConfiguration(new PartnerConfiguration(partnerConfiguration, sensitivePartnerConfiguration))
-                .withContractConfiguration(contractConfiguration)
-                .withEnvironment(environment)
-                .build();
+    public void checkOK() throws PluginTechnicalException, HttpException {
+        when(httpClient.testConnection(any(), any())).thenReturn(BeansUtils.createMockedSlimpayOrderResponseOpen());
+        ContractParametersCheckRequest contractParametersCheckRequest = TestUtils.createContractParametersCheckRequest();
 
         Map<String, String> errors = service.check(contractParametersCheckRequest);
         Assertions.assertEquals(0, errors.size());
@@ -139,50 +117,14 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkKOConnectionFails(){
+    public void checkKOConnectionFails() throws PluginTechnicalException, HttpException {
+        when(httpClient.testConnection(any(), any())).thenThrow(new HttpCallException("401", "bar"));
+        ContractParametersCheckRequest contractParametersCheckRequest = TestUtils.createContractParametersCheckRequest();
 
-        final ContractConfiguration contractConfiguration = new ContractConfiguration("Oney", new HashMap<String, ContractProperty>() {
-            {
-                put(CREDITOR_REFERENCE_KEY, new ContractProperty("paylinemerchanttest1"));
-                put(FIRST_PAYMENT_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
-                put(MANDATE_PAYIN_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
-                put(MANDATE_STANDARD_KEY, new ContractProperty("SEPA"));
-                put(SIGNATURE_APPROVAL_METHOD, new ContractProperty("otp"));
-                put(PAYMENT_PROCESSOR, new ContractProperty("slimpay"));
-            }
-        });
-
-        Map<String, String> partnerConfiguration = new HashMap<String, String>() {{
-            put(API_URL_KEY, "https://api.preprod.slimpay.com");
-            put(API_PROFILE_KEY, "https://api.slimpay.net/alps/v1");
-            put(API_NS_KEY, "https://api.slimpay.net/alps");
-            put(APP_KEY, "Zmonextreferral01Z");
-        }};
-
-        Map<String, String> sensitivePartnerConfiguration = new HashMap<String, String>(){{
-            put(APP_SECRET, "n32cXdaS0ZOACV8688ltKovAO6lquL4wKjZHnvyO");
-        }};
-
-        ContractParametersCheckRequest contractParametersCheckRequest = ContractParametersCheckRequest.CheckRequestBuilder
-                .aCheckRequest()
-                .withAccountInfo(accountInfo)
-                .withLocale(Locale.FRANCE)
-                .withPartnerConfiguration(new PartnerConfiguration(partnerConfiguration, sensitivePartnerConfiguration))
-                .withContractConfiguration(contractConfiguration)
-                .withEnvironment(environment)
-                .build();
-//todo  mock http call
-
-//        HttpClientErrorException errorMocked = new HttpClientErrorException(null, null, "{  " +
-//                "   \"timestamp\" : \"2019-02-14T13:58:52.977+0000\",\n" +
-//                "                \"status\" : 401,\n" +
-//                "                \"error\" : \"Unauthorized\",\n" +
-//                "                \"message\" : \"Bad credentials\",\n" +
-//                "                \"path\" : \"/oauth/token\"   }");
-
-                Map<String, String> errors = service.check(contractParametersCheckRequest);
+        Map<String, String> errors = service.check(contractParametersCheckRequest);
         Assertions.assertEquals(1, errors.size());
 
     }
 
 }
+

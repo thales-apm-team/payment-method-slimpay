@@ -53,20 +53,18 @@ dependencies {
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
 
     implementation group: 'com.slimpay', name: 'hapiclient', version: '1.0.2'
-    testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.0'
-
 
     testImplementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
     testImplementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
 
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.21.0'
+    testCompile 'org.mockito:mockito-junit-jupiter:2.23.0'
 
     testImplementation "com.payline:payment-method-api:${paymentMethodApiVersion}"
     testImplementation "com.payline:payment-method-integration:${paymentMethodIntegrationVersion}"
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.0.3'
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.13.0'
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.13.0'
-
     // fatJarTest include testImplementation dependencies (not for IT)
     fatJarTest group: 'org.mockito', name: 'mockito-core', version: '2.21.0'
     fatJarTest group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.0'
