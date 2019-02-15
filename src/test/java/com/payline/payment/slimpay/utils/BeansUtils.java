@@ -5,8 +5,8 @@ import com.payline.payment.slimpay.bean.common.*;
 import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
-import com.payline.payment.slimpay.utils.properties.constants.OrderStatus;
 import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
+import com.payline.payment.slimpay.utils.properties.constants.OrderStatus;
 import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionStatus;
 import com.slimpay.hapiclient.hal.CustomRel;
 import com.slimpay.hapiclient.hal.Rel;
@@ -115,7 +115,7 @@ public class BeansUtils {
                 "   },\n" +
                 "   \"id\": \"ff4ea3a6-303e-11e9-9d34-000000000000\",\n" +
                 "   \"reference\": \"Y-ORDER-REF-1550138270755\",\n" +
-                "   \"state\": \"open.running\",\n" +
+                "   \"state\": \"" + state + "\",\n" +
                 "   \"locale\": \"fr\",\n" +
                 "   \"started\": true,\n" +
                 "   \"dateCreated\": \"2019-02-14T09:57:54.083+0000\",\n" +
