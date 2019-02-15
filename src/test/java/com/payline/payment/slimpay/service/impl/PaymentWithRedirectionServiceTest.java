@@ -15,30 +15,29 @@ import com.payline.pmapi.bean.payment.response.impl.PaymentResponseSuccess;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.payline.payment.slimpay.utils.TestUtils.createDefaultTransactionStatusRequest;
 import static com.payline.payment.slimpay.utils.TestUtils.createRedirectionPaymentRequest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PaymentWithRedirectionServiceTest {
 
     @InjectMocks
-    private static PaymentWithRedirectionServiceImpl service;
+    private PaymentWithRedirectionServiceImpl service;
 
     @Mock
     private SlimpayHttpClient httpClient;
 
     @BeforeAll
-    public static void setup() {
+    public void setup() {
         service = new PaymentWithRedirectionServiceImpl();
-        MockitoAnnotations.initMocks(PaymentWithRedirectionServiceTest.class);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test

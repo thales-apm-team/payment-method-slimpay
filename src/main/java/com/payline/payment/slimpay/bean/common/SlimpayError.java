@@ -3,7 +3,7 @@ package com.payline.payment.slimpay.bean.common;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
-public class SlimpayError extends SlimpayBean{
+public class SlimpayError extends SlimpayBean {
 
     private int code;
     private String message;
@@ -22,14 +22,18 @@ public class SlimpayError extends SlimpayBean{
         return errorDescription;
     }
 
-    public SlimpayError(int code, String message,String description) {
+    public SlimpayError(int code, String message, String description) {
         this.code = code;
         this.message = message;
         this.errorDescription = description;
     }
 
-    public static SlimpayError fromJson(String json){
+    public static SlimpayError fromJson(String json) {
         Gson parser = new Gson();
         return parser.fromJson(json, SlimpayError.class);
+    }
+
+    public String toPaylineError() {
+        return this.code + " - " + this.message;
     }
 }

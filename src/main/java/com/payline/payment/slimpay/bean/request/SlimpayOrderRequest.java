@@ -4,6 +4,7 @@ import com.payline.payment.slimpay.bean.common.Creditor;
 import com.payline.payment.slimpay.bean.common.SlimPayOrderItem;
 import com.payline.payment.slimpay.bean.common.SlimpayBean;
 import com.payline.payment.slimpay.bean.common.Subscriber;
+import com.payline.payment.slimpay.utils.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,23 +12,25 @@ public class SlimpayOrderRequest extends SlimpayBean {
 
     private static final transient Logger LOGGER = LogManager.getLogger(SlimpayOrderRequest.class);
 
-
     private String reference;
     private String paymentScheme;
     private String locale;
+    @Required
     private Creditor creditor;
+    @Required
     private Subscriber subscriber;
-    private boolean started; //must be true to automatically start order after creation
+    //must be true to automatically start order after creation
+    private boolean started;
     private boolean mandateReused;
-    private boolean sendUserApproval; // if approval link will be sent to subscriber email after finishing order
+    // if approval link will be sent to subscriber email after finishing order
+    private boolean sendUserApproval;
+    @Required
     private SlimPayOrderItem[] items;
+    @Required
     private String successUrl;
     private String cancelUrl;
+    @Required
     private String failureUrl;
-
-
-
-
 
 
     public String getReference() {
@@ -86,7 +89,7 @@ public class SlimpayOrderRequest extends SlimpayBean {
         this.creditor = builder.creditor;
         this.subscriber = builder.subscriber;
         this.started = builder.started;
-        this.mandateReused =builder.mandateReused;
+        this.mandateReused = builder.mandateReused;
         this.sendUserApproval = builder.sendUserApproval;
         this.items = builder.items;
         this.successUrl = builder.successUrl;
@@ -176,24 +179,24 @@ public class SlimpayOrderRequest extends SlimpayBean {
         private SlimpayOrderRequest.Builder verifyIntegrity() {
             //to do logger les champs manquants obligatoire ??
             if (this.creditor == null) {
-                LOGGER.warn ("SlimpayOrderRequest must have a creditor when built");
+                LOGGER.warn("SlimpayOrderRequest must have a creditor when built");
             }
             if (this.subscriber == null) {
-                LOGGER.warn ("SlimpayOrderRequest must have a subscriber when built");
+                LOGGER.warn("SlimpayOrderRequest must have a subscriber when built");
             }
-            if (this.items == null) {
-                LOGGER.warn ("SlimpayOrderRequest must have a items when built");
+            if (this.items == null || this.items.length == 0) {
+                LOGGER.warn("SlimpayOrderRequest must have a items when built");
             }
             if (this.successUrl == null) {
-                LOGGER.warn ("SlimpayOrderRequest must have a successUrl when built");
+                LOGGER.warn("SlimpayOrderRequest must have a successUrl when built");
             }
             if (this.failureUrl == null) {
-                LOGGER.warn ("SlimpayOrderRequest must have a failureUrl when built");
+                LOGGER.warn("SlimpayOrderRequest must have a failureUrl when built");
             }
             return this;
         }
 
-        public SlimpayOrderRequest build(){
+        public SlimpayOrderRequest build() {
             return new SlimpayOrderRequest(this.verifyIntegrity());
 
         }

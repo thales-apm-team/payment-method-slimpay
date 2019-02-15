@@ -17,11 +17,10 @@ import com.slimpay.hapiclient.exception.HttpException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -30,23 +29,24 @@ import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ConfigurationServiceImplTest {
 
     @InjectMocks
-    private static ConfigurationServiceImpl service;
+    private ConfigurationServiceImpl service;
 
     @Mock
     private SlimpayHttpClient httpClient;
 
     private Map<String, String> accountInfo = new HashMap<>();
 
-    private static Environment environment = TestUtils.ENVIRONMENT;;
+    private static Environment environment = TestUtils.ENVIRONMENT;
+    ;
 
     @BeforeAll
-    public static void setUp() {
+    public void setUp() {
         service = new ConfigurationServiceImpl();
-        MockitoAnnotations.initMocks(ConfigurationServiceImplTest.class);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkOK() throws PluginTechnicalException, HttpException {
+    public void checkOK() throws Exception {
         when(httpClient.testConnection(any(), any())).thenReturn(BeansUtils.createMockedSlimpayOrderResponseOpen());
         ContractParametersCheckRequest contractParametersCheckRequest = TestUtils.createContractParametersCheckRequest();
 
@@ -126,18 +126,18 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void testGetReleaseInformation_versionFormat(){
+    public void testGetReleaseInformation_versionFormat() {
         // when: getReleaseInformation method is called
         ReleaseInformation releaseInformation = service.getReleaseInformation();
 
         // then: the version has a valid format
-        Assertions.assertNotNull( releaseInformation );
-        Assertions.assertTrue( releaseInformation.getVersion().matches( "^\\d\\.\\d(\\.\\d)?$" ) );
+        Assertions.assertNotNull(releaseInformation);
+        Assertions.assertTrue(releaseInformation.getVersion().matches("^\\d\\.\\d(\\.\\d)?$"));
     }
 
     @Test
     public void getName() {
-        String name = service.getName( Locale.FRENCH);
+        String name = service.getName(Locale.FRENCH);
         Assertions.assertNotNull(name);
         Assertions.assertNotEquals(0, name.length());
     }

@@ -1,6 +1,7 @@
 package com.payline.payment.slimpay.bean.response;
 
 import com.google.gson.Gson;
+import com.payline.payment.slimpay.utils.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,26 +9,37 @@ import org.apache.logging.log4j.Logger;
 //https://dev.slimpay.com/hapi/reference/order-items#order-items-representation
 public class SlimpayPaymentResponse extends SlimpayResponse {
 
-    private static final transient Logger LOGGER = LogManager.getLogger(SlimpayPaymentResponse.class);
+    private static final Logger LOGGER = LogManager.getLogger(SlimpayPaymentResponse.class);
 
+    @Required
     private String action;
     private String id;
+    @Required
     private String reference;
+    @Required
     private String scheme;
+    @Required
     private String direction;
     private String category;
+    @Required
     private Float amount;
+    @Required
     private String currency;
     private String state;
     private String executionDate;
     private String executionStatus;
     private String sequenceType;
     private Integer replayCount;
-    private String dateCreated; //DateTime, ISO8601, Read-Only.
-    private String dateModified; //DateTime, ISO8601, Read-Only.
-    private String dateBooked; //DateTime, ISO8601, Read-Only.
-    private String dateValued; //DateTime, ISO8601, Read-Only.
-    private String capture; //DateTime, ISO8601, Read-Only.
+    //DateTime, ISO8601, Read-Only.
+    private String dateCreated;
+    //DateTime, ISO8601, Read-Only.
+    private String dateModified;
+    //DateTime, ISO8601, Read-Only.
+    private String dateBooked;
+    //DateTime, ISO8601, Read-Only.
+    private String dateValued;
+    //DateTime, ISO8601, Read-Only.
+    private String capture;
     private boolean confirmed;
     private String processor;
     private String correlationId;
@@ -121,7 +133,8 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
         return action;
     }
 
-    private SlimpayPaymentResponse(){}
+    private SlimpayPaymentResponse() {
+    }
 
     public SlimpayPaymentResponse(SlimpayPaymentResponse.Builder builder) {
         this.action = builder.action;
@@ -177,8 +190,7 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
         private String label;
 
 
-
-        public static SlimpayPaymentResponse.Builder aPaymentResponseBuilder(){
+        public static SlimpayPaymentResponse.Builder aPaymentResponseBuilder() {
             return new SlimpayPaymentResponse.Builder();
         }
 
@@ -187,22 +199,22 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
 
             //to do logger les champs manquants obligatoire ??
             if (this.reference == null) {
-                LOGGER.warn ("SlimpayPaymentResponse must have a reference when built");
+                LOGGER.warn("SlimpayPaymentResponse must have a reference when built");
             }
             if (this.scheme == null) {
-                LOGGER.warn ("SlimpayPaymentResponse must have a scheme when built");
+                LOGGER.warn("SlimpayPaymentResponse must have a scheme when built");
             }
             if (this.amount == null) {
-                LOGGER.warn ("SlimpayPaymentResponse must have a amount when built");
+                LOGGER.warn("SlimpayPaymentResponse must have a amount when built");
             }
             if (this.currency == null) {
-                LOGGER.warn ("SlimpayPaymentResponse must have a currency when built");
+                LOGGER.warn("SlimpayPaymentResponse must have a currency when built");
             }
             if (this.action == null) {
-                LOGGER.warn ("SlimpayPaymentResponse must have a action when built");
+                LOGGER.warn("SlimpayPaymentResponse must have a action when built");
             }
             if (this.direction == null) {
-                LOGGER.warn ("SlimpayPaymentResponse must have a direction when built");
+                LOGGER.warn("SlimpayPaymentResponse must have a direction when built");
             }
 
             return this;
@@ -215,6 +227,7 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
 
         /**
          * Create a SlimpayPaymentResponse from a  json returned by Slimpay server
+         *
          * @param json a SlimPay payment
          * @return a SlimpayPaymentResponse
          */

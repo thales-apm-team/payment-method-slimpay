@@ -31,9 +31,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String SDD_CORE = "SEPA.DIRECT_DEBIT.CORE";
     private static final String UNAUTHORIZED = "401";
     private static final String FORBIDDEN = "403";
+    private static final String SLIMPAY = "Slimpay";
+    private static final String OTP = "otp";
 
     private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
-
 
 
     public ConfigurationServiceImpl() {
@@ -60,8 +61,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         paymentProcessor.setDescription(this.i18n.getMessage(PAYMENT_PROCESSOR_DESCRIPTION, locale));
         paymentProcessor.setRequired(true);
         final LinkedHashMap<String, String> processors = new LinkedHashMap<>();
-        processors.put("Slimpay", "Slimpay");
+        processors.put(SLIMPAY, SLIMPAY);
         paymentProcessor.setList(processors);
+        paymentProcessor.setValue(SLIMPAY);
         parameters.add(paymentProcessor);
 
         //paymentScheme
@@ -73,6 +75,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final LinkedHashMap<String, String> paymentSchemes = new LinkedHashMap<>();
         paymentSchemes.put(SDD_CORE, SDD_CORE);
         paymentScheme.setList(paymentSchemes);
+        paymentScheme.setValue(SDD_CORE);
         parameters.add(paymentScheme);
 
         // mandateScheme
@@ -84,6 +87,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final LinkedHashMap<String, String> mandateSchemes = new LinkedHashMap<>();
         mandateSchemes.put(SDD_CORE, SDD_CORE);
         mandateScheme.setList(mandateSchemes);
+        mandateScheme.setValue(SDD_CORE);
         parameters.add(mandateScheme);
 
         // signatureApproval method
@@ -92,8 +96,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         signatureApproval.setLabel(this.i18n.getMessage(SIGNATURE_APPROVAL_METHOD_LABEL, locale));
         signatureApproval.setRequired(true);
         final LinkedHashMap<String, String> signatures = new LinkedHashMap<>();
-        signatures.put("otp", "otp");
+        signatures.put(OTP, OTP);
         signatureApproval.setList(signatures);
+        signatureApproval.setValue(OTP);
         parameters.add(signatureApproval);
 
         return parameters;
@@ -159,10 +164,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             LOGGER.error("Error while calling the plugin {}", e);
             //si erreur 401 ?
             String errorCode = e.getMessage();
-            if (errorCode.contains(UNAUTHORIZED) || errorCode.contains(FORBIDDEN) ) {
+            if (errorCode.contains(UNAUTHORIZED) || errorCode.contains(FORBIDDEN)) {
                 //if auth failed
                 errors.put(APP_KEY, this.i18n.getMessage(API_TEST_MESSAGE_ERROR, locale));
-                return  errors;
+                return errors;
             }
 
         }

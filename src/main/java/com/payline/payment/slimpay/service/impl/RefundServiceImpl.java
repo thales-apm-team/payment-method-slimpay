@@ -1,27 +1,19 @@
 package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.common.Payment;
-import com.payline.payment.slimpay.bean.common.SlimpayError;
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayResponse;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
-import com.payline.payment.slimpay.utils.SlimpayErrorHandler;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
-import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionStatus;
-import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseSuccess;
 import com.payline.pmapi.logger.LogManager;
 import com.payline.pmapi.service.RefundService;
-import com.slimpay.hapiclient.exception.HttpClientErrorException;
-import com.slimpay.hapiclient.exception.HttpException;
-import com.slimpay.hapiclient.exception.HttpServerErrorException;
 import org.apache.logging.log4j.Logger;
 
-import static com.payline.payment.slimpay.utils.PluginUtils.errorToString;
 import static com.payline.payment.slimpay.utils.SlimpayErrorHandler.handleSlimpayFailureResponse;
 
 public class RefundServiceImpl implements RefundService {
@@ -53,7 +45,7 @@ public class RefundServiceImpl implements RefundService {
                 SlimpayFailureResponse slimpayPayoutFailureResponse = (SlimpayFailureResponse) refundResponse;
                 return RefundResponseFailure.RefundResponseFailureBuilder
                         .aRefundResponseFailure()
-                        .withErrorCode(errorToString(slimpayPayoutFailureResponse.getError()))
+                        .withErrorCode(slimpayPayoutFailureResponse.getError().toPaylineError())
                         .withFailureCause(handleSlimpayFailureResponse(slimpayPayoutFailureResponse.getError()))
                         .withPartnerTransactionId(transactionId)
                         .build();
@@ -67,16 +59,9 @@ public class RefundServiceImpl implements RefundService {
                         .build();
             }
 
-
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            LOGGER.error("unable to refund  the payment");
-            String errorString = e.getResponseBody();
-            SlimpayError error = SlimpayError.fromJson(errorString);
-            return SlimpayErrorHandler.geRefundResponseFailure(handleSlimpayFailureResponse(error), transactionId, errorToString(error));
-
-        } catch (PluginTechnicalException | HttpException e) {
+        } catch (PluginTechnicalException e) {
             LOGGER.error("unable to communicate with Slimpay server");
-            return SlimpayErrorHandler.geRefundResponseFailure(FailureCause.COMMUNICATION_ERROR, transactionId, e.getMessage());
+            return e.toRefundResponseFailure(transactionId);
         }
 
     }

@@ -1,7 +1,6 @@
 package com.payline.payment.slimpay.service.impl;
 
 
-import com.payline.payment.slimpay.bean.common.SlimpayError;
 import com.payline.payment.slimpay.bean.response.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
@@ -20,19 +19,15 @@ import com.payline.pmapi.bean.payment.response.impl.PaymentResponseOnHold;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseSuccess;
 import com.payline.pmapi.logger.LogManager;
 import com.payline.pmapi.service.PaymentWithRedirectionService;
-import com.slimpay.hapiclient.exception.HttpClientErrorException;
-import com.slimpay.hapiclient.exception.HttpException;
-import com.slimpay.hapiclient.exception.HttpServerErrorException;
 import org.apache.logging.log4j.Logger;
 
-import static com.payline.payment.slimpay.utils.PluginUtils.errorToString;
 import static com.payline.payment.slimpay.utils.SlimpayErrorHandler.handleSlimpayFailureResponse;
 import static com.payline.payment.slimpay.utils.properties.constants.OrderStatus.*;
 
 public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirectionService {
 
     private static final Logger LOGGER = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
-    private static String SUCCESS_MESSAGE = "COMMANDE_OK";
+    private static final String SUCCESS_MESSAGE = "COMMANDE_OK";
     private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
 
 
@@ -44,33 +39,16 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             SlimpayResponse orderResponse = httpClient.getOrder(redirectionPaymentRequest);
             return returnResponse(orderResponse, transactionId);
 
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            LOGGER.error("unable to get the payment status");
-            String errorString = e.getResponseBody();
-            SlimpayError error = SlimpayError.fromJson(errorString);
-
-            return PaymentResponseFailure.PaymentResponseFailureBuilder
-                    .aPaymentResponseFailure()
-                    .withErrorCode(errorToString(error))
-                    .withFailureCause(handleSlimpayFailureResponse(error))
-                    .withPartnerTransactionId(transactionId)
-                    .build();
-
-
-        } catch (PluginTechnicalException | HttpException e) {
+        } catch (PluginTechnicalException e) {
             LOGGER.error("unable to call slimpay server", e);
-            return PaymentResponseFailure.PaymentResponseFailureBuilder
-                    .aPaymentResponseFailure()
-                    .withErrorCode(e.getCause().getMessage())
-                    .withFailureCause(FailureCause.COMMUNICATION_ERROR)
-                    .withPartnerTransactionId(transactionId)
-                    .build();
+            return e.toPaymentResponseFailure(transactionId);
         }
 
     }
 
     /**
      * get order status from a transactionStatusRequest
+     *
      * @param transactionStatusRequest
      * @return a PaymentResponse
      */
@@ -82,36 +60,20 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             SlimpayResponse orderResponse = httpClient.getOrder(transactionStatusRequest);
             return returnResponse(orderResponse, transactionId);
 
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            LOGGER.error("unable to get the transactionStatusRequest status");
-            String errorString = e.getResponseBody();
-            SlimpayError error = SlimpayError.fromJson(errorString);
-
-            return PaymentResponseFailure.PaymentResponseFailureBuilder
-                    .aPaymentResponseFailure()
-                    .withErrorCode(errorToString(error))
-                    .withFailureCause(handleSlimpayFailureResponse(error))
-                    .withPartnerTransactionId(transactionId)
-                    .build();
-        } catch (PluginTechnicalException | HttpException e) {
+        } catch (PluginTechnicalException e) {
             LOGGER.error("unable to call slimpay server", e);
-            return PaymentResponseFailure.PaymentResponseFailureBuilder
-                    .aPaymentResponseFailure()
-                    .withErrorCode(e.getCause().getMessage())
-                    .withFailureCause(FailureCause.COMMUNICATION_ERROR)
-                    .withPartnerTransactionId(transactionId)
-                    .build();
+            return e.toPaymentResponseFailure(transactionId);
         }
 
     }
 
-    public PaymentResponse returnResponse(SlimpayResponse orderResponse, String transactionId){
+    public PaymentResponse returnResponse(SlimpayResponse orderResponse, String transactionId) {
         if (orderResponse.getClass() == SlimpayFailureResponse.class) {
             //Fail to get order
             SlimpayFailureResponse slimpayOrderFailureResponse = (SlimpayFailureResponse) orderResponse;
             return PaymentResponseFailure.PaymentResponseFailureBuilder
                     .aPaymentResponseFailure()
-                    .withErrorCode(errorToString(slimpayOrderFailureResponse.getError()))
+                    .withErrorCode(slimpayOrderFailureResponse.getError().toPaylineError())
                     .withFailureCause(handleSlimpayFailureResponse(slimpayOrderFailureResponse.getError()))
                     .withPartnerTransactionId(transactionId)
                     .build();
@@ -144,20 +106,21 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                             .build();
 
                 case CLOSED_COMPLETED:
+                    String reference = slimpayOrderResponse.getReference();
                     //check statut du payment ??
                     //todo get transaction additional data (id) :  mandate payment
                     //check payment state or not ??
                     PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.Builder
                             .aPaymentResponseSuccessAdditionalData()
                             .withOrderId(slimpayOrderResponse.getId())
-                            .withOrderReference(slimpayOrderResponse.getReference())
+                            .withOrderReference(reference)
 //                                .withMandateId()
-                            .withMandateReference(slimpayOrderResponse.getReference())
+                            .withMandateReference(reference)
 //                                .withPaymentId()
-                            .withPaymentReference(slimpayOrderResponse.getReference())
+                            .withPaymentReference(reference)
                             .build();
                     return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
-                            .withTransactionAdditionalData(additionalData.toJson())
+                            .withTransactionAdditionalData(additionalData.toString())
                             .withMessage(new Message(Message.MessageType.SUCCESS, SUCCESS_MESSAGE))
                             .withPartnerTransactionId(transactionId)
                             .withTransactionDetails(new EmptyTransactionDetails())

@@ -1,5 +1,6 @@
 package com.payline.payment.slimpay.bean.common;
 
+import com.payline.payment.slimpay.utils.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,12 +11,18 @@ public class Payment extends SlimpayBean {
 
     private static final transient Logger LOGGER = LogManager.getLogger(Payment.class);
 
+    @Required
     private String action;
+    @Required
     private String reference;
+    @Required
     private String scheme;
+    @Required
     private String direction;
     private String category;
+    @Required
     private String amount;
+    @Required
     private String currency;
     private String executionDate;
     private String capture; //DateTime, ISO8601, Read-Only.
@@ -194,6 +201,7 @@ public class Payment extends SlimpayBean {
             this.mandate = mandate;
             return this;
         }
+
         public Payment.Builder verifyIntegrity() {
 
             //to do logger les champs manquants obligatoire ??
@@ -214,19 +222,17 @@ public class Payment extends SlimpayBean {
             }
             if (this.direction == null) {
                 LOGGER.warn("Payment must have a direction when built");
-            }
-
-            if (this.direction != null && (this.direction != "IN" && this.direction != "OUT")) {
+            } else if (this.direction != "IN" && this.direction != "OUT") {
                 LOGGER.warn("Payment direction value must be 'IN' or 'OUT' ");
-            }
+            } else if (this.direction == "OUT") {
 
-            if (this.direction == "OUT") {
-
-                if (this.creditor == null)
+                if (this.creditor == null) {
                     LOGGER.warn("Payment with direction 'OUT' must have a creditor when built");
+                }
 
-                if (this.subscriber == null)
+                if (this.subscriber == null) {
                     LOGGER.warn("Payment with direction 'OUT'  must have a subscriber when built");
+                }
             }
 
             return this;

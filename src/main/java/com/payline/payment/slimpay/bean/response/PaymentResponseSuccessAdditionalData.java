@@ -53,11 +53,7 @@ public class PaymentResponseSuccessAdditionalData extends SlimpayBean {
         return orderId;
     }
 
-    public String toJson() {
-        return new Gson().toJson(this);
-    }
-
-    public static  PaymentResponseSuccessAdditionalData fromJson(String jsonContent) {
+    public static PaymentResponseSuccessAdditionalData fromJson(String jsonContent) {
         Gson gson = new Gson();
         return gson.fromJson(jsonContent, PaymentResponseSuccessAdditionalData.class);
     }

@@ -1,7 +1,7 @@
 package com.payline.payment.slimpay.utils;
 
 
-import com.payline.payment.slimpay.bean.common.SlimpayError;
+import com.payline.pmapi.bean.common.Amount;
 
 import java.math.BigInteger;
 import java.util.Currency;
@@ -24,12 +24,18 @@ public class PluginUtils {
      * @param amount
      * @return
      */
-    public static String createStringAmount(BigInteger amount, Currency currency) {
+    public static String createStringAmount(Amount amount) {
+        if (amount == null || amount.getAmountInSmallestUnit() == null || amount.getCurrency() == null) {
+            return null;
+        }
+        Currency currency = amount.getCurrency();
+        BigInteger amountInSmallestUnit = amount.getAmountInSmallestUnit();
+
         //récupérer le nombre de digits dans currency
         int nbDigits = currency.getDefaultFractionDigits();
 
         StringBuilder sb = new StringBuilder();
-        sb.append(amount);
+        sb.append(amountInSmallestUnit);
 
         for (int i = sb.length(); i < 3; i++) {
             sb.insert(0, "0");
@@ -45,11 +51,8 @@ public class PluginUtils {
      * @param amount
      * @return
      */
-    public static Float createFloatAmount(BigInteger amount, Currency currency) {
-        if (amount == null || currency == null) {
-            return null;
-        }
-        return Float.parseFloat(createStringAmount(amount, currency));
+    public static Float createFloatAmount(Amount amount) {
+        return Float.parseFloat(createStringAmount(amount));
     }
 
     public static String truncate(String value, int length) {
@@ -64,6 +67,7 @@ public class PluginUtils {
         if (civility == null) {
             return null;
         }
+
         switch (civility.toLowerCase()) {
             //MR
             case "4":
@@ -81,21 +85,6 @@ public class PluginUtils {
                 return "Mr";
         }
     }
-    //generate a order reference
-    public static String generateOrderReference(String reference){
-        return reference ;
-    }
-    //generate a mandate reference
-    public static String generateMandateReference(String reference){
-        return reference ;
-    }
-    //generate a payment reference
-    public static String generatePaymentReference(String reference){
-        return reference ;
-    }
 
-    //MAke a
-    public static String errorToString (SlimpayError error) {
-        return error.getCode() + " - " + error.getMessage();
-     }
+
 }

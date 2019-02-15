@@ -5,10 +5,18 @@ import com.payline.pmapi.bean.common.FailureCause;
 
 public class SlimpayErrorMapper {
 
+
+    private SlimpayErrorMapper() {
+        //ras
+    }
+
     public static FailureCause handleSlimpayError(SlimpayError error) {
 
+        if (error == null) {
+            return FailureCause.PAYMENT_PARTNER_ERROR;
+        }
+
         int spErrorCode = error.getCode();
-        FailureCause paylineCause;
 
         switch (spErrorCode) {
             case 101:
@@ -55,8 +63,7 @@ public class SlimpayErrorMapper {
             case 901:
             case 908:
             case 911:
-                paylineCause = FailureCause.INVALID_DATA;
-                break;
+                return FailureCause.INVALID_DATA;
 
             case 2001:
             case 2000:
@@ -68,8 +75,7 @@ public class SlimpayErrorMapper {
             case 907:
             case 904:
             case 652:
-                paylineCause = FailureCause.COMMUNICATION_ERROR;
-                break;
+                return FailureCause.COMMUNICATION_ERROR;
 
 
             case 301:
@@ -101,25 +107,20 @@ public class SlimpayErrorMapper {
             case 925:
             case 158:
             case 160:
-                paylineCause = FailureCause.REFUSED;
-                break;
+                return FailureCause.REFUSED;
 
             case 651:
             case 656:
-                paylineCause = FailureCause.FRAUD_DETECTED;
-                break;
+                return FailureCause.FRAUD_DETECTED;
 
             case 100:
-                paylineCause = FailureCause.PARTNER_UNKNOWN_ERROR;
-                break;
+                return FailureCause.PARTNER_UNKNOWN_ERROR;
 
             case 1009:
-                paylineCause = FailureCause.CANCEL;
-                break;
+                return FailureCause.CANCEL;
 
             case 120:
-                paylineCause = FailureCause.SESSION_EXPIRED;
-                break;
+                return FailureCause.SESSION_EXPIRED;
 
             case 103:
             case 199:
@@ -131,16 +132,9 @@ public class SlimpayErrorMapper {
             case 906:
             case 924:
             default:
-                paylineCause = FailureCause.PAYMENT_PARTNER_ERROR;
-                break;
+                return FailureCause.PAYMENT_PARTNER_ERROR;
         }
 
-        return paylineCause;
 
-
-    }
-
-    private SlimpayErrorMapper() {
-        //ras
     }
 }
