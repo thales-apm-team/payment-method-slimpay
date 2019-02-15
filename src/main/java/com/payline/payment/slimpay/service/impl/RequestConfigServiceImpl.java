@@ -171,11 +171,11 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
     public String getParameterValue(ContractParametersCheckRequest request, String key) throws InvalidDataException {
         PaylineParameterType paylineParameterType = PARAMETERS_MAP.get(key);
         if (PaylineParameterType.CONTRACT_CONFIGURATION_PARAMETER == paylineParameterType) {
-            return safeGetValue(request.getContractConfiguration(), key);
+            return safeGetValue(request.getAccountInfo(), key);
         } else if (PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
             return safeGetValue(request.getPartnerConfiguration(), key);
         } else if (PaylineParameterType.EXT_PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
-            String ext = safeGetValue(request.getContractConfiguration(), getExtensionKey());
+            String ext = safeGetValue(request.getAccountInfo(), getExtensionKey());
             return safeGetValue(request.getPartnerConfiguration(), key, ext);
         }
         return null;

@@ -47,15 +47,13 @@ dependencies {
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
     implementation group: 'javax.json', name: 'javax.json-api', version: '1.1.4'
-    implementation group:'org.glassfish', name:'javax.json', version:'1.1'
+    implementation group: 'org.glassfish', name: 'javax.json', version: '1.1'
 
     implementation group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.10'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
 
     implementation group: 'com.slimpay', name: 'hapiclient', version: '1.0.2'
-    //powermock ??
-    compile group: 'org.powermock', name: 'powermock-mockito-release-full', version: '1.5.4'
-    
+    testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.0'
 
 
     testImplementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
@@ -71,6 +69,7 @@ dependencies {
 
     // fatJarTest include testImplementation dependencies (not for IT)
     fatJarTest group: 'org.mockito', name: 'mockito-core', version: '2.21.0'
+    fatJarTest group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.0'
     fatJarTest group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.0.3'
     fatJarTest group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.13.0'
     fatJarTest group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.13.0'
@@ -148,5 +147,5 @@ task testJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
 
 test {
     useJUnitPlatform()
-    exclude('**/*IT.class')
 }
+test.exclude '**/*IT.class'

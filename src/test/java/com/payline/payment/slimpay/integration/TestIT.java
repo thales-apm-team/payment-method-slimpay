@@ -10,7 +10,7 @@ import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.PaymentFormContext;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.integration.AbstractPaymentIntegration;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
-import static com.payline.payment.slimpay.utils.SlimpayConstants.PAYMENT_PROCESSOR;
 
 
 public class TestIT extends AbstractPaymentIntegration {
@@ -93,7 +92,7 @@ public class TestIT extends AbstractPaymentIntegration {
 
             //confirmation OTP
             driver.findElement(By.xpath("//*[@class='demo-tooltip demo-otp']//a")).click();
-            String code  =  driver.findElement(By.xpath("//*[@class='demo-tooltip demo-otp']//a")).getText();
+            String code = driver.findElement(By.xpath("//*[@class='demo-tooltip demo-otp']//a")).getText();
             driver.findElement(By.xpath("//input[@name='otp']")).sendKeys(code);
 
 
@@ -122,7 +121,7 @@ public class TestIT extends AbstractPaymentIntegration {
         ContractParametersCheckRequest checkRequest = TestUtils.createContractParametersCheckRequest();
 
         Map<String, String> checkError = configurationService.check(checkRequest);
-        Assert.assertEquals(0, checkError.size());
+        Assertions.assertEquals(0, checkError.size());
 
         PaymentRequest request = createDefaultPaymentRequest();
         this.fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);

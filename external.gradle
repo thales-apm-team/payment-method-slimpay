@@ -1,3 +1,5 @@
+import javax.swing.*
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -85,6 +87,22 @@ task generateMetaInf {
             def configMetafile = new File(srcDir.getPath() + '/com.payline.pmapi.service.PaymentFormConfigurationService')
             configMetafile.write(_package + 'PaymentFormConfigurationServiceImpl');
 
+        }
+    }
+}
+
+
+tasks.build.dependsOn("checkJarSize")
+task checkJarSize {
+    doLast {
+
+        File file = new File("${projectDir}/build/libs/${jar.archiveName}")
+        System.out.println(file.getName())
+        System.out.println(file.length())
+        if (file.length() > 2097152) {
+            JOptionPane.showMessageDialog(null, "Jar file size is too heavy : " + file.length(),
+                    "Titre : exception",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }
