@@ -3,6 +3,7 @@ package com.payline.payment.slimpay.utils;
 
 import com.payline.payment.slimpay.bean.common.*;
 import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
+import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
 import com.slimpay.hapiclient.hal.CustomRel;
 import com.slimpay.hapiclient.hal.Rel;
@@ -95,7 +96,7 @@ public class BeansUtils {
 
     //Mocked response
     public static SlimpayOrderResponse createMockedSlimpayOrderResponseOpen() {
-        return SlimpayOrderResponse.fromJson("{\n" +
+        SlimpayOrderResponse OrderResponse = SlimpayOrderResponse.fromJson("{\n" +
                 "   \"_links\":    {\n" +
                 "      \"self\": {\"href\": \"https://api.preprod.slimpay.com/orders/ff4ea3a6-303e-11e9-9d34-000000000000\"},\n" +
                 "      \"profile\": {\"href\": \"https://api.preprod.slimpay.com/alps/v1/orders\"},\n" +
@@ -120,10 +121,12 @@ public class BeansUtils {
                 "   \"sendUserApproval\": true,\n" +
                 "   \"checkoutActor\": \"end_user\"\n" +
                 "}");
+        OrderResponse.setUrlApproval("https://checkout.preprod.slimpay.com/userApproval?accessCode=spi5LZZtKKSEvMk3ogLghiOzAFUsKb1cTznTeh88yEHM5ES31r8Dm3kx21tAJF");
+        return OrderResponse;
     }
 
     public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosed() {
-        return SlimpayOrderResponse.fromJson("{\n" +
+        SlimpayOrderResponse orderResponse = SlimpayOrderResponse.fromJson("{\n" +
                 "   \"_links\":    {\n" +
                 "      \"self\": {\"href\": \"https://api.preprod.slimpay.com/orders/ff4ea3a6-303e-11e9-9d34-000000000000\"},\n" +
                 "      \"profile\": {\"href\": \"https://api.preprod.slimpay.com/alps/v1/orders\"},\n" +
@@ -148,9 +151,22 @@ public class BeansUtils {
                 "   \"sendUserApproval\": true,\n" +
                 "   \"checkoutActor\": \"end_user\"\n" +
                 "}");
+        orderResponse.setUrlApproval("https://checkout.preprod.slimpay.com/userApproval?accessCode=spi5LZZtKKSEvMk3ogLghiOzAFUsKb1cTznTeh88yEHM5ES31r8Dm3kx21tAJF");
+        return orderResponse;
     }
 
-    public static Resource getMockedOrder() {
+    public static SlimpayFailureResponse createMockedSlimpayFailureResponse() {
+        String jsonError = "{\n" +
+                "   \"code\": 901,\n" +
+                "   \"message\": \"Duplicate order : order Y-ORDER-REF- for creditor paylinemerchanttest1 already exists\"\n" +
+                "}";
+       return SlimpayFailureResponse.fromJson(jsonError);
+
+
+    }
+
+
+    public static Resource getMockedResource() {
 
 
         JsonObject state = Json.createObjectBuilder()

@@ -1,14 +1,14 @@
 package com.payline.payment.slimpay.service.impl;
 
+import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
+import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseRedirect;
-import com.slimpay.hapiclient.hal.Resource;
-import com.slimpay.hapiclient.http.Follow;
-import com.slimpay.hapiclient.http.HapiClient;
+import com.slimpay.hapiclient.http.JsonBody;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
-import static com.payline.payment.slimpay.utils.BeansUtils.getMockedOrder;
+import static com.payline.payment.slimpay.utils.BeansUtils.createMockedSlimpayFailureResponse;
+import static com.payline.payment.slimpay.utils.BeansUtils.createMockedSlimpayOrderResponseOpen;
 import static com.payline.payment.slimpay.utils.TestUtils.createBadPaymentRequest;
 import static com.payline.payment.slimpay.utils.TestUtils.createDefaultPaymentRequest;
 
@@ -28,8 +29,8 @@ public class PaymentServiceImplTest {
 
     @Spy
     SlimpayHttpClient httpClient;
-    @Spy
-    HapiClient hapiClient;
+//    @Spy
+//    HapiClient hapiClient;
 
     @InjectMocks
     PaymentServiceImpl service;
@@ -46,8 +47,8 @@ public class PaymentServiceImplTest {
 
     @Test
     public void paymentRequestOK() throws Exception {
-        Resource responseMocked = getMockedOrder();
-        Mockito.doReturn(responseMocked).when(hapiClient).send(Mockito.any(Follow.class));
+        SlimpayOrderResponse responseMocked = createMockedSlimpayOrderResponseOpen();
+        Mockito.doReturn(responseMocked).when(httpClient).createOrder(Mockito.any(PaymentRequest.class),Mockito.any(JsonBody.class));
 
         PaymentRequest request = createDefaultPaymentRequest();
         PaymentResponse response = service.paymentRequest(request);
@@ -57,15 +58,19 @@ public class PaymentServiceImplTest {
         PaymentResponseRedirect responseRedirect = (PaymentResponseRedirect) response;
         //Assert we have confirmation Url
         Assertions.assertNotNull(responseRedirect.getRedirectionRequest().getUrl());
-        System.out.println(responseRedirect.getRedirectionRequest().getUrl());
+        Assertions.assertNotNull(responseRedirect.getRedirectionRequest().getUrl());
 
 
     }
 
     @Test
     public void paymentRequestReferenceDuplicated() throws Exception {
+        SlimpayFailureResponse responseMocked = createMockedSlimpayFailureResponse();
+        Mockito.doReturn(responseMocked).when(httpClient).createOrder(Mockito.any(PaymentRequest.class),Mockito.any(JsonBody.class));
+
         PaymentRequest request = createBadPaymentRequest();
         PaymentResponse response = service.paymentRequest(request);
+
         Assertions.assertTrue(response.getClass() == PaymentResponseFailure.class);
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
         Assertions.assertNotNull(responseFailure.getFailureCause());
