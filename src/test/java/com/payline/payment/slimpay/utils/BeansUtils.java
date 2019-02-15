@@ -98,7 +98,7 @@ public class BeansUtils {
     }
 
     //Mocked response
-    private static SlimpayOrderResponse createMockedSlimpayOrderResponse(String state) {
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponse(String state) {
         SlimpayOrderResponse OrderResponse = SlimpayOrderResponse.fromJson("{\n" +
                 "   \"_links\":    {\n" +
                 "      \"self\": {\"href\": \"https://api.preprod.slimpay.com/orders/ff4ea3a6-303e-11e9-9d34-000000000000\"},\n" +
@@ -138,6 +138,10 @@ public class BeansUtils {
 
     public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAborted() {
         return createMockedSlimpayOrderResponse(OrderStatus.CLOSED_ABORTED);
+    }
+
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAbortedByClient() {
+        return createMockedSlimpayOrderResponse(OrderStatus.CLOSED_ABORTED_BY_CLIENT);
     }
 
     public static SlimpayFailureResponse createMockedSlimpayFailureResponse() {
