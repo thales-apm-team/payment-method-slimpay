@@ -8,6 +8,7 @@ import com.payline.payment.slimpay.utils.SlimpayConstants;
 import com.payline.payment.slimpay.utils.TestUtils;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
+import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
@@ -122,6 +123,23 @@ public class ConfigurationServiceImplTest {
         Map<String, String> errors = service.check(contractParametersCheckRequest);
         Assertions.assertEquals(1, errors.size());
 
+    }
+
+    @Test
+    public void testGetReleaseInformation_versionFormat(){
+        // when: getReleaseInformation method is called
+        ReleaseInformation releaseInformation = service.getReleaseInformation();
+
+        // then: the version has a valid format
+        Assertions.assertNotNull( releaseInformation );
+        Assertions.assertTrue( releaseInformation.getVersion().matches( "^\\d\\.\\d(\\.\\d)?$" ) );
+    }
+
+    @Test
+    public void getName() {
+        String name = service.getName( Locale.FRENCH);
+        Assertions.assertNotNull(name);
+        Assertions.assertNotEquals(0, name.length());
     }
 
 }
