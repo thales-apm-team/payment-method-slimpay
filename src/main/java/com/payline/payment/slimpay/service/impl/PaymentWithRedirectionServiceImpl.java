@@ -42,70 +42,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
         try {
             SlimpayResponse orderResponse = httpClient.getOrder(redirectionPaymentRequest);
-
-            if (orderResponse.getClass() == SlimpayFailureResponse.class) {
-                //Fail to get order
-                SlimpayFailureResponse slimpayOrderFailureResponse = (SlimpayFailureResponse) orderResponse;
-                return PaymentResponseFailure.PaymentResponseFailureBuilder
-                        .aPaymentResponseFailure()
-                        .withErrorCode(errorToString(slimpayOrderFailureResponse.getError()))
-                        .withFailureCause(handleSlimpayFailureResponse(slimpayOrderFailureResponse.getError()))
-                        .withPartnerTransactionId(redirectionPaymentRequest.getTransactionId())
-                        .build();
-
-
-            } else {
-
-                SlimpayOrderResponse slimpayOrderResponse = (SlimpayOrderResponse) orderResponse;
-                String state = slimpayOrderResponse.getState();
-                switch (state) {
-                    case OPEN:
-                    case OPEN_RUNNING:
-                    case OPEN_NOT_RUNNING:
-                        return PaymentResponseOnHold.PaymentResponseOnHoldBuilder.aPaymentResponseOnHold()
-                                .withPartnerTransactionId(redirectionPaymentRequest.getTransactionId())
-                                .withOnHoldCause(OnHoldCause.SCORING_ASYNC)
-                                .build();
-
-                    case CLOSED_ABORTED:
-                    case CLOSED_ABORTED_BY_CLIENT:
-                        return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
-                                .withPartnerTransactionId(redirectionPaymentRequest.getTransactionId())
-                                .withFailureCause(FailureCause.CANCEL)
-                                .build();
-
-
-                    case CLOSED_COMPLETED:
-                        //check statut du payment ??
-                        //todo get transaction additional data (id ) :  mandate payment
-                        //check payment state or not ??
-                        PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.Builder
-                                .aPaymentResponseSuccessAdditionalData()
-                                .withOrderId(slimpayOrderResponse.getId())
-                                .withOrderReference(slimpayOrderResponse.getReference())
-//                                .withMandateId()
-                                .withMandateReference(slimpayOrderResponse.getReference())
-//                                .withPaymentId()
-                                .withPaymentReference(slimpayOrderResponse.getReference())
-                                .build();
-                        return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
-                                .withTransactionAdditionalData(additionalData.toJson())
-                                .withMessage(new Message(Message.MessageType.SUCCESS, SUCCESS_MESSAGE))
-                                .withPartnerTransactionId(redirectionPaymentRequest.getTransactionId())
-                                .withTransactionDetails(new EmptyTransactionDetails())
-                                .build();
-
-                    default:
-                        return PaymentResponseOnHold.PaymentResponseOnHoldBuilder.aPaymentResponseOnHold()
-                                .withPartnerTransactionId(redirectionPaymentRequest.getTransactionId())
-                                .withOnHoldCause(OnHoldCause.SCORING_ASYNC)
-                                .build();
-
-                }
-
-
-            }
-
+            return returnResponse(orderResponse, transactionId);
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             LOGGER.error("unable to get the payment status");
@@ -143,72 +80,8 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
         try {
             SlimpayResponse orderResponse = httpClient.getOrder(transactionStatusRequest);
+            return returnResponse(orderResponse, transactionId);
 
-            if (orderResponse.getClass() == SlimpayFailureResponse.class) {
-                //Fail to get order
-                SlimpayFailureResponse slimpayOrderFailureResponse = (SlimpayFailureResponse) orderResponse;
-                return PaymentResponseFailure.PaymentResponseFailureBuilder
-                        .aPaymentResponseFailure()
-                        .withErrorCode(errorToString(slimpayOrderFailureResponse.getError()))
-                        .withFailureCause(handleSlimpayFailureResponse(slimpayOrderFailureResponse.getError()))
-                        .withPartnerTransactionId(transactionStatusRequest.getTransactionId())
-                        .build();
-
-
-            } else {
-
-                SlimpayOrderResponse slimpayOrderResponse = (SlimpayOrderResponse) orderResponse;
-                String state = slimpayOrderResponse.getState();
-                switch (state) {
-                    case OPEN:
-                    case OPEN_RUNNING:
-                    case OPEN_NOT_RUNNING:
-                        return PaymentResponseOnHold.PaymentResponseOnHoldBuilder.aPaymentResponseOnHold()
-                                .withPartnerTransactionId(transactionStatusRequest.getTransactionId())
-                                .withOnHoldCause(OnHoldCause.SCORING_ASYNC)
-                                .build();
-
-                    case CLOSED_ABORTED_BY_CLIENT:
-                        return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
-                                .withPartnerTransactionId(transactionStatusRequest.getTransactionId())
-                                .withFailureCause(FailureCause.CANCEL)
-                                .build();
-
-                    case CLOSED_ABORTED:
-                    case CLOSED_ABORTED_BY_SERVER:
-                        return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
-                                .withPartnerTransactionId(transactionStatusRequest.getTransactionId())
-                                .withFailureCause(FailureCause.REFUSED)
-                                .build();
-
-                    case CLOSED_COMPLETED:
-                        //check statut du payment ??
-                        //todo get transaction additional data (id) :  mandate payment
-                        //check payment state or not ??
-                        PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.Builder
-                                .aPaymentResponseSuccessAdditionalData()
-                                .withOrderId(slimpayOrderResponse.getId())
-                                .withOrderReference(slimpayOrderResponse.getReference())
-//                                .withMandateId()
-                                .withMandateReference(slimpayOrderResponse.getReference())
-//                                .withPaymentId()
-                                .withPaymentReference(slimpayOrderResponse.getReference())
-                                .build();
-                        return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
-                                .withTransactionAdditionalData(additionalData.toJson())
-                                .withMessage(new Message(Message.MessageType.SUCCESS, SUCCESS_MESSAGE))
-                                .withPartnerTransactionId(transactionStatusRequest.getTransactionId())
-                                .withTransactionDetails(new EmptyTransactionDetails())
-                                .build();
-
-                    default:
-                        return PaymentResponseOnHold.PaymentResponseOnHoldBuilder.aPaymentResponseOnHold()
-                                .withPartnerTransactionId(transactionStatusRequest.getTransactionId())
-                                .withOnHoldCause(OnHoldCause.SCORING_ASYNC)
-                                .build();
-                }
-
-            }
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             LOGGER.error("unable to get the transactionStatusRequest status");
             String errorString = e.getResponseBody();
@@ -230,6 +103,74 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                     .build();
         }
 
+    }
+
+    public PaymentResponse returnResponse(SlimpayResponse orderResponse, String transactionId){
+        if (orderResponse.getClass() == SlimpayFailureResponse.class) {
+            //Fail to get order
+            SlimpayFailureResponse slimpayOrderFailureResponse = (SlimpayFailureResponse) orderResponse;
+            return PaymentResponseFailure.PaymentResponseFailureBuilder
+                    .aPaymentResponseFailure()
+                    .withErrorCode(errorToString(slimpayOrderFailureResponse.getError()))
+                    .withFailureCause(handleSlimpayFailureResponse(slimpayOrderFailureResponse.getError()))
+                    .withPartnerTransactionId(transactionId)
+                    .build();
+
+
+        } else {
+
+            SlimpayOrderResponse slimpayOrderResponse = (SlimpayOrderResponse) orderResponse;
+            String state = slimpayOrderResponse.getState();
+            switch (state) {
+                case OPEN:
+                case OPEN_RUNNING:
+                case OPEN_NOT_RUNNING:
+                    return PaymentResponseOnHold.PaymentResponseOnHoldBuilder.aPaymentResponseOnHold()
+                            .withPartnerTransactionId(transactionId)
+                            .withOnHoldCause(OnHoldCause.SCORING_ASYNC)
+                            .build();
+
+                case CLOSED_ABORTED_BY_CLIENT:
+                    return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
+                            .withPartnerTransactionId(transactionId)
+                            .withFailureCause(FailureCause.CANCEL)
+                            .build();
+
+                case CLOSED_ABORTED:
+                case CLOSED_ABORTED_BY_SERVER:
+                    return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
+                            .withPartnerTransactionId(transactionId)
+                            .withFailureCause(FailureCause.REFUSED)
+                            .build();
+
+                case CLOSED_COMPLETED:
+                    //check statut du payment ??
+                    //todo get transaction additional data (id) :  mandate payment
+                    //check payment state or not ??
+                    PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.Builder
+                            .aPaymentResponseSuccessAdditionalData()
+                            .withOrderId(slimpayOrderResponse.getId())
+                            .withOrderReference(slimpayOrderResponse.getReference())
+//                                .withMandateId()
+                            .withMandateReference(slimpayOrderResponse.getReference())
+//                                .withPaymentId()
+                            .withPaymentReference(slimpayOrderResponse.getReference())
+                            .build();
+                    return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
+                            .withTransactionAdditionalData(additionalData.toJson())
+                            .withMessage(new Message(Message.MessageType.SUCCESS, SUCCESS_MESSAGE))
+                            .withPartnerTransactionId(transactionId)
+                            .withTransactionDetails(new EmptyTransactionDetails())
+                            .build();
+
+                default:
+                    return PaymentResponseOnHold.PaymentResponseOnHoldBuilder.aPaymentResponseOnHold()
+                            .withPartnerTransactionId(transactionId)
+                            .withOnHoldCause(OnHoldCause.SCORING_ASYNC)
+                            .build();
+            }
+
+        }
     }
 }
 

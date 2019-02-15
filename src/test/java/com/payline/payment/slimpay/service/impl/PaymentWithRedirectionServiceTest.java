@@ -65,6 +65,34 @@ public class PaymentWithRedirectionServiceTest {
     }
 
     @Test
+    public void finalizeRedirectionPaymentKOAborted() throws Exception {
+        when(httpClient.getOrder(any(RedirectionPaymentRequest.class))).thenReturn(BeansUtils.createMockedSlimpayOrderResponseClosedAborted());
+
+        RedirectionPaymentRequest request = createRedirectionPaymentRequest("ZORDER-DEV-1549638902921");
+        PaymentResponse response = service.finalizeRedirectionPayment(request);
+
+        Assertions.assertTrue(response instanceof PaymentResponseFailure);
+        PaymentResponseFailure failureResponse = (PaymentResponseFailure) response;
+        Assertions.assertNotNull(failureResponse);
+        Assertions.assertNotNull(failureResponse.getPartnerTransactionId());
+        Assertions.assertNotNull(failureResponse.getFailureCause());
+    }
+
+//    @Test
+//    public void finalizeRedirectionPaymentFailure() throws Exception {
+//        when(httpClient.getOrder(any(RedirectionPaymentRequest.class))).thenReturn(BeansUtils.createMockedSlimpayFailureResponse());
+//
+//        RedirectionPaymentRequest request = createRedirectionPaymentRequest("ZORDER-DEV-1549638902921");
+//        PaymentResponse response = service.finalizeRedirectionPayment(request);
+//
+//        Assertions.assertTrue(response instanceof PaymentResponseFailure);
+//        PaymentResponseFailure failureResponse = (PaymentResponseFailure) response;
+//        Assertions.assertNotNull(failureResponse);
+//        Assertions.assertNotNull(failureResponse.getPartnerTransactionId());
+//        Assertions.assertNotNull(failureResponse.getFailureCause());
+//    }
+
+    @Test
     public void handleSessionExpiredKo() throws Exception {
         when(httpClient.getOrder(any(TransactionStatusRequest.class))).thenThrow(new HttpCallException("401", "bar"));
 
@@ -79,8 +107,21 @@ public class PaymentWithRedirectionServiceTest {
         Assertions.assertNotNull(failureResponse.getFailureCause());
     }
 
+//    @Test
+//    public void handleSessionExpiredOk() throws Exception {
+//        when(httpClient.getOrder(any(TransactionStatusRequest.class))).thenReturn(BeansUtils.createMockedSlimpayFailureResponse());
+//        TransactionStatusRequest request = createDefaultTransactionStatusRequest("HDEV-1550072222649");
+//        PaymentResponse response = service.handleSessionExpired(request);
+//
+//        Assertions.assertTrue(response instanceof PaymentResponseFailure);
+//        PaymentResponseFailure failureResponse = (PaymentResponseFailure) response;
+//        Assertions.assertNotNull(failureResponse);
+//        Assertions.assertNotNull(failureResponse.getPartnerTransactionId());
+//        Assertions.assertNotNull(failureResponse.getFailureCause());
+//    }
+
     @Test
-    public void handleSessionExpiredOk() throws Exception {
+    public void handleSessionExpiredKoFailure() throws Exception {
         when(httpClient.getOrder(any(TransactionStatusRequest.class))).thenReturn(BeansUtils.createMockedSlimpayOrderResponseClosed());
         TransactionStatusRequest request = createDefaultTransactionStatusRequest("HDEV-1550072222649");
         PaymentResponse response = service.handleSessionExpired(request);
