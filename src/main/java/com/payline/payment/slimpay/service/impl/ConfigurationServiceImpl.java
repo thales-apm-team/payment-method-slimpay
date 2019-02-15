@@ -155,6 +155,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             }
 
         } catch (PluginTechnicalException | HttpException e) {
+            // todo si c'est autre chose faut le logger aussi
             LOGGER.error("Error while calling the plugin {}", e);
             //si erreur 401 ?
             String errorCode = e.getMessage();

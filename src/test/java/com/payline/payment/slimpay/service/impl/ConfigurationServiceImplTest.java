@@ -40,14 +40,12 @@ public class ConfigurationServiceImplTest {
 
     private Map<String, String> accountInfo = new HashMap<>();
 
-    private static Environment environment;
+    private static Environment environment = TestUtils.ENVIRONMENT;;
 
     @BeforeAll
     public static void setUp() {
         service = new ConfigurationServiceImpl();
         MockitoAnnotations.initMocks(ConfigurationServiceImplTest.class);
-
-        environment = TestUtils.ENVIRONMENT;
     }
 
     @Test
