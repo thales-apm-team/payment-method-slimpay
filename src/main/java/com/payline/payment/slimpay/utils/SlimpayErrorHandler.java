@@ -20,6 +20,11 @@ public class SlimpayErrorHandler {
                 .build();
     }
 
+    public static PaymentResponseFailure getPaymentResponseFailure(final FailureCause failureCause, String errorCode) {
+        return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
+                .withFailureCause(failureCause)
+                .build();
+    }
     public static PaymentResponseFailure getPaymentResponseFailure(final FailureCause failureCause, String transactionId, String errorCode) {
         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                 .withFailureCause(failureCause)

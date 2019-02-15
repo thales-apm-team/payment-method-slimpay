@@ -26,16 +26,12 @@ import static com.payline.payment.slimpay.utils.TestUtils.createDefaultPaymentRe
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PaymentServiceImplTest {
 
-
     @Spy
     SlimpayHttpClient httpClient;
-//    @Spy
-//    HapiClient hapiClient;
 
     @InjectMocks
     PaymentServiceImpl service;
 
-    private BeanAssemblerServiceImpl beanAssembleService = BeanAssemblerServiceImpl.getInstance();
 
 
     @BeforeAll
@@ -52,19 +48,19 @@ public class PaymentServiceImplTest {
 
         PaymentRequest request = createDefaultPaymentRequest();
         PaymentResponse response = service.paymentRequest(request);
-        System.out.println(response);
         Assertions.assertTrue(response.getClass() == PaymentResponseRedirect.class);
 
         PaymentResponseRedirect responseRedirect = (PaymentResponseRedirect) response;
         //Assert we have confirmation Url
         Assertions.assertNotNull(responseRedirect.getRedirectionRequest().getUrl());
-        Assertions.assertNotNull(responseRedirect.getRedirectionRequest().getUrl());
+        Assertions.assertNotNull(responseRedirect.getPartnerTransactionId());
+        Assertions.assertNotNull(responseRedirect.getRequestContext());
 
 
     }
 
     @Test
-    public void paymentRequestReferenceDuplicated() throws Exception {
+    public void paymentRequestKO() throws Exception {
         SlimpayFailureResponse responseMocked = createMockedSlimpayFailureResponse();
         Mockito.doReturn(responseMocked).when(httpClient).createOrder(Mockito.any(PaymentRequest.class),Mockito.any(JsonBody.class));
 
@@ -74,10 +70,37 @@ public class PaymentServiceImplTest {
         Assertions.assertTrue(response.getClass() == PaymentResponseFailure.class);
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
         Assertions.assertNotNull(responseFailure.getFailureCause());
+        Assertions.assertNotNull(responseFailure.getPartnerTransactionId());
         Assertions.assertEquals(FailureCause.INVALID_DATA, responseFailure.getFailureCause());
         Assertions.assertNotNull(responseFailure.getErrorCode());
 
+    }
+
+    @Test
+    public void paymentRequestResponseNull() throws Exception {
+        Mockito.doReturn(null).when(httpClient).createOrder(Mockito.any(PaymentRequest.class),Mockito.any(JsonBody.class));
+
+        PaymentRequest request = createBadPaymentRequest();
+        PaymentResponse response = service.paymentRequest(request);
+
+        Assertions.assertTrue(response.getClass() == PaymentResponseFailure.class);
+        PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
+        Assertions.assertNotNull(responseFailure.getFailureCause());
+        Assertions.assertNotNull(responseFailure.getPartnerTransactionId());
+        Assertions.assertEquals(FailureCause.PARTNER_UNKNOWN_ERROR, responseFailure.getFailureCause());
+        Assertions.assertNotNull(responseFailure.getErrorCode());
 
     }
 
+
+    @Test
+    public void paymentRequestNullRequest() throws Exception {
+        PaymentResponse response = service.paymentRequest(null);
+
+        Assertions.assertTrue(response.getClass() == PaymentResponseFailure.class);
+        PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
+        Assertions.assertNotNull(responseFailure.getFailureCause());
+        Assertions.assertEquals(FailureCause.INVALID_DATA, responseFailure.getFailureCause());
+
+    }
 }

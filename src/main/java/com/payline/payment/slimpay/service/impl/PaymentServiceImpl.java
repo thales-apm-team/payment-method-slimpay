@@ -51,9 +51,7 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (InvalidDataException e) {
             LOGGER.error("Unable to build a orderRequest {}", e);
             return SlimpayErrorHandler.getPaymentResponseFailure(
-                    FailureCause.INVALID_DATA,
-                    paymentRequest.getTransactionId(),
-                    "Unable to build a orderRequest");
+                    FailureCause.INVALID_DATA);
         }
         //make order request body
         JsonBody jsonOrderRequest = slimpayOrderRequest.toJsonBody();

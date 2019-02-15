@@ -6,6 +6,8 @@ import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.utils.properties.constants.OrderStatus;
+import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
+import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionStatus;
 import com.slimpay.hapiclient.hal.CustomRel;
 import com.slimpay.hapiclient.hal.Rel;
 import com.slimpay.hapiclient.hal.Resource;
@@ -113,7 +115,7 @@ public class BeansUtils {
                 "   },\n" +
                 "   \"id\": \"ff4ea3a6-303e-11e9-9d34-000000000000\",\n" +
                 "   \"reference\": \"Y-ORDER-REF-1550138270755\",\n" +
-                "   \"state\": \"" + state + "\",\n" +
+                "   \"state\": \"open.running\",\n" +
                 "   \"locale\": \"fr\",\n" +
                 "   \"started\": true,\n" +
                 "   \"dateCreated\": \"2019-02-14T09:57:54.083+0000\",\n" +
@@ -143,9 +145,49 @@ public class BeansUtils {
                 "   \"code\": 901,\n" +
                 "   \"message\": \"Duplicate order : order Y-ORDER-REF- for creditor paylinemerchanttest1 already exists\"\n" +
                 "}";
-       return SlimpayFailureResponse.fromJson(jsonError);
+        return SlimpayFailureResponse.fromJson(jsonError);
+
+
     }
 
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOut(String executionStatus) {
+        return SlimpayPaymentResponse.Builder.fromJson("{\n" +
+                "    \"id\": \"edbd987c-23e1-11e9-ad0d-000000000000\",\n" +
+                "    \"scheme\": \"SEPA.CREDIT_TRANSFER\",\n" +
+                "    \"reference\": \"REB-EXE-20190129-10189\",\n" +
+                "    \"direction\": \"OUT\",\n" +
+                "    \"amount\": \"0.01\",\n" +
+                "    \"currency\": \"EUR\",\n" +
+                "    \"label\": \"Virement Slimpay\",\n" +
+                "    \"state\": \"accepted\",\n" +
+                "    \"executionStatus\": \"" + executionStatus + "\",\n" +
+                "    \"executionDate\": \"2019-01-28T23:00:00.000+0000\",\n" +
+                "    \"dateCreated\": \"2019-01-29T16:21:27.471+0000\",\n" +
+                "    \"confirmed\": false,\n" +
+                "    \"category\": \"refund\",\n" +
+                "    \"processor\": \"slimpay\"\n" +
+                "}");
+    }
+
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutTopProcess() {
+        return createMockedSlimpayPaymentOut(PaymentExecutionStatus.TOP_PROCESS);
+    }
+
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutProcessed() {
+        return createMockedSlimpayPaymentOut(PaymentExecutionStatus.PROCESSED);
+    }
+
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutRejected() {
+        return createMockedSlimpayPaymentOut(PaymentExecutionStatus.REJECTED);
+    }
+
+    public static SlimpayFailureResponse createMockedSlimpayPaymentOutError() {
+        String jsonError = "{\n" +
+                "   \"code\": 901,\n" +
+                "   \"message\": \"Duplicate order : order Y-ORDER-REF- for creditor paylinemerchanttest1 already exists\"\n" +
+                "}";
+        return SlimpayFailureResponse.fromJson(jsonError);
+    }
 
     public static Resource getMockedResource() {
         JsonObject state = Json.createObjectBuilder()
@@ -164,6 +206,8 @@ public class BeansUtils {
         String resourceJson = "";
 
         return Resource.fromJson(resourceJson);
+
+
     }
 
 }

@@ -2,7 +2,6 @@ package com.payline.payment.slimpay.service.impl;
 
 import com.google.gson.JsonSyntaxException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -10,18 +9,8 @@ import java.util.Map;
 
 public class TransactionManagerServiceImplTest {
 
-
-
-
     private Map<String, String> additionalData;
-    private TransactionManagerServiceImpl service;
-
-    @BeforeAll
-    public void setup() {
-        service = new TransactionManagerServiceImpl();
-
-    }
-
+    private TransactionManagerServiceImpl service = new TransactionManagerServiceImpl();
     @Test
     public void readAdditionalDataKo() {
         String malformedJson = "{mandateReference: \"RUMTEST01\",mandateId: \"Transaction01\", paymentReference: \"007\"";
@@ -29,10 +18,7 @@ public class TransactionManagerServiceImplTest {
             additionalData = service.readAdditionalData(malformedJson, "PaymentResponseSuccessAdditionalData");
         });
 
-
     }
-
-
 
 
     @Test

@@ -33,7 +33,7 @@ public class TestUtils {
     public static final String SUCCESS_URL = "https://succesurl.com/";
     public static final String CANCEL_URL = "http://localhost/cancelurl.com/";
     public static final String NOTIFICATION_URL = "http://google.com/";
-    private static final String MDP_IDENTIFIER = "Oney";
+    private static final String MDP_IDENTIFIER = "Slimpay";
 
 
     private static final String SOFT_DESCRIPTOR = "softDescriptor";

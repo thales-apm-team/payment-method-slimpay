@@ -30,7 +30,7 @@ public class PaymentFormConfigurationServiceImplTest {
     private final String decription = "payer avec slimpay";
     private final int height = 24;
     private final int width = 24;
-    private final String paymentMethodIdentifier = "paymentMethodIdentifier";
+    private final String paymentMethodIdentifier = "slimpay";
 
     private static final Environment ENVIRONMENT = new Environment("https://succesurl.com/", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
 
