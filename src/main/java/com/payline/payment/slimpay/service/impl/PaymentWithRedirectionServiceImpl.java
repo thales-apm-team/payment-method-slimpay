@@ -78,7 +78,6 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                     .withPartnerTransactionId(transactionId)
                     .build();
 
-
         } else {
 
             SlimpayOrderResponse slimpayOrderResponse = (SlimpayOrderResponse) orderResponse;
@@ -135,6 +134,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
         }
     }
+
 }
 
 

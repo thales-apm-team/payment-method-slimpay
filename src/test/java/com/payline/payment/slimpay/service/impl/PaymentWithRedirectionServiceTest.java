@@ -2,6 +2,7 @@ package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
+import com.payline.payment.slimpay.exception.HttpCallException;
 import com.payline.payment.slimpay.utils.BeansUtils;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
@@ -54,6 +55,19 @@ public class PaymentWithRedirectionServiceTest {
     }
 
     @Test
+    public void finalizeRedirectionPaymentKO() throws Exception {
+        when(httpClient.getOrder(any(RedirectionPaymentRequest.class))).thenThrow( new HttpCallException("this is an error", "foo"));
+        RedirectionPaymentRequest request = createRedirectionPaymentRequest("ORDER-DEV-1549638902921");
+        PaymentResponse response = service.finalizeRedirectionPayment(request);
+
+        Assertions.assertTrue(response instanceof PaymentResponseFailure);
+        PaymentResponseFailure failureResponse = (PaymentResponseFailure) response;
+        Assertions.assertNotNull(failureResponse);
+        Assertions.assertEquals(FailureCause.COMMUNICATION_ERROR, failureResponse.getFailureCause());
+        Assertions.assertNotNull(failureResponse.getPartnerTransactionId());
+    }
+
+    @Test
     public void handleSessionExpiredKoFailure() throws Exception {
         when(httpClient.getOrder(any(TransactionStatusRequest.class))).thenReturn(BeansUtils.createMockedSlimpayOrderResponseClosed());
         TransactionStatusRequest request = createDefaultTransactionStatusRequest("HDEV-1550072222649");
@@ -64,6 +78,19 @@ public class PaymentWithRedirectionServiceTest {
         Assertions.assertNotNull(successResponse);
         Assertions.assertNotNull(successResponse.getPartnerTransactionId());
         Assertions.assertNotNull(successResponse.getTransactionAdditionalData());
+    }
+
+    @Test
+    public void handleSessionExpiredKO() throws Exception {
+        when(httpClient.getOrder(any(TransactionStatusRequest.class))).thenThrow( new HttpCallException("this is an error", "foo"));
+        TransactionStatusRequest request = createDefaultTransactionStatusRequest("HDEV-1550072222649");
+        PaymentResponse response = service.handleSessionExpired(request);
+
+        Assertions.assertTrue(response instanceof PaymentResponseFailure);
+        PaymentResponseFailure failureResponse = (PaymentResponseFailure) response;
+        Assertions.assertNotNull(failureResponse);
+        Assertions.assertEquals(FailureCause.COMMUNICATION_ERROR, failureResponse.getFailureCause());
+        Assertions.assertNotNull(failureResponse.getPartnerTransactionId());
     }
 
     @Test
