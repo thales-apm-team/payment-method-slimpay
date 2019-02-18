@@ -190,11 +190,6 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
         private String label;
 
 
-        public static SlimpayPaymentResponse.Builder aPaymentResponseBuilder() {
-            return new SlimpayPaymentResponse.Builder();
-        }
-
-
         public SlimpayPaymentResponse.Builder verifyIntegrity() {
 
             //to do logger les champs manquants obligatoire ??

@@ -20,24 +20,11 @@ public class SlimpayErrorHandler {
                 .build();
     }
 
-    public static PaymentResponseFailure getPaymentResponseFailure(final FailureCause failureCause, String errorCode) {
-        return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
-                .withFailureCause(failureCause)
-                .withErrorCode(errorCode)
-                .build();
-    }
-
     public static PaymentResponseFailure getPaymentResponseFailure(final FailureCause failureCause, String transactionId, String errorCode) {
         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                 .withFailureCause(failureCause)
                 .withPartnerTransactionId(transactionId)
                 .withErrorCode(errorCode)
-                .build();
-    }
-
-    public static RefundResponseFailure geRefundResponseFailure(final FailureCause failureCause) {
-        return RefundResponseFailure.RefundResponseFailureBuilder.aRefundResponseFailure()
-                .withFailureCause(failureCause)
                 .build();
     }
 
