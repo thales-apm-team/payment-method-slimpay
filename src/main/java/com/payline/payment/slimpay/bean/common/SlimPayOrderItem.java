@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 //https://dev.slimpay.com/hapi/reference/order-items
 public class SlimPayOrderItem extends SlimpayBean {
 
-    private static final transient Logger LOGGER = LogManager.getLogger(SlimPayOrderItem.class);
+    private static final Logger LOGGER = LogManager.getLogger(SlimPayOrderItem.class);
 
     private String action;
     private String id;

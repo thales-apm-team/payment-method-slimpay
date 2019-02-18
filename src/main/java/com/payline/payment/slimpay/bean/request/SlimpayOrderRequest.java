@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 public class SlimpayOrderRequest extends SlimpayBean {
 
-    private static final transient Logger LOGGER = LogManager.getLogger(SlimpayOrderRequest.class);
+    private static final Logger LOGGER = LogManager.getLogger(SlimpayOrderRequest.class);
 
     private String reference;
     private String paymentScheme;

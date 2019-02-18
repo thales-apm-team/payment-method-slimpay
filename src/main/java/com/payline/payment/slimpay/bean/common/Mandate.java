@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 public class Mandate extends SlimpayBean {
 
-    private static final transient Logger LOGGER = LogManager.getLogger(Mandate.class);
+    private static final Logger LOGGER = LogManager.getLogger(Mandate.class);
     @Required
     private String reference;
     private String action;
