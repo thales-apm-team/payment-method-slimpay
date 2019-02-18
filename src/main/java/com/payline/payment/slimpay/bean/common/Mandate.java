@@ -7,6 +7,12 @@ import org.apache.logging.log4j.Logger;
 public class Mandate extends SlimpayBean {
 
     private static final Logger LOGGER = LogManager.getLogger(Mandate.class);
+
+    protected static final String REFERENCE_WARN = "Mandate must have a reference when built";
+    protected static final String SIGNATORY_WARN = "Mandate must have a signatory when built";
+    protected static final String PAYMENT_SCHEME_WARN = "Mandate must have a paymentScheme when built";
+    protected static final String CREATE_SEQUENCE_TYPE_WARN = "Mandate must have a createSequenceType when built";
+
     @Required
     private String reference;
     private String action;
@@ -135,17 +141,17 @@ public class Mandate extends SlimpayBean {
         public Mandate.Builder verifyIntegrity() {
 
             if (this.reference == null) {
-                LOGGER.warn("Mandate must have a reference when built");
+                LOGGER.warn(REFERENCE_WARN);
             }
             if (this.signatory == null) {
-                LOGGER.warn("Mandate must have a signatory when built");
+                LOGGER.warn(SIGNATORY_WARN);
             }
 
             if (this.paymentScheme == null) {
-                LOGGER.warn("Mandate must have a paymentScheme when built");
+                LOGGER.warn(PAYMENT_SCHEME_WARN);
             }
             if (this.createSequenceType == null) {
-                LOGGER.warn("Mandate must have a createSequenceType when built");
+                LOGGER.warn(CREATE_SEQUENCE_TYPE_WARN);
             }
 
             return this;

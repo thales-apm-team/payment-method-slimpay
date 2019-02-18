@@ -58,6 +58,7 @@ dependencies {
     testImplementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
 
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.21.0'
+    testImplementation group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.0'
 
     testImplementation "com.payline:payment-method-api:${paymentMethodApiVersion}"
     testImplementation "com.payline:payment-method-integration:${paymentMethodIntegrationVersion}"

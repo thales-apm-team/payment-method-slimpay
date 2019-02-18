@@ -44,7 +44,7 @@ public class TestUtils {
     //    private static final String TRANSACTION_ID = "455454545415451198120";
     private static final String TRANSACTION_ID = "HDEV-" + Calendar.getInstance().getTimeInMillis();
     private static final String CUSTOMER_ID = "Client2";
-    private static final String ADDITIONAL_DATA  = "{mandateReference: \"MANDATE-DEV-1549638902921\",mandateId: \"Transaction01\"," +
+    private static final String ADDITIONAL_DATA = "{mandateReference: \"MANDATE-DEV-1549638902921\",mandateId: \"Transaction01\"," +
             "orderReference: \"ORDER-DEV-1549638902921\",orderId: \"Transaction01\"," +
             "paymentReference: \"PAYMENT-DEV-1549638902921\",paymentId: \"3072b5e8-2eab-11e9-a9a1-000000000000\"}";
 
@@ -98,7 +98,7 @@ public class TestUtils {
     );
 
 
-    public static final Map<String, String> ACCOUNT_INFO = new HashMap<String, String>() {{
+    private static final Map<String, String> ACCOUNT_INFO = new HashMap<String, String>() {{
         put(CREDITOR_REFERENCE_KEY, "paylinemerchanttest1");
         put(FIRST_PAYMENT_SCHEME, "SEPA.DIRECT_DEBIT.CORE");
         put(MANDATE_PAYIN_SCHEME, ("SEPA.DIRECT_DEBIT.CORE"));
@@ -180,9 +180,9 @@ public class TestUtils {
     }
 
 
-    public static RefundRequest createRefundRequest(String transactionId,String amount) {
+    public static RefundRequest createRefundRequest(String transactionId, String amount) {
 
-        Amount amountRefunded  = new Amount(new BigInteger(amount), Currency.getInstance(CURRENCY_EUR));
+        Amount amountRefunded = new Amount(new BigInteger(amount), Currency.getInstance(CURRENCY_EUR));
         return RefundRequest.RefundRequestBuilder.aRefundRequest()
                 .withAmount(amountRefunded)
                 .withOrder(createOrder(transactionId, AMOUNT))
@@ -247,8 +247,8 @@ public class TestUtils {
 
 
         Map<String, String> requestData = new HashMap<>();
-        requestData.put(SlimpayConstants.CREDITOR_REFERENCE_KEY,"paylinemerchanttest1" );
-        requestData.put(SlimpayConstants.ORDER_REFERENCE,TRANSACTION_ID );
+        requestData.put(SlimpayConstants.CREDITOR_REFERENCE_KEY, "paylinemerchanttest1");
+        requestData.put(SlimpayConstants.ORDER_REFERENCE, TRANSACTION_ID);
         requestData.put(SlimpayConstants.ORDER_ID, "ff4ea3a6-303e-11e9-9d34-000000000000");
 
         final RequestContext requestContext = RequestContext.RequestContextBuilder
@@ -332,7 +332,7 @@ public class TestUtils {
 
 
     public static Buyer.FullName createFullName() {
-        return new Buyer.FullName("Jumper","Johnny", "4");
+        return new Buyer.FullName("Jumper", "Johnny", "4");
     }
 
     public static Map<Buyer.PhoneNumberType, String> createDefaultPhoneNumbers() {
@@ -421,8 +421,6 @@ public class TestUtils {
     }
 
 
-
-
     public static TransactionStatusRequest createDefaultTransactionStatusRequest(String transactionId) {
         return TransactionStatusRequest.TransactionStatusRequestBuilder
                 .aNotificationRequest()
@@ -457,7 +455,6 @@ public class TestUtils {
                 .withTransactionAdditionalData(ADDITIONAL_DATA)
                 .build();
     }
-
 
 
 }

@@ -202,7 +202,6 @@ public class BeansUtils {
                 .build();
 
         Map<Rel, Object> links = new HashMap<>();
-        Map<Rel, Object> embbeded = new HashMap<>();
         links.put(new CustomRel("https://api.slimpay.net/alps#extended-user-approval"), "https://api.preprod.slimpay.com/creditors/paylinemerchanttest1/orders/HDEV-1550076312981/extended-user-approval{?mode}");
         links.put(new CustomRel("https://api.slimpay.net/alps#cancel-order"), "https://api.preprod.slimpay.com/orders/c6542999-2fae-11e9-9d34-000000000000/cancellation");
         links.put(new CustomRel("https://api.slimpay.net/alps#get-order-items"), "https://api.preprod.slimpay.com/orders/c6542999-2fae-11e9-9d34-000000000000/order-items");
