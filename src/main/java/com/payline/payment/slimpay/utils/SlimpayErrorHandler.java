@@ -23,8 +23,10 @@ public class SlimpayErrorHandler {
     public static PaymentResponseFailure getPaymentResponseFailure(final FailureCause failureCause, String errorCode) {
         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                 .withFailureCause(failureCause)
+                .withErrorCode(errorCode)
                 .build();
     }
+
     public static PaymentResponseFailure getPaymentResponseFailure(final FailureCause failureCause, String transactionId, String errorCode) {
         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                 .withFailureCause(failureCause)
@@ -39,7 +41,7 @@ public class SlimpayErrorHandler {
                 .build();
     }
 
-    public static RefundResponseFailure geRefundResponseFailure(final FailureCause failureCause, String transactionId,String errorCode) {
+    public static RefundResponseFailure geRefundResponseFailure(final FailureCause failureCause, String transactionId, String errorCode) {
         return RefundResponseFailure.RefundResponseFailureBuilder.aRefundResponseFailure()
                 .withFailureCause(failureCause)
                 .withPartnerTransactionId(transactionId)

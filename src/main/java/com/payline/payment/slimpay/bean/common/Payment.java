@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 public class Payment extends SlimpayBean {
 
-    private static final transient Logger LOGGER = LogManager.getLogger(Payment.class);
+    private static final Logger LOGGER = LogManager.getLogger(Payment.class);
 
     @Required
     private String action;
@@ -222,9 +222,9 @@ public class Payment extends SlimpayBean {
             }
             if (this.direction == null) {
                 LOGGER.warn("Payment must have a direction when built");
-            } else if (this.direction != "IN" && this.direction != "OUT") {
+            } else if (!"IN".equals(this.direction) && !"OUT".equals(this.direction)) {
                 LOGGER.warn("Payment direction value must be 'IN' or 'OUT' ");
-            } else if (this.direction == "OUT") {
+            } else if ("OUT".equals(this.direction)) {
 
                 if (this.creditor == null) {
                     LOGGER.warn("Payment with direction 'OUT' must have a creditor when built");

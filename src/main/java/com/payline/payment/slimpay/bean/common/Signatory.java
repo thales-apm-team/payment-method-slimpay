@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 public class Signatory extends SlimpayBean {
 
-    private static final transient Logger LOGGER = LogManager.getLogger(Signatory.class);
+    private static final Logger LOGGER = LogManager.getLogger(Signatory.class);
     //Mr/Miss/Mrs
     private String honorificPrefix;
     @Required

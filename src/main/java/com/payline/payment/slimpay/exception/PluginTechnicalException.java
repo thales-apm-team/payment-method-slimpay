@@ -18,7 +18,7 @@ public class PluginTechnicalException extends Exception {
 
     private final String message;
 
-    protected SlimpayError slimpayError = null;
+    protected final SlimpayError slimpayError;
 
 
     protected final String errorCodeOrLabel;
@@ -27,6 +27,7 @@ public class PluginTechnicalException extends Exception {
         super();
         this.message = message;
         this.errorCodeOrLabel = errorCodeOrLabel;
+        slimpayError = null;
         LOGGER.error(message);
     }
 
@@ -39,6 +40,7 @@ public class PluginTechnicalException extends Exception {
         super(e);
         this.message = e.getMessage();
         this.errorCodeOrLabel = errorCodeOrLabel;
+        slimpayError = null;
         LOGGER.error(errorCodeOrLabel, e);
 
     }
