@@ -52,6 +52,7 @@ public class PluginUtils {
      * @return
      */
     public static Float createFloatAmount(Amount amount) {
+        if (amount == null) return null;
         return Float.parseFloat(createStringAmount(amount));
     }
 
