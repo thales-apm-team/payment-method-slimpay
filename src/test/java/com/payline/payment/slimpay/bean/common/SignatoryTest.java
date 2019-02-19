@@ -1,13 +1,31 @@
 package com.payline.payment.slimpay.bean.common;
 
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.reflect.Whitebox;
 
 import static com.payline.payment.slimpay.utils.BeansUtils.createDefaultBillingAddress;
 
+@PrepareForTest({Signatory.class})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SignatoryTest {
 
     private Signatory signatory;
+
+    private Logger mockLogger;
+
+    @BeforeEach
+    public void setUp() {
+
+        mockLogger = Mockito.mock(Logger.class);
+
+        Whitebox.setInternalState(Signatory.class, "LOGGER", mockLogger);
+    }
 
     @Test
     public void signatoryOk(){
@@ -38,5 +56,9 @@ public class SignatoryTest {
                 .withTelephone("+33725262729")
                 .build();
         //todo assertion log  ecrit 2 messages
+        //test on logs
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Signatory.FAMILY_NAME_WARN));
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Signatory.GIVEN_NAME_WARN));
+
     }
 }

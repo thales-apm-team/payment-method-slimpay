@@ -1,11 +1,31 @@
 package com.payline.payment.slimpay.bean.common;
 
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.reflect.Whitebox;
 
+@PrepareForTest({Payment.class})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PaymentTest {
 
     private Payment payment;
+
+
+    private Logger mockLogger;
+
+    @BeforeEach
+    public void setUp() {
+
+        mockLogger = Mockito.mock(Logger.class);
+
+        Whitebox.setInternalState(Payment.class, "LOGGER", mockLogger);
+    }
+
 
     @Test
     public void testPaymentOK(){
@@ -34,13 +54,11 @@ public class PaymentTest {
                 .withAction("payin")
                 .withLabel("the label")
                 .build();
-        String jsonPayment = payment.toString();
-        Assertions.assertFalse(jsonPayment.contains("amount"));
-        Assertions.assertFalse(jsonPayment.contains("currency"));
-        Assertions.assertFalse(jsonPayment.contains("scheme"));
-        Assertions.assertFalse(jsonPayment.contains("direction"));
-        Assertions.assertFalse(jsonPayment.contains("reference"));
-        //faire test sur les logs
+        //test on logs
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Payment.AMOUNT_WARN));
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Payment.DIRECTION_WARN));
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Payment.CURRENCY_WARN));
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Payment.REFERENCE_WARN));
     }
 
 
@@ -53,7 +71,10 @@ public class PaymentTest {
         System.out.println(payment);
         String jsonPayment = payment.toString();
         Assertions.assertTrue(jsonPayment.contains("direction"));
-        //todo faire test sur les logs
 
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Payment.WRONG_DIRECTION_WARN));
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Payment.AMOUNT_WARN));
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Payment.CURRENCY_WARN));
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Payment.REFERENCE_WARN));
     }
 }

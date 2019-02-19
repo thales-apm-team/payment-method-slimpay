@@ -22,10 +22,11 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
 
     public static final String IS_NULL = "PaymentRequest is null";
 
+    //two values allowed to create a payment
     private enum Direction {
         IN, OUT;
     }
-
+    //two types of a orderItem
     private enum Type {
         PAYMENT("payment"), SIGN_MANDATE("signMandate");
 
@@ -39,8 +40,8 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     private static final String CREATE = "create";
     private static final String PAYOUT_SCHEME = "SEPA.CREDIT_TRANSFER";
     private static final String FOO = "foo";
-    //Type de prélèvement
     private static final String PONCTUEL = "OOFF";
+    private static final String EMPTY_REQUEST_ERROR_MESSAGE = "PaymentRequest is null or empty";
 
 
     /**
@@ -58,7 +59,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     }
 
     /**
-     * Create a Slimplay Payment with direction IN from a Payline PaymentRequest
+     * Create a Slimplay Payment with direction IN (subscriber to creditor) from a Payline PaymentRequest
      *
      * @param paymentRequest
      * @return a a new  Payment
@@ -67,7 +68,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     @Override
     public Payment assemblePayin(PaymentRequest paymentRequest) throws InvalidDataException {
         if (paymentRequest == null) {
-            throw new InvalidDataException("PaymentRequest is null or empty", IS_NULL);
+            throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
         } else {
             return Payment.Builder.aPaymentBuilder()
                     .withReference(paymentRequest.getOrder().getReference())
@@ -82,7 +83,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     }
 
     /**
-     * Create a Slimplay Payment with direction OUT from a Payline PaymentRequest
+     * Create a Slimplay Payment with direction OUT (  creditor to subscriber) from a Payline PaymentRequest
      *
      * @param refundRequest
      * @return a a new  Payment
@@ -115,11 +116,6 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         }
     }
 
-    @Override
-    public SlimPayOrderItem assembleOrderItem(PaymentRequest paymentRequest) {
-        return null;
-    }
-
     /**
      * Create a SlimPayOrderItem with type signMandate and  a Mandate from a Payline PaymentRequest
      *
@@ -129,7 +125,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     @Override
     public SlimPayOrderItem assembleOrderItemMandate(PaymentRequest paymentRequest) throws InvalidDataException {
         if (paymentRequest == null) {
-            throw new InvalidDataException("PaymentRequest is null or empty", IS_NULL);
+            throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
         } else {
             return SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder()
                     .withType(Type.SIGN_MANDATE.key)
@@ -149,7 +145,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     @Override
     public SlimPayOrderItem assembleOrderItemPayment(PaymentRequest paymentRequest) throws InvalidDataException {
         if (paymentRequest == null) {
-            throw new InvalidDataException("PaymentRequest is null or empty", IS_NULL);
+            throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
         } else {
             return SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder()
                     .withType(Type.PAYMENT.key)
@@ -167,7 +163,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     @Override
     public Mandate assembleMandate(PaymentRequest paymentRequest) throws InvalidDataException {
         if (paymentRequest == null) {
-            throw new InvalidDataException("PaymentRequest is null or empty", IS_NULL);
+            throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
         } else {
             return Mandate.Builder.aMandateBuilder()
                     .withReference(paymentRequest.getTransactionId())
@@ -238,7 +234,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
      */
     public SlimpayOrderRequest assembleSlimPayOrderRequest(PaymentRequest paymentRequest) throws InvalidDataException {
         if (paymentRequest == null) {
-            throw new InvalidDataException("PaymentRequest is null or empty", IS_NULL);
+            throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
         } else {
             Environment environment = paymentRequest.getEnvironment();
             Locale locale = paymentRequest.getLocale();
@@ -336,6 +332,11 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .build();
     }
 
+    /**
+     * Get String value of a amount
+     * @param amount
+     * @return
+     */
     private String getCurrencyAsString(Amount amount) {
         if (amount == null || amount.getCurrency() == null) {
             return null;

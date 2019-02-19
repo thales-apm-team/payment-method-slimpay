@@ -8,6 +8,11 @@ public class BillingAddress extends SlimpayBean {
 
     private static final Logger LOGGER = LogManager.getLogger(Signatory.class);
 
+    protected static final String STREET_WARN = "BillingAddress must have a street1 when built";
+    protected static final String CITY_WARN = "BillingAddress must have a city when built";
+    protected static final String POSTAL_CODE_WARN = "BillingAddress must have a postalCode when built";
+    protected static final String COUNTRY_WARN = "BillingAddress must have a country when built";
+
     @Required
     private String street1;
     private String street2;
@@ -18,25 +23,6 @@ public class BillingAddress extends SlimpayBean {
     @Required
     private String country;
 
-    public String getStreet1() {
-        return street1;
-    }
-
-    public String getStreet2() {
-        return street2;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public String getCountry() {
-        return country;
-    }
 
     public BillingAddress(BillingAddress.Builder builder) {
         this.street1 = builder.street1;
@@ -86,19 +72,20 @@ public class BillingAddress extends SlimpayBean {
 
             //to do logger les champs manquants obligatoire ??
             if (this.street1 == null) {
-                LOGGER.warn("BillingAddress must have a familyName when built");
+                LOGGER.warn(STREET_WARN);
             }
             if (this.city == null) {
-                LOGGER.warn("BillingAddress must have a city when built");
+                LOGGER.warn(CITY_WARN);
             }
             if (this.postalCode == null) {
-                LOGGER.warn("BillingAddress must have a postalCode when built");
+                LOGGER.warn(POSTAL_CODE_WARN);
             }
             if (this.country == null) {
-                LOGGER.warn("BillingAddress must have a country when built");
+                LOGGER.warn(COUNTRY_WARN);
             }
             return this;
         }
+
 
         public BillingAddress build() {
             return new BillingAddress(this.verifyIntegrity());

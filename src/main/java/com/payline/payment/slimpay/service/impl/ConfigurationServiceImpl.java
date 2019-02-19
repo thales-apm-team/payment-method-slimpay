@@ -14,7 +14,6 @@ import com.payline.pmapi.bean.configuration.parameter.impl.ListBoxParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.logger.LogManager;
 import com.payline.pmapi.service.ConfigurationService;
-import com.slimpay.hapiclient.exception.HttpException;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDate;
@@ -159,11 +158,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 httpClient.testConnection(contractParametersCheckRequest, request.toJsonBody());
             }
 
-        } catch (PluginTechnicalException | HttpException e) {
-            // todo si c'est autre chose faut le logger aussi
+        } catch (PluginTechnicalException e) {
+            //log error
             LOGGER.error("Error while calling the plugin {}", e);
-            //si erreur 401 ?
             String errorCode = e.getMessage();
+            //if client side error, add it to error array
             if (errorCode.contains(UNAUTHORIZED) || errorCode.contains(FORBIDDEN)) {
                 //if auth failed
                 errors.put(APP_KEY, this.i18n.getMessage(API_TEST_MESSAGE_ERROR, locale));

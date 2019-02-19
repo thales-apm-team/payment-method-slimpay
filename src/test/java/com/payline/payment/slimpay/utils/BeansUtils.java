@@ -155,7 +155,7 @@ public class BeansUtils {
     }
 
     public static SlimpayPaymentResponse createMockedSlimpayPaymentOut(String executionStatus) {
-        return SlimpayPaymentResponse.Builder.fromJson("{\n" +
+        return SlimpayPaymentResponse.fromJson("{\n" +
                 "    \"id\": \"edbd987c-23e1-11e9-ad0d-000000000000\",\n" +
                 "    \"scheme\": \"SEPA.CREDIT_TRANSFER\",\n" +
                 "    \"reference\": \"REB-EXE-20190129-10189\",\n" +

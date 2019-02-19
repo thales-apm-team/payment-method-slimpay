@@ -6,6 +6,7 @@ import com.payline.pmapi.bean.common.Buyer.Address;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.*;
+import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
@@ -431,6 +432,18 @@ public class TestUtils {
                 .withOrder(createOrder(transactionId))
                 .withBuyer(createDefaultBuyer())
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
+                .build();
+    }
+
+
+    public static NotifyTransactionStatusRequest createDefaultNotifyTransactionStatusRequest(String transactionId) {
+        return NotifyTransactionStatusRequest.NotifyTransactionStatusRequestBuilder
+                .aNotifyTransactionStatusRequest()
+                .withAmount(AMOUNT)
+                .withContractConfiguration(CONTRACT_CONFIGURATION)
+                .withEnvironment(ENVIRONMENT)
+                .withPartnerConfiguration(PARTNER_CONFIGURATION)
+                .withPartnerTransactionId(transactionId)
                 .build();
     }
 

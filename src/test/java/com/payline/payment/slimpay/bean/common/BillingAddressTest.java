@@ -1,14 +1,33 @@
 package com.payline.payment.slimpay.bean.common;
 
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.reflect.Whitebox;
 
+@PrepareForTest({BillingAddress.class})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BillingAddressTest {
 
     private  BillingAddress address;
 
+    private Logger mockLogger;
+
+    @BeforeEach
+    public void setUp() {
+
+        mockLogger = Mockito.mock(Logger.class);
+
+        Whitebox.setInternalState(BillingAddress.class, "LOGGER", mockLogger);
+    }
+
+
     @Test
-    public  void billingAdressTestOK(){
+    public  void billingAddressTestOK(){
         address = BillingAddress.Builder.aBillingAddressBuilder()
                 .withStreet1("10 rue de la paix")
                 .withStreet2("residence peace")
@@ -26,11 +45,16 @@ public class BillingAddressTest {
     }
 
     @Test
-    public  void billingAdressTestKO(){
+    public  void billingAddressTestKO(){
         address = BillingAddress.Builder.aBillingAddressBuilder()
                 .build();
 
-        String jsonAddress= address.toString();
-//todo test sur le log d'erreurs 4 lignes attendues
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(BillingAddress.STREET_WARN));
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(BillingAddress.CITY_WARN));
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(BillingAddress.COUNTRY_WARN));
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(BillingAddress.POSTAL_CODE_WARN));
+
+//        String jsonAddress= address.toString();
+
     }
 }

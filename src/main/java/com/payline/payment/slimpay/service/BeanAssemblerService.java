@@ -11,8 +11,6 @@ public interface BeanAssemblerService {
 
     public Payment assemblePayout (RefundRequest refundRequest) throws InvalidDataException;
 
-    public SlimPayOrderItem assembleOrderItem (PaymentRequest paymentRequest);
-
     public SlimPayOrderItem assembleOrderItemMandate (PaymentRequest paymentRequest) throws InvalidDataException;
 
     public SlimPayOrderItem assembleOrderItemPayment (PaymentRequest paymentRequest) throws InvalidDataException;

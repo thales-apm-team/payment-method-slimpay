@@ -36,7 +36,11 @@ public class PaymentServiceImpl implements PaymentService {
     private BeanAssemblerServiceImpl beanAssembleService = BeanAssemblerServiceImpl.getInstance();
     private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
 
-
+    /**
+     * Execute a paymentRequest
+     * @param paymentRequest
+     * @return
+     */
     @Override
     public PaymentResponse paymentRequest(PaymentRequest paymentRequest) {
 
@@ -64,6 +68,7 @@ public class PaymentServiceImpl implements PaymentService {
             //return  a paymentResponseRedirect
             else {
                 if (slimpayOrderResponse.getClass() == SlimpayFailureResponse.class) {
+                    // payment Failed return  a PaymentResponseFailure with Slimpay error
                     SlimpayFailureResponse slimpayOrderFailureResponse = (SlimpayFailureResponse) slimpayOrderResponse;
                     return PaymentResponseFailure.PaymentResponseFailureBuilder
                             .aPaymentResponseFailure()
@@ -73,6 +78,7 @@ public class PaymentServiceImpl implements PaymentService {
                             .build();
                 } else {
                     try {
+                        // payment Successed, return a paymentResponseRedirect With a confirmation url
                         SlimpayOrderResponse slimpayOrderSuccessResponse = (SlimpayOrderResponse) slimpayOrderResponse;
                         URL redirectURL = new URL(slimpayOrderSuccessResponse.getUrlApproval());
                         PaymentResponseRedirect.RedirectionRequest.RedirectionRequestBuilder responseRedirectURL = PaymentResponseRedirect.RedirectionRequest

@@ -5,10 +5,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 //Item Slimpay
+//an Item is an action made during un order ( create a mandate or make a payment)
 //https://dev.slimpay.com/hapi/reference/order-items
 public class SlimPayOrderItem extends SlimpayBean {
 
     private static final Logger LOGGER = LogManager.getLogger(SlimPayOrderItem.class);
+    protected static final String TYPE_WARN = "SlimPayOrderItem must have a type when built";
+    protected static final String MANDATE_WARN = "SlimPayOrderItem must have a mandate or a payin when built";
 
     private String action;
     private String id;
@@ -18,31 +21,6 @@ public class SlimPayOrderItem extends SlimpayBean {
     @Required
     private Mandate mandate;
     private Payment payin;
-
-    public String getAction() {
-        return action;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public CardAlias getCardAlias() {
-        return cardAlias;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-
-    public Mandate getMandate() {
-        return mandate;
-    }
-
-    public Payment getPayin() {
-        return payin;
-    }
 
     private SlimPayOrderItem() {
         //ras
@@ -97,10 +75,10 @@ public class SlimPayOrderItem extends SlimpayBean {
         public SlimPayOrderItem.Builder verifyIntegrity() {
 
             if (this.type == null) {
-                LOGGER.warn("SlimPayOrderItem must have a type when built");
+                LOGGER.warn(TYPE_WARN);
             }
             if (this.mandate == null && this.payin == null) {
-                LOGGER.warn("SlimPayOrderItem must have a mandate or a payin when built");
+                LOGGER.warn(MANDATE_WARN);
             }
             return this;
         }

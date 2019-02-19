@@ -107,15 +107,12 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 case CLOSED_COMPLETED:
                     String reference = slimpayOrderResponse.getReference();
                     //check statut du payment ??
-                    //todo get transaction additional data (id) :  mandate payment
                     //check payment state or not ??
                     PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.Builder
                             .aPaymentResponseSuccessAdditionalData()
                             .withOrderId(slimpayOrderResponse.getId())
                             .withOrderReference(reference)
-//                                .withMandateId()
                             .withMandateReference(reference)
-//                                .withPaymentId()
                             .withPaymentReference(reference)
                             .build();
                     return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()

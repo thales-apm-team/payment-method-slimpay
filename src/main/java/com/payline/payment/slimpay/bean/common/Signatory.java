@@ -7,6 +7,9 @@ import org.apache.logging.log4j.Logger;
 public class Signatory extends SlimpayBean {
 
     private static final Logger LOGGER = LogManager.getLogger(Signatory.class);
+    protected static final String FAMILY_NAME_WARN = "Signatory must have a familyName when built";
+    protected static final String GIVEN_NAME_WARN = "Signatory must have a givenName when built";
+
     //Mr/Miss/Mrs
     private String honorificPrefix;
     @Required
@@ -97,10 +100,10 @@ public class Signatory extends SlimpayBean {
 
             //to do logger les champs manquants obligatoire ??
             if (this.familyName == null) {
-                LOGGER.warn("Signatory must have a familyName when built");
+                LOGGER.warn(FAMILY_NAME_WARN);
             }
             if (this.givenName == null) {
-                LOGGER.warn("Signatory must have a givenName when built");
+                LOGGER.warn(GIVEN_NAME_WARN);
             }
 
             return this;

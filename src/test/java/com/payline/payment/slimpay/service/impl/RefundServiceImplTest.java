@@ -1,9 +1,11 @@
 package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
+import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
 import com.payline.payment.slimpay.exception.HttpCallException;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
+import com.payline.payment.slimpay.utils.properties.constants.OrderStatus;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
@@ -16,10 +18,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import static com.payline.payment.slimpay.utils.BeansUtils.createMockedSlimpayPaymentOutError;
-import static com.payline.payment.slimpay.utils.BeansUtils.createMockedSlimpayPaymentOutTopProcess;
+import static com.payline.payment.slimpay.utils.BeansUtils.*;
 import static com.payline.payment.slimpay.utils.TestUtils.createRefundRequest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -45,6 +47,10 @@ public class RefundServiceImplTest {
         String transactionId = "HDEV-1550072222649";
         SlimpayPaymentResponse payout = createMockedSlimpayPaymentOutTopProcess();
         when(httpClient.createPayout(any(RefundRequest.class), any(JsonBody.class))).thenReturn(payout);
+        SlimpayOrderResponse orderMocked = createMockedSlimpayOrderResponse(OrderStatus.CLOSED_COMPLETED);
+
+        Mockito.doReturn(payout).when(httpClient).createPayout(Mockito.any(RefundRequest.class), Mockito.any(JsonBody.class));
+        Mockito.doReturn(orderMocked).when(httpClient).getOrder(Mockito.any(RefundRequest.class));
 
         RefundRequest request = createRefundRequest(transactionId, "100");
         RefundResponse refundResponse = service.refundRequest(request);
@@ -61,19 +67,27 @@ public class RefundServiceImplTest {
     public void refundRequestTestKO() throws Exception {
         SlimpayFailureResponse payoutError = createMockedSlimpayPaymentOutError();
         when(httpClient.createPayout(any(RefundRequest.class), any(JsonBody.class))).thenReturn(payoutError);
+        SlimpayOrderResponse orderMocked = createMockedSlimpayOrderResponse(OrderStatus.CLOSED_COMPLETED);
+
+        Mockito.doReturn(payoutError).when(httpClient).createPayout(Mockito.any(RefundRequest.class), Mockito.any(JsonBody.class));
+        Mockito.doReturn(orderMocked).when(httpClient).getOrder(Mockito.any(RefundRequest.class));
         //too much money
-        RefundRequest request = createRefundRequest("HDEV-1550072222649", "10000000");
+        RefundRequest request = createRefundRequest("Y-ORDER-REF-1550495902513", "10000000");
         RefundResponse refundResponse = service.refundRequest(request);
 
         Assertions.assertTrue(refundResponse.getClass() == RefundResponseFailure.class);
         RefundResponseFailure refundFail = (RefundResponseFailure) refundResponse;
         Assertions.assertNotNull(refundFail.getErrorCode());
-        Assertions.assertNotNull(refundFail.getErrorCode());
-        Assertions.assertEquals(FailureCause.INVALID_DATA, refundFail.getFailureCause());
+        Assertions.assertNotNull(refundFail.getFailureCause());
+        System.out.println(refundFail.getFailureCause());
+        System.out.println(refundFail.getErrorCode());
     }
 
     @Test
     public void refundRequestTestKOException() throws Exception {
+        SlimpayOrderResponse orderMocked = createMockedSlimpayOrderResponse(OrderStatus.CLOSED_COMPLETED);
+        Mockito.doReturn(orderMocked).when(httpClient).getOrder(Mockito.any(RefundRequest.class));
+
         when(httpClient.createPayout(any(RefundRequest.class), any(JsonBody.class))).thenThrow(new HttpCallException("this is an error", "foo"));
         //too much money
         RefundRequest request = createRefundRequest("HDEV-1550072222649", "10000000");

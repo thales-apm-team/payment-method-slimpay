@@ -11,6 +11,16 @@ public class Payment extends SlimpayBean {
 
     private static final Logger LOGGER = LogManager.getLogger(Payment.class);
 
+    protected static final String REFERENCE_WARN = "Payment must have a reference when built";
+    protected static final String SCHEME_WARN = "Payment must have a scheme when built";
+    protected static final String AMOUNT_WARN = "Payment must have a amount when built";
+    protected static final String CURRENCY_WARN = "Payment must have a currency when built";
+    protected static final String ACTION_WARN = "Payment must have a action when built";
+    protected static final String DIRECTION_WARN = "Payment must have a direction when built";
+    protected static final String WRONG_DIRECTION_WARN = "Payment direction value must be 'IN' or 'OUT'";
+    protected static final String CREDITOR_WARN = "Payment with direction 'OUT' must have a creditor when built";
+    protected static final String SUBSCRIBER_WARN = "Payment with direction 'OUT'  must have a subscriber when built";
+
     @Required
     private String action;
     @Required
@@ -206,34 +216,35 @@ public class Payment extends SlimpayBean {
 
             //to do logger les champs manquants obligatoire ??
             if (this.reference == null) {
-                LOGGER.warn("Payment must have a reference when built");
+                LOGGER.warn(REFERENCE_WARN);
             }
             if (this.scheme == null) {
-                LOGGER.warn("Payment must have a scheme when built");
+                LOGGER.warn(SCHEME_WARN);
             }
             if (this.amount == null) {
-                LOGGER.warn("Payment must have a amount when built");
+                LOGGER.warn(AMOUNT_WARN);
             }
             if (this.currency == null) {
-                LOGGER.warn("Payment must have a currency when built");
+                LOGGER.warn(CURRENCY_WARN);
             }
             if (this.action == null) {
-                LOGGER.warn("Payment must have a action when built");
+                LOGGER.warn(ACTION_WARN);
             }
             if (this.direction == null) {
-                LOGGER.warn("Payment must have a direction when built");
+                LOGGER.warn(DIRECTION_WARN);
             } else if (!"IN".equals(this.direction) && !"OUT".equals(this.direction)) {
-                LOGGER.warn("Payment direction value must be 'IN' or 'OUT' ");
+                LOGGER.warn(WRONG_DIRECTION_WARN);
             } else if ("OUT".equals(this.direction)) {
 
                 if (this.creditor == null) {
-                    LOGGER.warn("Payment with direction 'OUT' must have a creditor when built");
+                    LOGGER.warn(CREDITOR_WARN);
                 }
 
                 if (this.subscriber == null) {
-                    LOGGER.warn("Payment with direction 'OUT'  must have a subscriber when built");
+                    LOGGER.warn(SUBSCRIBER_WARN);
                 }
             }
+
 
             return this;
         }

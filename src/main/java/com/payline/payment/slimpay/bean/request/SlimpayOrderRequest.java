@@ -11,6 +11,11 @@ import org.apache.logging.log4j.Logger;
 public class SlimpayOrderRequest extends SlimpayBean {
 
     private static final Logger LOGGER = LogManager.getLogger(SlimpayOrderRequest.class);
+    protected static final String FAIL_URL_WARN = "SlimpayOrderRequest must have a failureUrl when built";
+    protected static final String SUCCESS_URL_WARN = "SlimpayOrderRequest must have a successUrl when built";
+    protected static final String ITEMS_WARN = "SlimpayOrderRequest must have a items when built";
+    protected static final String CREDITOR_WARN = "SlimpayOrderRequest must have a creditor when built";
+    protected static final String SUBSCRIBER_WARN = "SlimpayOrderRequest  must have a subscriber when built";
 
     private String reference;
     private String paymentScheme;
@@ -179,22 +184,25 @@ public class SlimpayOrderRequest extends SlimpayBean {
         private SlimpayOrderRequest.Builder verifyIntegrity() {
             //to do logger les champs manquants obligatoire ??
             if (this.creditor == null) {
-                LOGGER.warn("SlimpayOrderRequest must have a creditor when built");
+                LOGGER.warn(CREDITOR_WARN);
             }
             if (this.subscriber == null) {
-                LOGGER.warn("SlimpayOrderRequest must have a subscriber when built");
+                LOGGER.warn(SUBSCRIBER_WARN);
             }
             if (this.items == null || this.items.length == 0) {
-                LOGGER.warn("SlimpayOrderRequest must have a items when built");
+                LOGGER.warn(ITEMS_WARN);
             }
             if (this.successUrl == null) {
-                LOGGER.warn("SlimpayOrderRequest must have a successUrl when built");
+                LOGGER.warn(SUCCESS_URL_WARN);
             }
             if (this.failureUrl == null) {
-                LOGGER.warn("SlimpayOrderRequest must have a failureUrl when built");
+                LOGGER.warn(FAIL_URL_WARN);
             }
             return this;
         }
+
+
+
 
         public SlimpayOrderRequest build() {
             return new SlimpayOrderRequest(this.verifyIntegrity());
