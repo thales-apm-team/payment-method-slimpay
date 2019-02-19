@@ -2,11 +2,11 @@ package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.common.Payment;
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
-import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayResponse;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
+import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionStatus;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
@@ -17,7 +17,6 @@ import com.payline.pmapi.service.RefundService;
 import org.apache.logging.log4j.Logger;
 
 import static com.payline.payment.slimpay.utils.SlimpayErrorHandler.handleSlimpayFailureResponse;
-import static com.payline.payment.slimpay.utils.properties.constants.OrderStatus.CLOSED_ABORTED;
 
 public class RefundServiceImpl implements RefundService {
 
@@ -76,29 +75,32 @@ public class RefundServiceImpl implements RefundService {
         //recuperer orderId ou pas ?
         SlimpayResponse slimpayResponse = httpClient.cancelPayment(refundRequest);
 
-        if (SlimpayOrderResponse.class.equals(slimpayResponse.getClass())) {
+        if (SlimpayPaymentResponse.class.equals(slimpayResponse.getClass())) {
 
-            SlimpayOrderResponse orderResponse = (SlimpayOrderResponse) slimpayResponse;
-            if ((orderResponse.getState().contains(CLOSED_ABORTED))) {
+            SlimpayPaymentResponse paymentResponse = (SlimpayPaymentResponse) slimpayResponse;
+
+            //Cancellation is OK
+            if ((paymentResponse.getExecutionStatus().equals(PaymentExecutionStatus.NOT_PROCESSED))) {
                 return RefundResponseSuccess.RefundResponseSuccessBuilder
                         .aRefundResponseSuccess()
-                        //    .withPartnerTransactionId(slimpayRefundResponse.getReference())
                         .withPartnerTransactionId(refundRequest.getPartnerTransactionId())
-                        .withStatusCode(orderResponse.getState())
+                        .withStatusCode(paymentResponse.getState())
                         .build();
 
             } else {
-                // fix me CancelFail
+                //Cancellation fails but the payment object  current was returned by slimpay
+                LOGGER.error("payment cancellation fails");
                 return RefundResponseFailure.RefundResponseFailureBuilder
                         .aRefundResponseFailure()
                         .withErrorCode("Unable to cancel the payment")
-                        .withFailureCause(FailureCause.PARTNER_UNKNOWN_ERROR)
+                        .withFailureCause(FailureCause.REFUSED)
                         .withPartnerTransactionId(refundRequest.getPartnerTransactionId())
                         .build();
             }
 
         }
     else{
+        //An slimpay error was returned
             LOGGER.error("unable to cancel the payment");
             SlimpayFailureResponse orderErrror = (SlimpayFailureResponse) slimpayResponse;
             return RefundResponseFailure.RefundResponseFailureBuilder.aRefundResponseFailure()

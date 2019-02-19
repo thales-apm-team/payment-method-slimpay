@@ -253,6 +253,7 @@ public class SlimpayHttpClient {
         }
     }
 
+
     /**
      * create the request to call a #get-order http request
      *
@@ -336,11 +337,13 @@ public class SlimpayHttpClient {
 
     //fixme cancel jamais autorisé
     public SlimpayResponse cancelPayment(RefundRequest request) throws PluginTechnicalException {
+
+
         Oauth2BasicAuthentication authentication = createAuthentication(request);
         String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
         String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
         String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
-        CustomRel rel = new CustomRel(ns + "#cancel-order");
+        CustomRel rel = new CustomRel(ns + "#cancel-payment");
 
         //creditor reference
         String creditorReference = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.CREDITOR_REFERENCE_KEY);
@@ -356,8 +359,14 @@ public class SlimpayHttpClient {
         Resource response = request(url, profile, authentication, follow);
 
         if (response != null) {
-            return SlimpayPaymentResponse.fromJson(response.getState().toString());
-        } else {
+            if (response.getState() != null) {
+                return SlimpayPaymentResponse.fromJson(response.getState().toString());
+            } else {//return a Failure response
+                LOGGER.info("Fail to cancel the payment");
+                return SlimpayFailureResponse.fromJson(response.toString());
+
+            }
+        }else {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getOrder");
         }
     }

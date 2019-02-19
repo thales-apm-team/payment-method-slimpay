@@ -55,7 +55,6 @@ public class SignatoryTest {
                 .withEmail("toto@emailcom")
                 .withTelephone("+33725262729")
                 .build();
-        //todo assertion log  ecrit 2 messages
         //test on logs
         Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Signatory.FAMILY_NAME_WARN));
         Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Signatory.GIVEN_NAME_WARN));

@@ -150,7 +150,26 @@ public class BeansUtils {
                 "   \"message\": \"Duplicate order : order Y-ORDER-REF- for creditor paylinemerchanttest1 already exists\"\n" +
                 "}";
         return SlimpayFailureResponse.fromJson(jsonError);
+    }
 
+
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentIn(String executionStatus) {
+        return SlimpayPaymentResponse.fromJson(" {  " +
+                " \"id\": \"8212f471-3432-11e9-ad8f-000000000000\",\n" +
+                "   \"scheme\": \"SEPA.DIRECT_DEBIT.CORE\",\n" +
+                "   \"reference\": \"HDEV-1550572705098\",\n" +
+                "   \"direction\": \"IN\",\n" +
+                "   \"amount\": \"408.00\",\n" +
+                "   \"currency\": \"EUR\",\n" +
+                "   \"label\": \"softDescriptor\",\n" +
+                "   \"sequenceType\": \"RCUR\",\n" +
+                "   \"state\": \"accepted\",\n" +
+                "    \"executionStatus\": \"" + executionStatus + "\",\n" +
+                "   \"replayCount\": 0,\n" +
+                "   \"executionDate\": \"2019-02-20T23:00:00.000+0000\",\n" +
+                "   \"dateCreated\": \"2019-02-19T10:38:35.000+0000\",\n" +
+                "   \"confirmed\": false" +
+                "}");
 
     }
 
@@ -192,8 +211,15 @@ public class BeansUtils {
                 "}";
         return SlimpayFailureResponse.fromJson(jsonError);
     }
+    public static SlimpayFailureResponse createMockedCancelPaymentError() {
+        String jsonError = "{\n" +
+                "   \"code\": 903,\n" +
+                "   \"message\": \"Illegal state : Cannot find cancellable direct debit with id=7232101\"\n" +
+                "}";
+        return SlimpayFailureResponse.fromJson(jsonError);
+    }
 
-    public static Resource getMockedResource() {
+    public static Resource createMockedResource() {
         JsonObject state = Json.createObjectBuilder()
                 .add("id", 1)
                 .add("reference", 1)
