@@ -39,7 +39,7 @@ public class PluginTechnicalException extends Exception {
      */
     public PluginTechnicalException(Exception e, String errorCodeOrLabel) {
         super(e);
-        this.message = e.getMessage();
+        this.message = e == null ? "" : e.getMessage();
         this.errorCodeOrLabel = errorCodeOrLabel;
         slimpayError = null;
         LOGGER.error(errorCodeOrLabel, e);
@@ -102,7 +102,7 @@ public class PluginTechnicalException extends Exception {
     }
 
     public FailureCause getFailureCause() {
-        return FailureCause.INVALID_DATA;
+        return FailureCause.PARTNER_UNKNOWN_ERROR;
     }
 
     @Override
