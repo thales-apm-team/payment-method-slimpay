@@ -1,11 +1,10 @@
 package com.payline.payment.slimpay.exception;
 
+import com.payline.payment.slimpay.utils.SlimpayErrorMapper;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.logger.LogManager;
 import com.slimpay.hapiclient.exception.HttpException;
 import org.apache.logging.log4j.Logger;
-
-import static com.payline.payment.slimpay.utils.SlimpayErrorHandler.handleSlimpayFailureResponse;
 
 public class SlimpayHttpException extends PluginTechnicalException {
 
@@ -23,7 +22,7 @@ public class SlimpayHttpException extends PluginTechnicalException {
 
     @Override
     public FailureCause getFailureCause() {
-        return handleSlimpayFailureResponse(slimpayError);
+        return SlimpayErrorMapper.handleSlimpayError(slimpayError);
     }
 
 }

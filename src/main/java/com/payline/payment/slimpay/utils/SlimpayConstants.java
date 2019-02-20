@@ -59,11 +59,13 @@ public class SlimpayConstants {
     public static final String CREATE_PAYOUT_URL = "#create-payouts";
     public static final String GET_ORDER_URL = "#get-orders";
     public static final String CANCEL_PAYMENT_URL = "#cancel-payment";
-    public static final String GET_PAYMENT_URL = "#get-payment";
+    public static final String GET_PAYMENT_URL = "#search-payment-by-id";
+    public static final String SEARCH_PAYMENT_URL = "#search-payments";
 
     //INTERNAL KEYS
     public static final String ORDER_REFERENCE = "orderReference";
     public static final String ORDER_ID = "orderId";
+    public static final int ERROR_MAX_LENGTH = 50;
 
 
     private SlimpayConstants() {

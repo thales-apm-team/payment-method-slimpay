@@ -71,7 +71,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
             throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
         } else {
             return Payment.Builder.aPaymentBuilder()
-                    .withReference(paymentRequest.getOrder().getReference())
+                    .withReference(paymentRequest.getTransactionId())
                     .withScheme(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, FIRST_PAYMENT_SCHEME))
                     .withDirection(Direction.IN.name())
                     .withAction(CREATE)

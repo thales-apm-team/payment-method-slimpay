@@ -1,6 +1,5 @@
 package com.payline.payment.slimpay.utils.properties.service;
 
-import com.payline.payment.slimpay.utils.config.ConfigEnvironment;
 import com.payline.pmapi.logger.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +14,7 @@ public interface PropertiesService {
 
     /**
      * Get a config property by its name.
-     * Warning, if the property is environment-dependent, use {@link ConfigPropertiesEnum#get(String, ConfigEnvironment)} instead.
+     * Warning, if the property is environment-dependent, use partnerConfiguration instead.
      *
      * @param properties : the used Properties object
      * @param key        The name of the property to recover
@@ -26,21 +25,6 @@ public interface PropertiesService {
         return properties.getProperty(key);
     }
 
-    /**
-     * Get a environment-dependent config property by its name.
-     *
-     * @param properties  : the used Properties object
-     * @param key         The name of the property to recover
-     * @param environment The runtime environment
-     * @return The property value. Can be null if the property has not been found.
-     */
-    default String getProperty(final Properties properties, final String key, final ConfigEnvironment environment) {
-        String prefix = "";
-        if (environment != null) {
-            prefix += environment.getPrefix() + ".";
-        }
-        return getProperty(properties, prefix + key);
-    }
 
     /**
      * Get the properties file's name
@@ -49,9 +33,16 @@ public interface PropertiesService {
      */
     String getFilename();
 
-    String get(final String key);
+    /**
+     * Get the Properties object
+     *
+     * @return a Properties object
+     */
+    Properties getProperties();
 
-    String get(final String key, final ConfigEnvironment environment);
+    default String get(final String key) {
+        return getProperty(getProperties(), key);
+    }
 
     /**
      * Reads the properties file and stores the result.
@@ -76,6 +67,5 @@ public interface PropertiesService {
         }
 
     }
-
 
 }

@@ -18,6 +18,8 @@ public class ConfigurationConstants {
     public static final String RELEASE_DATE = "release.date";
     public static final String RELEASE_VERSION = "release.version";
     public static final String RELEASE_PROPERTIES = "release.properties";
+
+    public static final String CONFIG_PROPERTIES = "config.properties";
 }
 
 

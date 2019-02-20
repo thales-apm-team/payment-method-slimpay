@@ -1,6 +1,7 @@
 package com.payline.payment.slimpay.utils;
 
 import com.payline.payment.slimpay.bean.common.SlimpayError;
+import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.pmapi.bean.common.FailureCause;
 
 public class SlimpayErrorMapper {
@@ -8,6 +9,15 @@ public class SlimpayErrorMapper {
 
     private SlimpayErrorMapper() {
         //ras
+    }
+
+    public static FailureCause handleSlimpayError(SlimpayFailureResponse slimpayOrderFailureResponse) {
+
+        if (slimpayOrderFailureResponse == null) {
+            return FailureCause.PAYMENT_PARTNER_ERROR;
+        }
+
+        return handleSlimpayError(slimpayOrderFailureResponse.getError());
     }
 
     public static FailureCause handleSlimpayError(SlimpayError error) {
@@ -23,14 +33,12 @@ public class SlimpayErrorMapper {
             case 105:
             case 108:
             case 122:
-            case 188:
             case 123:
             case 124:
             case 125:
             case 127:
             case 128:
             case 129:
-            case 146:
             case 133:
             case 134:
             case 135:
@@ -38,13 +46,17 @@ public class SlimpayErrorMapper {
             case 142:
             case 143:
             case 144:
+            case 146:
+            case 179:
             case 180:
+            case 188:
             case 191:
             case 196:
             case 205:
             case 230:
-            case 232:
             case 231:
+            case 232:
+            case 407:
             case 637:
             case 639:
             case 642:
@@ -56,28 +68,28 @@ public class SlimpayErrorMapper {
             case 648:
             case 666:
             case 919:
-            case 179:
-            case 407:
-            case 1004:
-            case 910:
             case 901:
             case 908:
+            case 910:
             case 911:
+            case 1004:
                 return FailureCause.INVALID_DATA;
 
-            case 2001:
-            case 2000:
-            case 1008:
             case 402:
-            case 921:
-            case 917:
-            case 916:
-            case 907:
-            case 904:
             case 652:
+            case 904:
+            case 907:
+            case 916:
+            case 917:
+            case 921:
+            case 1008:
+            case 2000:
+            case 2001:
                 return FailureCause.COMMUNICATION_ERROR;
 
 
+            case 158:
+            case 160:
             case 301:
             case 632:
             case 633:
@@ -105,8 +117,6 @@ public class SlimpayErrorMapper {
             case 922:
             case 923:
             case 925:
-            case 158:
-            case 160:
                 return FailureCause.REFUSED;
 
             case 651:
@@ -125,8 +135,8 @@ public class SlimpayErrorMapper {
             case 103:
             case 199:
             case 631:
-            case 640:
             case 638:
+            case 640:
             case 649:
             case 905:
             case 906:

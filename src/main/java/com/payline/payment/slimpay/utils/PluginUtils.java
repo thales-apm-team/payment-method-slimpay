@@ -6,6 +6,8 @@ import com.payline.pmapi.bean.common.Amount;
 import java.math.BigInteger;
 import java.util.Currency;
 
+import static com.payline.payment.slimpay.utils.SlimpayConstants.ERROR_MAX_LENGTH;
+
 public class PluginUtils {
 
 
@@ -85,6 +87,15 @@ public class PluginUtils {
             default:
                 return "Mr";
         }
+    }
+
+    /**
+     * Truncate a String to max length define in SlimpayConstants class
+     * @param error
+     * @return
+     */
+    public static String truncateError(String error) {
+        return PluginUtils.truncate(error, ERROR_MAX_LENGTH);
     }
 
 

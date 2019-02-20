@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import java.math.BigInteger;
 import java.util.Currency;
 
+import static com.payline.payment.slimpay.utils.PluginUtils.truncateError;
+import static com.payline.payment.slimpay.utils.SlimpayConstants.ERROR_MAX_LENGTH;
+
 public class PluginUtilsTest {
 
     private Currency currency = Currency.getInstance("EUR");
@@ -52,4 +55,15 @@ public class PluginUtilsTest {
         Assertions.assertEquals("Miss", PluginUtils.getHonorificCode("3"));
         Assertions.assertEquals("Mr", PluginUtils.getHonorificCode("-1"));
     }
+
+    @Test
+    public void truncateErrorTest()
+    {
+        String longText ="I don't think this will (always?) work -- the one piror will be the most recent commit that was merged in from the other branch -- it won't be the most recent commit on the current branch. Right? (This ";
+        String truncatedText = truncateError(longText);
+        Assertions.assertEquals(50,truncatedText.length());
+        Assertions.assertEquals(ERROR_MAX_LENGTH,truncatedText.length());
+        Assertions.assertTrue(longText.contains(truncatedText));
+    }
+
 }

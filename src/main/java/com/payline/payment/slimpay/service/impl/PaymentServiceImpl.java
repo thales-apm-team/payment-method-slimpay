@@ -8,7 +8,7 @@ import com.payline.payment.slimpay.exception.HttpCallException;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.SlimpayConstants;
-import com.payline.payment.slimpay.utils.SlimpayErrorHandler;
+import com.payline.payment.slimpay.utils.SlimpayErrorMapper;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.RequestContext;
@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.payline.payment.slimpay.utils.SlimpayErrorHandler.handleSlimpayFailureResponse;
+import static com.payline.payment.slimpay.utils.PluginUtils.truncateError;
 
 
 public class PaymentServiceImpl implements PaymentService {
@@ -38,6 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     /**
      * Execute a paymentRequest
+     *
      * @param paymentRequest
      * @return
      */
@@ -49,8 +50,7 @@ public class PaymentServiceImpl implements PaymentService {
             slimpayOrderRequest = beanAssembleService.assembleSlimPayOrderRequest(paymentRequest);
         } catch (InvalidDataException e) {
             LOGGER.error("Unable to build a orderRequest {}", e);
-            return SlimpayErrorHandler.getPaymentResponseFailure(
-                    FailureCause.INVALID_DATA);
+            return e.toPaymentResponseFailure();
         }
         //make order request body
         JsonBody jsonOrderRequest = slimpayOrderRequest.toJsonBody();
@@ -60,10 +60,11 @@ public class PaymentServiceImpl implements PaymentService {
             if (slimpayOrderResponse == null) {
                 LOGGER.debug("createOrder response is null !");
                 LOGGER.error("Payment is null");
-                return SlimpayErrorHandler.getPaymentResponseFailure(
-                        FailureCause.PARTNER_UNKNOWN_ERROR,
-                        slimpayOrderRequest.getReference(),
-                        "Empty partner response");
+                return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
+                        .withFailureCause(FailureCause.PARTNER_UNKNOWN_ERROR)
+                        .withPartnerTransactionId(slimpayOrderRequest.getReference())
+                        .withErrorCode("Empty partner response")
+                        .build();
             }
             //return  a paymentResponseRedirect
             else {
@@ -72,8 +73,8 @@ public class PaymentServiceImpl implements PaymentService {
                     SlimpayFailureResponse slimpayOrderFailureResponse = (SlimpayFailureResponse) slimpayOrderResponse;
                     return PaymentResponseFailure.PaymentResponseFailureBuilder
                             .aPaymentResponseFailure()
-                            .withErrorCode(slimpayOrderFailureResponse.getError().toPaylineError())
-                            .withFailureCause(handleSlimpayFailureResponse(slimpayOrderFailureResponse.getError()))
+                            .withErrorCode(truncateError(slimpayOrderFailureResponse.getError().toPaylineError()))
+                            .withFailureCause(SlimpayErrorMapper.handleSlimpayError(slimpayOrderFailureResponse))
                             .withPartnerTransactionId(slimpayOrderRequest.getReference())
                             .build();
                 } else {

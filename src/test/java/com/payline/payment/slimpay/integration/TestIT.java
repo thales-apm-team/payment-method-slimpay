@@ -30,7 +30,7 @@ public class TestIT extends AbstractPaymentIntegration {
     private PaymentServiceImpl paymentService = new PaymentServiceImpl();
     private PaymentWithRedirectionServiceImpl paymentWithRedirectionService = new PaymentWithRedirectionServiceImpl();
 
-    private static final String MDP_IDENTIFIER = "paymentMethodIdentifier";
+    private static final String MDP_IDENTIFIER = "SDD SLimpay";
 
     private static final Map<String, String> PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
         put(API_URL_KEY, "https://api.preprod.slimpay.com");
@@ -118,10 +118,6 @@ public class TestIT extends AbstractPaymentIntegration {
 
     @Test
     public void fullPaymentTest() {
-
-        //test method check() of ConfigurationService
-        this.configurationServiceCheckTest();
-
         PaymentRequest request = createDefaultPaymentRequest();
         this.fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);
     }

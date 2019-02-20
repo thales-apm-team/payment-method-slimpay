@@ -2,9 +2,11 @@ package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
+import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
 import com.payline.payment.slimpay.exception.HttpCallException;
 import com.payline.payment.slimpay.utils.BeansUtils;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
+import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionStatus;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.common.OnHoldCause;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
@@ -19,8 +21,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import static com.payline.payment.slimpay.utils.BeansUtils.createMockedSlimpayPaymentIn;
 import static com.payline.payment.slimpay.utils.TestUtils.createDefaultTransactionStatusRequest;
 import static com.payline.payment.slimpay.utils.TestUtils.createRedirectionPaymentRequest;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,6 +48,10 @@ public class PaymentWithRedirectionServiceTest {
     @Test
     public void finalizeRedirectionPaymentOK() throws Exception {
         when(httpClient.getOrder(any(RedirectionPaymentRequest.class))).thenReturn(BeansUtils.createMockedSlimpayOrderResponseClosed());
+
+        SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.TOP_PROCESS);
+        Mockito.doReturn(paymentMocked).when(httpClient).searchPayment(Mockito.any(RedirectionPaymentRequest.class));
+
         RedirectionPaymentRequest request = createRedirectionPaymentRequest("ORDER-DEV-1549638902921");
         PaymentResponse response = service.finalizeRedirectionPayment(request);
 
@@ -71,6 +79,9 @@ public class PaymentWithRedirectionServiceTest {
     public void handleSessionExpiredKoFailure() throws Exception {
         when(httpClient.getOrder(any(TransactionStatusRequest.class))).thenReturn(BeansUtils.createMockedSlimpayOrderResponseClosed());
         TransactionStatusRequest request = createDefaultTransactionStatusRequest("HDEV-1550072222649");
+        SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.TOP_PROCESS);
+        Mockito.doReturn(paymentMocked).when(httpClient).searchPayment(Mockito.any(TransactionStatusRequest.class));
+
         PaymentResponse response = service.handleSessionExpired(request);
 
         Assertions.assertTrue(response instanceof PaymentResponseSuccess);
@@ -82,7 +93,7 @@ public class PaymentWithRedirectionServiceTest {
 
     @Test
     public void handleSessionExpiredKO() throws Exception {
-        when(httpClient.getOrder(any(TransactionStatusRequest.class))).thenThrow( new HttpCallException("this is an error", "foo"));
+        when(httpClient.getOrder(any(TransactionStatusRequest.class))).thenThrow(new HttpCallException("this is an error", "foo"));
         TransactionStatusRequest request = createDefaultTransactionStatusRequest("HDEV-1550072222649");
         PaymentResponse response = service.handleSessionExpired(request);
 
@@ -150,4 +161,5 @@ public class PaymentWithRedirectionServiceTest {
         PaymentResponseOnHold responseOnHold = (PaymentResponseOnHold) response;
         Assertions.assertEquals(OnHoldCause.SCORING_ASYNC, responseOnHold.getOnHoldCause());
     }
+
 }

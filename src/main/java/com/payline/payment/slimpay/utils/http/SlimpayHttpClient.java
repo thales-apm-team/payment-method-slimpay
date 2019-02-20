@@ -1,9 +1,6 @@
 package com.payline.payment.slimpay.utils.http;
 
-import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
-import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
-import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
-import com.payline.payment.slimpay.bean.response.SlimpayResponse;
+import com.payline.payment.slimpay.bean.response.*;
 import com.payline.payment.slimpay.exception.HttpCallException;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
@@ -31,10 +28,11 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
+import java.util.List;
 
 public class SlimpayHttpClient {
     private static final Logger LOGGER = LogManager.getLogger(SlimpayHttpClient.class);
-    private static HttpClientBuilder httpClientBuilder ;
+    private static HttpClientBuilder httpClientBuilder;
 
     private static final String EMPTY_RESPONSE_MESSAGE = "response is empty";
     private static final String USER_APPROVAL = "#user-approval";
@@ -42,12 +40,18 @@ public class SlimpayHttpClient {
     private static final String REFERENCE = "reference";
     private static final String ORDER_FOUND_MESSAGE = "Order found";
     private static final String ORDER_NOT_FOUND_MESSAGE = "Fail to find the order";
+    private static final String PAYMENT_FOUND_MESSAGE = "Payment found";
+    private static final String PAYMENT_NOT_FOUND_MESSAGE = "Fail to find the payment";
+    private static final String ID = "id";
+    private static final String SUBSCRIBER_REFERENCE = "subcriberReference";
+    private static final String MANDATE_REFERENCE = "mandateReference";
+    private static final String SCHEME = "scheme";
+    private static final String DIRECTION = "direction";
+    private static final String CURRENCY = "direction";
 
     /**
      * Instantiate a HTTP client with default values.
      */
-
-
     private SlimpayHttpClient() {
         //Define Client builder used in every Request to Slimpay
         final RequestConfig requestConfig = RequestConfig.custom()
@@ -78,7 +82,7 @@ public class SlimpayHttpClient {
     }
 
     /**
-     * Call the SlimPay API using the Slimpay hapiclient
+     * Build the HttpClient and Call the SlimPay API using the Slimpay hapiclient
      *
      * @param url            the API url
      * @param profile        the profile URL
@@ -88,6 +92,49 @@ public class SlimpayHttpClient {
      * @throws SlimpayHttpException
      */
     private Resource request(String url, String profile, Oauth2BasicAuthentication authentication, Follow follow) throws SlimpayHttpException {
+        HapiClient client = new HapiClient.Builder()
+                .setApiUrl(url)
+                .setProfile(profile)
+                .setAuthenticationMethod(authentication)
+                .setClientBuilder(httpClientBuilder)
+                .build();
+        return sendRequest(client, follow, url);
+    }
+
+    /**
+     * Build the HttpClient and Call the SlimPay API using the Slimpay hapiclient
+     *
+     * @param url
+     * @param profile
+     * @param authentication
+     * @param follow
+     * @param entryPoint     entryPoint of the http request
+     * @return
+     * @throws SlimpayHttpException
+     */
+    private Resource request(String url, String profile, Oauth2BasicAuthentication authentication, Follow follow, String entryPoint) throws SlimpayHttpException {
+
+        HapiClient client = new HapiClient.Builder()
+                .setApiUrl(url)
+                .setProfile(profile)
+                .setAuthenticationMethod(authentication)
+                .setClientBuilder(httpClientBuilder)
+                .setEntryPointUrl(entryPoint)
+                .build();
+
+        return sendRequest(client, follow, url);
+    }
+
+    /**
+     * Execute the Http call
+     *
+     * @param client
+     * @param follow
+     * @param url
+     * @return
+     * @throws SlimpayHttpException
+     */
+    private Resource sendRequest(HapiClient client, Follow follow, String url) throws SlimpayHttpException {
         final long start = System.currentTimeMillis();
         int count = 0;
         Resource response = null;
@@ -96,14 +143,6 @@ public class SlimpayHttpClient {
         while (count < 3 && response == null) {
             try {
                 LOGGER.info("Start partner call... [URL: {}]", url);
-
-
-                HapiClient client = new HapiClient.Builder()
-                        .setApiUrl(url)
-                        .setProfile(profile)
-                        .setAuthenticationMethod(authentication)
-                        .setClientBuilder(httpClientBuilder)
-                        .build();
 
                 response = client.send(follow);
 
@@ -122,6 +161,8 @@ public class SlimpayHttpClient {
         }
 
         return response;
+
+
     }
 
     /**
@@ -176,27 +217,26 @@ public class SlimpayHttpClient {
         Resource response = request(url, profile, authentication, follow);
 
 
-        if (response != null) {
-
-            if (response.getState() != null) {
-                LOGGER.info("Order created");
-                SlimpayOrderResponse orderSuccessResponse = SlimpayOrderResponse.fromJson(response.getState().toString());
-                //add confirm url on the response
-                String confirmationUrl = response.getLink(new CustomRel(ns + USER_APPROVAL)).getHref();
-                orderSuccessResponse.setUrlApproval(confirmationUrl);
-                return orderSuccessResponse;
-
-            } else {
-                //return a Failure response
-                LOGGER.info("Fail to create the order");
-                return SlimpayFailureResponse.fromJson(response.toString());
-
-            }
-
-        } else {
+        if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.createOrder");
 
         }
+
+        if (response.getState() != null) {
+            LOGGER.info("Order created");
+            SlimpayOrderResponse orderSuccessResponse = SlimpayOrderResponse.fromJson(response.getState().toString());
+            //add confirm url on the response
+            String confirmationUrl = response.getLink(new CustomRel(ns + USER_APPROVAL)).getHref();
+            orderSuccessResponse.setUrlApproval(confirmationUrl);
+            return orderSuccessResponse;
+
+        } else {
+            //return a Failure response
+            LOGGER.info("Fail to create the order");
+            return SlimpayFailureResponse.fromJson(response.toString());
+
+        }
+
 
     }
 
@@ -220,19 +260,18 @@ public class SlimpayHttpClient {
                 .build();
 
         Resource response = request(url, profile, authentication, follow);
-        if (response != null) {
-
-            if (response.getState() != null) {
-                return SlimpayPaymentResponse.fromJson(response.getState().toString());
-            } else {//return a Failure response
-                LOGGER.info("Fail to create the payout");
-                return SlimpayFailureResponse.fromJson(response.toString());
-
-            }
-
-        } else {
+        if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.createPayout");
         }
+
+        if (response.getState() != null) {
+            return SlimpayPaymentResponse.fromJson(response.getState().toString());
+        } else {//return a Failure response
+            LOGGER.info("Fail to create the payout");
+            return SlimpayFailureResponse.fromJson(response.toString());
+
+        }
+
     }
 
     /**
@@ -261,18 +300,21 @@ public class SlimpayHttpClient {
 
         Resource response = request(url, profile, authentication, follow);
 
-        if (response != null) {
-            if (response.getState() != null) {
-                LOGGER.info(ORDER_FOUND_MESSAGE);
-                return SlimpayOrderResponse.fromJson(response.getState().toString());
-            } else {
-                //return a Failure response
-                LOGGER.info(ORDER_NOT_FOUND_MESSAGE);
-                return SlimpayFailureResponse.fromJson(response.toString());
-            }
+        return getSlimpayResponse(response);
 
-        } else {
+    }
+
+    private SlimpayResponse getSlimpayResponse(Resource response) throws HttpCallException {
+        if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getOrder");
+        }
+        if (response.getState() != null) {
+            LOGGER.info(ORDER_FOUND_MESSAGE);
+            return SlimpayOrderResponse.fromJson(response.getState().toString());
+        } else {
+            //return a Failure response
+            LOGGER.info(ORDER_NOT_FOUND_MESSAGE);
+            return SlimpayFailureResponse.fromJson(response.toString());
         }
     }
 
@@ -303,95 +345,225 @@ public class SlimpayHttpClient {
 
         Resource response = request(url, profile, authentication, follow);
 
-        if (response != null) {
-            if (response.getState() != null) {
-                LOGGER.info(ORDER_FOUND_MESSAGE);
-                return SlimpayOrderResponse.fromJson(response.getState().toString());
-            } else {
-                //return a Failure response
-                LOGGER.info(ORDER_NOT_FOUND_MESSAGE);
-                return SlimpayFailureResponse.fromJson(response.toString());
-            }
+        return getSlimpayResponse(response);
+    }
+
+    /**
+     * Find a Slimpay Payment from its id
+     *
+     * @param request a Payline RefundRequest
+     * @return A Slimpay payment
+     * @throws PluginTechnicalException
+     */
+    public SlimpayResponse getPayment(RefundRequest request) throws PluginTechnicalException {
+        Oauth2BasicAuthentication authentication = createAuthentication(request);
+        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
+        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
+        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
+        CustomRel rel = new CustomRel(ns + SlimpayConstants.GET_PAYMENT_URL);
+
+        //get paymentId from transactionAdditionalData
+        PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.fromJson(request.getTransactionAdditionalData());
+        String paymentId = additionalData.getPaymentId();
+
+        Follow follow = new Follow.Builder(rel)
+                .setMethod(Method.GET)
+                .setUrlVariable(ID, paymentId)
+                .build();
+
+        Resource response = request(url, profile, authentication, follow);
+
+        if (response == null) {
+            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getPayment");
+        }
+        if (response.getState() != null) {
+            LOGGER.info(ORDER_FOUND_MESSAGE);
+            return SlimpayPaymentResponse.fromJson(response.getState().toString());
         } else {
-            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getOrder");
+            //return a Failure response
+            LOGGER.info(ORDER_NOT_FOUND_MESSAGE);
+            return SlimpayFailureResponse.fromJson(response.toString());
+        }
+
+    }
+
+    /**
+     * Search a payment a payment from a TransactionStatus request
+     * This method is useful to get payment id
+     *
+     * @param request
+     * @return
+     * @throws PluginTechnicalException
+     */
+    public SlimpayResponse searchPayment(TransactionStatusRequest request) throws PluginTechnicalException {
+        Oauth2BasicAuthentication authentication = createAuthentication(request);
+        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
+        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
+        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
+        CustomRel rel = new CustomRel(ns + SlimpayConstants.SEARCH_PAYMENT_URL);
+
+        //get paymentId from transactionAdditionalData
+        String subscriber = request.getBuyer().getCustomerIdentifier();
+        //creditor reference
+        String creditorReference = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.CREDITOR_REFERENCE_KEY);
+        String scheme = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.MANDATE_PAYIN_SCHEME);
+        //Order reference
+        String mandateReference = request.getTransactionId();
+        String paymentReference = request.getOrder().getReference();
+        String currency = request.getAmount().getCurrency().toString();
+        CustomRel relPayment = new CustomRel("payments");
+
+        Follow follow = new Follow.Builder(rel)
+                .setMethod(Method.GET)
+                .setUrlVariable(CREDITOR_REFERENCE, creditorReference)
+                .setUrlVariable(SUBSCRIBER_REFERENCE, subscriber)
+                .setUrlVariable(MANDATE_REFERENCE, mandateReference)
+                .setUrlVariable(REFERENCE, paymentReference)
+                .setUrlVariable(CURRENCY, currency)
+                .setUrlVariable(SCHEME, scheme)
+                .setUrlVariable(DIRECTION, "IN")
+                .build();
+
+
+        Resource response = request(url, profile, authentication, follow);
+
+        return getSlimpayResponse(relPayment, response);
+    }
+
+
+    /**
+     * Get a payment from a redirection request
+     * This method is useful to get payment id
+     *
+     * @param request
+     * @return
+     * @throws PluginTechnicalException
+     */
+    public SlimpayResponse searchPayment(RedirectionPaymentRequest request) throws PluginTechnicalException {
+        Oauth2BasicAuthentication authentication = createAuthentication(request);
+        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
+        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
+        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
+        CustomRel rel = new CustomRel(ns + SlimpayConstants.SEARCH_PAYMENT_URL);
+
+        //get paymentId from transactionAdditionalData
+        String subscriber = request.getBuyer().getCustomerIdentifier();
+        //creditor reference
+        String creditorReference = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.CREDITOR_REFERENCE_KEY);
+        String scheme = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.MANDATE_PAYIN_SCHEME);
+        //Order reference
+        String mandateReference = request.getTransactionId();
+        String paymentReference = request.getOrder().getReference();
+        String currency = request.getAmount().getCurrency().toString();
+        CustomRel relPayment = new CustomRel("payments");
+
+        Follow follow = new Follow.Builder(rel)
+                .setMethod(Method.GET)
+                .setUrlVariable(CREDITOR_REFERENCE, creditorReference)
+                .setUrlVariable(SUBSCRIBER_REFERENCE, subscriber)
+                .setUrlVariable(MANDATE_REFERENCE, mandateReference)
+                .setUrlVariable(REFERENCE, paymentReference)
+                .setUrlVariable(CURRENCY, currency)
+                .setUrlVariable(SCHEME, scheme)
+                .setUrlVariable(DIRECTION, "IN")
+                .build();
+
+        Resource response = request(url, profile, authentication, follow);
+
+        return getSlimpayResponse(relPayment, response);
+
+    }
+
+    private SlimpayResponse getSlimpayResponse(CustomRel relPayment, Resource response) throws HttpCallException {
+        if (response == null) {
+            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.searchPayment");
+        }
+        //the service called return a list of payment even when we search by mandate reference which is a unique identifier
+        List<Resource> paymentsResult = response.getEmbeddedResources(relPayment);
+        if (paymentsResult != null) {
+            LOGGER.info(PAYMENT_FOUND_MESSAGE);
+            return SlimpayPaymentResponse.fromJson(paymentsResult.get(0).getState().toString());
+        } else {
+            //return a Failure response
+            LOGGER.info(PAYMENT_NOT_FOUND_MESSAGE);
+            return SlimpayFailureResponse.fromJson(response.toString());
         }
     }
 
     /**
-     * create the request to call a #get-order http request
+     * Cancel a payment
      *
-     * @param request the payline request
+     * @param request
+     * @param body
+     * @return
      * @throws PluginTechnicalException
      */
-    public SlimpayResponse getOrder(RefundRequest request) throws PluginTechnicalException {
+
+    public SlimpayResponse cancelPayment(RefundRequest request, JsonBody body) throws PluginTechnicalException {
+
         Oauth2BasicAuthentication authentication = createAuthentication(request);
         String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
         String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
         String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
-        CustomRel rel = new CustomRel(ns + SlimpayConstants.GET_ORDER_URL);
+        CustomRel relCancelPayment = new CustomRel(ns + SlimpayConstants.CANCEL_PAYMENT_URL);
 
-        //creditor reference
-        String creditorReference = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.CREDITOR_REFERENCE_KEY);
-        //Order reference
-        String reference = request.getTransactionId();
+        //get paymentId from transactionAdditionalData
+        PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.fromJson(request.getTransactionAdditionalData());
+        String paymentId = additionalData.getPaymentId();
+        String entryPointUrl = url + "/payments/" + paymentId;
 
-        Follow follow = new Follow.Builder(rel)
-                .setMethod(Method.GET)
-                .setUrlVariable(CREDITOR_REFERENCE, creditorReference)
-                .setUrlVariable(REFERENCE, reference)
+
+        Follow follow = new Follow.Builder(relCancelPayment)
+                .setMethod(Method.POST)
+                .setMessageBody(body)
                 .build();
+        Resource response = request(url, profile, authentication, follow, entryPointUrl);
 
-        Resource response = request(url, profile, authentication, follow);
 
-        if (response != null) {
-            if (response.getState() != null) {
-                LOGGER.info(ORDER_FOUND_MESSAGE);
-                return SlimpayOrderResponse.fromJson(response.getState().toString());
-            } else {
-                //return a Failure response
-                LOGGER.info(ORDER_NOT_FOUND_MESSAGE);
-                return SlimpayFailureResponse.fromJson(response.toString());
-            }
+        if (response == null) {
+            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.cancelPayment");
+        }
+        if (response.getState() != null) {
+            return SlimpayPaymentResponse.fromJson(response.getState().toString());
+        } else {//return a Failure response
+            LOGGER.info("Fail to cancel the payment");
+            return SlimpayFailureResponse.fromJson(response.toString());
 
-        } else {
-            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getOrder");
         }
     }
 
-    //fixme cancel jamais autorisé
-    public SlimpayResponse cancelPayment(RefundRequest request) throws PluginTechnicalException {
+    /**
+     * Get payment ID fom transactionStatus Request
+     *
+     * @param request
+     * @return String the payment id or null
+     */
+    public String getPaymentId(TransactionStatusRequest request) throws PluginTechnicalException {
 
-
-        Oauth2BasicAuthentication authentication = createAuthentication(request);
-        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
-        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
-        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
-        CustomRel rel = new CustomRel(ns + "#cancel-payment");
-
-        //creditor reference
-        String creditorReference = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.CREDITOR_REFERENCE_KEY);
-        //Order reference
-        String reference = request.getTransactionId();
-
-        Follow follow = new Follow.Builder(rel)
-                .setMethod(Method.GET)
-                .setUrlVariable(CREDITOR_REFERENCE, creditorReference)
-                .setUrlVariable(REFERENCE, reference)
-                .build();
-
-        Resource response = request(url, profile, authentication, follow);
-
-        if (response != null) {
-            if (response.getState() != null) {
-                return SlimpayPaymentResponse.fromJson(response.getState().toString());
-            } else {//return a Failure response
-                LOGGER.info("Fail to cancel the payment");
-                return SlimpayFailureResponse.fromJson(response.toString());
-
-            }
-        } else {
-            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getOrder");
+        SlimpayResponse responsePayment = searchPayment(request);
+        if (responsePayment.getClass() == SlimpayPaymentResponse.class) {
+            SlimpayPaymentResponse paymentCreated = (SlimpayPaymentResponse) responsePayment;
+            return paymentCreated.getId();
         }
+        return "";
+
+    }
+
+    /**
+     * Get payment ID fom RedirectionPaymentRequest Request
+     *
+     * @param request
+     * @return String the payment id or null
+     */
+    public String getPaymentId(RedirectionPaymentRequest request) throws PluginTechnicalException {
+
+        SlimpayResponse responsePayment = searchPayment(request);
+        if (responsePayment.getClass() == SlimpayPaymentResponse.class) {
+            SlimpayPaymentResponse paymentCreated = (SlimpayPaymentResponse) responsePayment;
+            return paymentCreated.getId();
+        }
+        return "";
+
     }
 
     /**

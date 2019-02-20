@@ -1,7 +1,5 @@
 package com.payline.payment.slimpay.utils.properties.service;
 
-import com.payline.payment.slimpay.utils.config.ConfigEnvironment;
-
 import java.util.Properties;
 
 /**
@@ -29,12 +27,8 @@ public enum ConfigPropertiesEnum implements PropertiesService {
     }
 
     @Override
-    public String get(String key) {
-        return getProperty(properties, key);
+    public Properties getProperties() {
+        return properties;
     }
 
-    @Override
-    public String get(String key, ConfigEnvironment environment) {
-        return getProperty(properties, key, environment);
-    }
 }
