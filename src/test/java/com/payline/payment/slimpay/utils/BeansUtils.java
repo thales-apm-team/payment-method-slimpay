@@ -11,6 +11,9 @@ import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionSt
 import com.slimpay.hapiclient.hal.CustomRel;
 import com.slimpay.hapiclient.hal.Rel;
 import com.slimpay.hapiclient.hal.Resource;
+import com.slimpay.hapiclient.http.Follow;
+import com.slimpay.hapiclient.http.JsonBody;
+import com.slimpay.hapiclient.http.Method;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -239,4 +242,21 @@ public class BeansUtils {
 
     }
 
+    public static Follow createDefaultFollow(){
+        Rel rel = new CustomRel("testFollow");
+
+        return  new Follow.Builder(rel)
+                .setMethod(Method.POST)
+                .setMessageBody(new JsonBody(
+                        Json.createObjectBuilder()
+                                .add("creditor", Json.createObjectBuilder()
+                                        .add("reference", "democreditor")
+                                )
+                                .add("subscriber", Json.createObjectBuilder()
+                                        .add("reference", "subscriber5c6c36dac9fd0")
+                                )
+                ))
+                .build();
+
+    }
 }

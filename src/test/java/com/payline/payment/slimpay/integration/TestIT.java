@@ -118,13 +118,21 @@ public class TestIT extends AbstractPaymentIntegration {
 
     @Test
     public void fullPaymentTest() {
-        ContractParametersCheckRequest checkRequest = TestUtils.createContractParametersCheckRequest();
 
-        Map<String, String> checkError = configurationService.check(checkRequest);
-        Assertions.assertEquals(0, checkError.size());
+        //test method check() of ConfigurationService
+        this.configurationServiceCheckTest();
 
         PaymentRequest request = createDefaultPaymentRequest();
         this.fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);
+    }
+
+    @Test
+    public void configurationServiceCheckTest() {
+        //test method check() of ConfigurationService
+        ContractParametersCheckRequest checkRequest = TestUtils.createContractParametersCheckRequest();
+        Map<String, String> checkError = configurationService.check(checkRequest);
+        Assertions.assertEquals(0, checkError.size());
+
     }
 
 

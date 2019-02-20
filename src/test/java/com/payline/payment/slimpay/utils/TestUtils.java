@@ -97,7 +97,10 @@ public class TestUtils {
         put(PAYMENT_PROCESSOR, new ContractProperty("slimpay"));
     }}
     );
+    public static final ContractConfiguration EMPTY_CONTRACT_CONFIGURATION = new ContractConfiguration(MDP_IDENTIFIER, new HashMap<String, ContractProperty>() {{
 
+    }}
+    );
 
     private static final Map<String, String> ACCOUNT_INFO = new HashMap<String, String>() {{
         put(CREDITOR_REFERENCE_KEY, "paylinemerchanttest1");
@@ -353,7 +356,7 @@ public class TestUtils {
         return ContractParametersCheckRequest
                 .CheckRequestBuilder
                 .aCheckRequest()
-                .withContractConfiguration(CONTRACT_CONFIGURATION)
+                .withContractConfiguration(EMPTY_CONTRACT_CONFIGURATION)
                 .withAccountInfo(ACCOUNT_INFO)
                 .withEnvironment(ENVIRONMENT)
                 .withLocale(LOCALE_FR)

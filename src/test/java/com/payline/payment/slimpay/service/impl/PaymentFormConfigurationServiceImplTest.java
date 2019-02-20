@@ -26,11 +26,11 @@ public class PaymentFormConfigurationServiceImplTest {
     @InjectMocks
     private PaymentFormConfigurationServiceImpl service = new PaymentFormConfigurationServiceImpl();
 
-    private final String buttonText = "payer avec slimpay";
-    private final String decription = "payer avec slimpay";
+    private final String buttonText = "Payer avec Slimpay";
+    private final String decription = "Payer avec Slimpay";
     private final int height = 24;
     private final int width = 24;
-    private final String paymentMethodIdentifier = "slimpay";
+    private final String paymentMethodIdentifier = "SDD Slimpay";
 
     private static final Environment ENVIRONMENT = new Environment("https://succesurl.com/", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
 
