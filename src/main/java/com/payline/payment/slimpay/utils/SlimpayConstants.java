@@ -48,7 +48,7 @@ public class SlimpayConstants {
     public static final String APP_SECRET = "appSecret";
     public static final String APP_SECRET_MESSAGE_ERROR = "app.secret.message.error";
     //URLS
-    public static final String API_URL_KEY = "appUrl";
+    public static final String API_URL_KEY = "apiUrl";
     public static final String API_PROFILE_KEY = "apiProfile";
     public static final String API_NS_KEY = "apiNs";
 

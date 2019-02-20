@@ -24,10 +24,18 @@ import com.slimpay.hapiclient.http.HapiClient;
 import com.slimpay.hapiclient.http.JsonBody;
 import com.slimpay.hapiclient.http.Method;
 import com.slimpay.hapiclient.http.auth.Oauth2BasicAuthentication;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.Logger;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class SlimpayHttpClient {
     private static final Logger LOGGER = LogManager.getLogger(SlimpayHttpClient.class);
+    private static HttpClientBuilder httpClientBuilder ;
+
     private static final String EMPTY_RESPONSE_MESSAGE = "response is empty";
     private static final String USER_APPROVAL = "#user-approval";
     private static final String CREDITOR_REFERENCE = "creditorReference";
@@ -38,8 +46,21 @@ public class SlimpayHttpClient {
     /**
      * Instantiate a HTTP client with default values.
      */
+
+
     private SlimpayHttpClient() {
-        // ras.
+        //Define Client builder used in every Request to Slimpay
+        final RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(2 * 1000)
+                .setConnectionRequestTimeout(3 * 1000)
+                .setSocketTimeout(4 * 1000).build();
+
+        httpClientBuilder = HttpClientBuilder.create();
+        httpClientBuilder.useSystemProperties()
+                .setDefaultRequestConfig(requestConfig)
+                .setDefaultCredentialsProvider(new BasicCredentialsProvider())
+                .setSSLSocketFactory(new SSLConnectionSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory(), SSLConnectionSocketFactory.getDefaultHostnameVerifier()));
+
     }
 
     /**
@@ -76,10 +97,12 @@ public class SlimpayHttpClient {
             try {
                 LOGGER.info("Start partner call... [URL: {}]", url);
 
+
                 HapiClient client = new HapiClient.Builder()
                         .setApiUrl(url)
                         .setProfile(profile)
                         .setAuthenticationMethod(authentication)
+                        .setClientBuilder(httpClientBuilder)
                         .build();
 
                 response = client.send(follow);
@@ -366,7 +389,7 @@ public class SlimpayHttpClient {
                 return SlimpayFailureResponse.fromJson(response.toString());
 
             }
-        }else {
+        } else {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getOrder");
         }
     }

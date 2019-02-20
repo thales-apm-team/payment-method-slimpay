@@ -246,7 +246,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                     .withSuccessUrl(environment == null ? null : environment.getRedirectionReturnURL())
                     .withFailureUrl(environment == null ? null : environment.getRedirectionReturnURL())
                     .withCancelUrl(environment == null ? null : environment.getRedirectionCancelURL())
-                    .withLocale(locale == null ? null : locale.getCountry())
+                    .withLocale(locale == null ? null : locale.getLanguage())
                     .withStarted(true)
                     //send by mail user approval link
                     .withSendUserApproval(true)
@@ -275,11 +275,11 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
 
         return SlimpayOrderRequest.Builder.aSlimPayOrderRequestBuilder()
                 .withSubscriber(new Subscriber(FOO))
-                .withCreditor(new Creditor(request.getContractConfiguration().getProperty(CREDITOR_REFERENCE_KEY).getValue()))
+                .withCreditor(new Creditor(RequestConfigServiceImpl.INSTANCE.getParameterValue(request, CREDITOR_REFERENCE_KEY)))
                 .withSuccessUrl(environment == null ? null : environment.getRedirectionReturnURL())
                 .withFailureUrl(environment == null ? null : environment.getRedirectionReturnURL())
                 .withCancelUrl(environment == null ? null : environment.getRedirectionCancelURL())
-                .withLocale(locale == null ? null : locale.getCountry())
+                .withLocale(locale == null ? null : locale.getLanguage())
                 .withStarted(true)
                 .withItems(new SlimPayOrderItem[]{
                         SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder()

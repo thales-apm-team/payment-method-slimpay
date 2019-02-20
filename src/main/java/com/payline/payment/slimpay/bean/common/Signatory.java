@@ -9,6 +9,7 @@ public class Signatory extends SlimpayBean {
     private static final Logger LOGGER = LogManager.getLogger(Signatory.class);
     protected static final String FAMILY_NAME_WARN = "Signatory must have a familyName when built";
     protected static final String GIVEN_NAME_WARN = "Signatory must have a givenName when built";
+    protected static final String TELEPHONE_WARN = "Signatory must have a telephone in international format when built";
 
     //Mr/Miss/Mrs
     private String honorificPrefix;
@@ -105,7 +106,9 @@ public class Signatory extends SlimpayBean {
             if (this.givenName == null) {
                 LOGGER.warn(GIVEN_NAME_WARN);
             }
-
+            if (this.telephone != null && !this.telephone.startsWith("+")) {
+                LOGGER.warn(TELEPHONE_WARN);
+            }
             return this;
         }
 
