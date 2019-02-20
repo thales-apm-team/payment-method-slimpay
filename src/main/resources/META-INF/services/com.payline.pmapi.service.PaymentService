@@ -1,1 +1,1 @@
-com.payline.payment.slimpay.services.PaymentServiceImpl
+com.payline.payment.slimpay.service.impl.PaymentServiceImpl

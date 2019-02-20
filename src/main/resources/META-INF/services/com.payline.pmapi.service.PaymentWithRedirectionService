@@ -1,1 +1,1 @@
-com.payline.payment.slimpay.services.PaymentWithRedirectionServiceImpl
+com.payline.payment.slimpay.service.impl.PaymentWithRedirectionServiceImpl

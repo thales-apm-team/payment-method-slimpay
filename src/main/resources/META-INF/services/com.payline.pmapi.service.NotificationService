@@ -1,1 +1,1 @@
-com.payline.payment.slimpay.services.NotificationServiceImpl
+com.payline.payment.slimpay.service.impl.NotificationServiceImpl
