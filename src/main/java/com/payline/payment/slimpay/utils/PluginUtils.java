@@ -10,6 +10,7 @@ import static com.payline.payment.slimpay.utils.SlimpayConstants.ERROR_MAX_LENGT
 
 public class PluginUtils {
 
+    public static final String PHONE_CHECKER_REGEX = "^\\+?[1-9]\\d{1,14}$";
 
     private PluginUtils() {
         // ras.
@@ -91,11 +92,33 @@ public class PluginUtils {
 
     /**
      * Truncate a String to max length define in SlimpayConstants class
+     *
      * @param error
      * @return
      */
     public static String truncateError(String error) {
         return PluginUtils.truncate(error, ERROR_MAX_LENGTH);
+    }
+
+    /**
+     * convert phone number to e164 format
+     *
+     * @param telephone
+     * @return
+     */
+    public static String toInternationalFrenchNumber(String telephone) {
+        //suppress white space
+        String telWithoutSpace = telephone.replace(" ", "");
+        //Tester si respecter regex
+        if (!(telWithoutSpace.matches(PHONE_CHECKER_REGEX))) {
+            //replace 00 ou 0X  par +33
+            if (telWithoutSpace.startsWith("00")) {
+                telWithoutSpace = telWithoutSpace.replace("00", "+33");
+            } else if (telWithoutSpace.startsWith("0")) {
+                telWithoutSpace = telWithoutSpace.replace("0", "+33");
+            }
+        }
+        return telWithoutSpace;
     }
 
 

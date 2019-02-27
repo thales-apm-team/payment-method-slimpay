@@ -121,7 +121,7 @@ public class RefundServiceImpl implements RefundService {
                     LOGGER.error("payment cancellation fails");
                     return RefundResponseFailure.RefundResponseFailureBuilder
                             .aRefundResponseFailure()
-                            .withErrorCode(truncateError("Unable to cancel the payment,executionStatus: " + paymentResponse.getExecutionStatus()))
+                            .withErrorCode(truncateError("Unable to cancel,executionStatus: " + paymentResponse.getExecutionStatus()))
                             .withFailureCause(FailureCause.REFUSED)
                             .withPartnerTransactionId(refundRequest.getPartnerTransactionId())
                             .build();

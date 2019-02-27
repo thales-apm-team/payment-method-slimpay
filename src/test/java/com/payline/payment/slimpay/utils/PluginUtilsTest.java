@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigInteger;
 import java.util.Currency;
 
+import static com.payline.payment.slimpay.utils.PluginUtils.toInternationalFrenchNumber;
 import static com.payline.payment.slimpay.utils.PluginUtils.truncateError;
 import static com.payline.payment.slimpay.utils.SlimpayConstants.ERROR_MAX_LENGTH;
 
@@ -64,6 +65,19 @@ public class PluginUtilsTest {
         Assertions.assertEquals(50,truncatedText.length());
         Assertions.assertEquals(ERROR_MAX_LENGTH,truncatedText.length());
         Assertions.assertTrue(longText.contains(truncatedText));
+    }
+
+    @Test
+    public void toInternationalPhoneNumberTest(){
+        String phone = "06 36 65 65 65";
+        String phone2 = "0636656565";
+        String formatAttempted = "+33636656565";
+
+        String phoneFormatted = toInternationalFrenchNumber(phone);
+        String phoneFormatted2 = toInternationalFrenchNumber(phone2);
+        Assertions.assertEquals(formatAttempted,phoneFormatted);
+        Assertions.assertEquals(formatAttempted,phoneFormatted2);
+
     }
 
 }

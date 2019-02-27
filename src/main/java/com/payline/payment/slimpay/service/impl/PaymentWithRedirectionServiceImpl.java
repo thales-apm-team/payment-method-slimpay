@@ -26,6 +26,8 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
     private static final Logger LOGGER = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
     private static final String SUCCESS_MESSAGE = "COMMANDE_OK";
+    private static final String CANCELLATION_CLIENT_MESSAGE = "Cancelled by client";
+    private static final String CANCELLATION_SERVER_MESSAGE = "Cancelled by server";
     private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
 
 
@@ -61,6 +63,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 case CLOSED_ABORTED_BY_CLIENT:
                     return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                             .withPartnerTransactionId(transactionId)
+                            .withErrorCode(CANCELLATION_CLIENT_MESSAGE)
                             .withFailureCause(FailureCause.CANCEL)
                             .build();
 
@@ -68,6 +71,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 case CLOSED_ABORTED_BY_SERVER:
                     return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                             .withPartnerTransactionId(transactionId)
+                            .withErrorCode(CANCELLATION_SERVER_MESSAGE)
                             .withFailureCause(FailureCause.REFUSED)
                             .build();
 
@@ -143,6 +147,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 case CLOSED_ABORTED_BY_CLIENT:
                     return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                             .withPartnerTransactionId(transactionId)
+                            .withErrorCode(CANCELLATION_CLIENT_MESSAGE)
                             .withFailureCause(FailureCause.CANCEL)
                             .build();
 
@@ -150,6 +155,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 case CLOSED_ABORTED_BY_SERVER:
                     return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                             .withPartnerTransactionId(transactionId)
+                            .withErrorCode(CANCELLATION_SERVER_MESSAGE)
                             .withFailureCause(FailureCause.REFUSED)
                             .build();
 
@@ -219,6 +225,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 case CLOSED_ABORTED_BY_CLIENT:
                     return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                             .withPartnerTransactionId(transactionId)
+                            .withErrorCode(CANCELLATION_CLIENT_MESSAGE)
                             .withFailureCause(FailureCause.CANCEL)
                             .build();
 
@@ -226,6 +233,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 case CLOSED_ABORTED_BY_SERVER:
                     return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                             .withPartnerTransactionId(transactionId)
+                            .withErrorCode(CANCELLATION_SERVER_MESSAGE)
                             .withFailureCause(FailureCause.REFUSED)
                             .build();
 

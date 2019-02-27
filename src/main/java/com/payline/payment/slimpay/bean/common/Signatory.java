@@ -4,6 +4,8 @@ import com.payline.payment.slimpay.utils.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static com.payline.payment.slimpay.utils.PluginUtils.*;
+
 public class Signatory extends SlimpayBean {
 
     private static final Logger LOGGER = LogManager.getLogger(Signatory.class);
@@ -88,7 +90,7 @@ public class Signatory extends SlimpayBean {
         }
 
         public Signatory.Builder withTelephone(String telephone) {
-            this.telephone = telephone;
+            this.telephone = toInternationalFrenchNumber(telephone);
             return this;
         }
 
@@ -107,7 +109,7 @@ public class Signatory extends SlimpayBean {
                 LOGGER.warn(GIVEN_NAME_WARN);
             }
            //Phone number must strat by + and can contains white spaces or "-"
-            if (this.telephone != null && !this.telephone.matches("[+][\\d\\s*]{6,21}|[+][\\d\\-*]{6,15}")) {
+            if (this.telephone != null && !this.telephone.matches(PHONE_CHECKER_REGEX)) {
                 LOGGER.warn(TELEPHONE_WARN);
             }
             return this;
