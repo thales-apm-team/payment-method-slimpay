@@ -46,7 +46,7 @@ public class Signatory extends SlimpayBean {
         return billingAddress;
     }
 
-    public Signatory(Signatory.Builder builder) {
+    private Signatory(Signatory.Builder builder) {
         this.honorificPrefix = builder.honorificPrefix;
         this.familyName = builder.familyName;
         this.givenName = builder.givenName;
@@ -106,7 +106,8 @@ public class Signatory extends SlimpayBean {
             if (this.givenName == null) {
                 LOGGER.warn(GIVEN_NAME_WARN);
             }
-            if (this.telephone != null && !this.telephone.startsWith("+")) {
+           //Phone number must strat by + and can contains white spaces or "-"
+            if (this.telephone != null && !this.telephone.matches("[+][\\d\\s*]{6,21}|[+][\\d\\-*]{6,15}")) {
                 LOGGER.warn(TELEPHONE_WARN);
             }
             return this;
