@@ -109,7 +109,7 @@ public class Signatory extends SlimpayBean {
                 LOGGER.warn(GIVEN_NAME_WARN);
             }
            //Phone number must strat by + and can contains white spaces or "-"
-            if (this.telephone != null && !this.telephone.matches(PHONE_CHECKER_REGEX)) {
+            if (this.telephone != null && !this.telephone.matches(FRENCH_PHONE_CHECKER_REGEX)) {
                 LOGGER.warn(TELEPHONE_WARN);
             }
             return this;

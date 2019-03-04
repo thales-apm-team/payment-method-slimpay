@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigInteger;
 import java.util.Currency;
 
-import static com.payline.payment.slimpay.utils.PluginUtils.toInternationalFrenchNumber;
-import static com.payline.payment.slimpay.utils.PluginUtils.truncateError;
+import static com.payline.payment.slimpay.utils.PluginUtils.*;
 import static com.payline.payment.slimpay.utils.SlimpayConstants.ERROR_MAX_LENGTH;
 
 public class PluginUtilsTest {
@@ -41,12 +40,12 @@ public class PluginUtilsTest {
     }
 
     @Test
-    public void truncate(){
+    public void truncate() {
         Assertions.assertEquals("t", PluginUtils.truncate("this is a very long message", 1));
     }
 
     @Test
-    public void getHonorificCode(){
+    public void getHonorificCode() {
         Assertions.assertEquals(null, PluginUtils.getHonorificCode(null));
         Assertions.assertEquals("Mr", PluginUtils.getHonorificCode("4"));
         Assertions.assertEquals("Mr", PluginUtils.getHonorificCode("5"));
@@ -58,26 +57,55 @@ public class PluginUtilsTest {
     }
 
     @Test
-    public void truncateErrorTest()
-    {
-        String longText ="I don't think this will (always?) work -- the one piror will be the most recent commit that was merged in from the other branch -- it won't be the most recent commit on the current branch. Right? (This ";
+    public void truncateErrorTest() {
+        String longText = "I don't think this will (always?) work -- the one piror will be the most recent commit that was merged in from the other branch -- it won't be the most recent commit on the current branch. Right? (This ";
         String truncatedText = truncateError(longText);
-        Assertions.assertEquals(50,truncatedText.length());
-        Assertions.assertEquals(ERROR_MAX_LENGTH,truncatedText.length());
+        Assertions.assertEquals(50, truncatedText.length());
+        Assertions.assertEquals(ERROR_MAX_LENGTH, truncatedText.length());
         Assertions.assertTrue(longText.contains(truncatedText));
     }
 
     @Test
-    public void toInternationalPhoneNumberTest(){
-        String phone = "06 36 65 65 65";
+    public void toInternationalPhoneNumberTest() {
         String phone2 = "0636656565";
         String formatAttempted = "+33636656565";
 
-        String phoneFormatted = toInternationalFrenchNumber(phone);
         String phoneFormatted2 = toInternationalFrenchNumber(phone2);
-        Assertions.assertEquals(formatAttempted,phoneFormatted);
-        Assertions.assertEquals(formatAttempted,phoneFormatted2);
+        Assertions.assertEquals(formatAttempted, phoneFormatted2);
 
     }
 
+    @Test
+    public void toInternationalPhoneNumberWithSpaceTest() {
+        String phone = "06 36 65 65 65";
+        String formatAttempted = "+33636656565";
+        String phoneFormatted = toInternationalFrenchNumber(phone);
+        Assertions.assertEquals(formatAttempted, phoneFormatted);
+    }
+
+    @Test
+    public void toInternationalPhoneNumberWithStripeTest() {
+        String phone = "06-36-65-65-65";
+        String formatAttempted = "+33636656565";
+        String phoneFormatted = toInternationalFrenchNumber(phone);
+        Assertions.assertEquals(formatAttempted, phoneFormatted);
+    }
+
+    @Test
+    public void toInternationalPhoneNumberWithDotTest() {
+        String phone = "06.36.65.65.65";
+        String formatAttempted = "+33636656565";
+        String phoneFormatted = toInternationalFrenchNumber(phone);
+        Assertions.assertEquals(formatAttempted, phoneFormatted);
+        Assertions.assertTrue(formatAttempted.matches(FRENCH_PHONE_CHECKER_REGEX));
+    }
+
+    @Test
+    public void toInternationalPhoneNumberWithForeignNumberTest() {
+        String phone = "+1-202-555-0143";
+        String formatAttempted = "+12025550143";
+        String phoneFormatted = toInternationalFrenchNumber(phone);
+        Assertions.assertEquals(formatAttempted, phoneFormatted);
+        Assertions.assertFalse(formatAttempted.matches(FRENCH_PHONE_CHECKER_REGEX));
+    }
 }

@@ -11,6 +11,8 @@ import static com.payline.payment.slimpay.utils.SlimpayConstants.ERROR_MAX_LENGT
 public class PluginUtils {
 
     public static final String PHONE_CHECKER_REGEX = "^\\+?[1-9]\\d{1,14}$";
+    //french phone number e164
+    public static final String FRENCH_PHONE_CHECKER_REGEX = "^\\+33?[1-9]\\d{9}$";
 
     private PluginUtils() {
         // ras.
@@ -109,14 +111,20 @@ public class PluginUtils {
     public static String toInternationalFrenchNumber(String telephone) {
         //suppress white space
         String telWithoutSpace = telephone.replace(" ", "");
+        //suppress stripes
+         telWithoutSpace = telWithoutSpace.replace("-", "");
+        //suppress dots
+        telWithoutSpace = telWithoutSpace.replace(".", "");
         //Tester si respecter regex
-        if (!(telWithoutSpace.matches(PHONE_CHECKER_REGEX))) {
+        if (!(telWithoutSpace.matches(FRENCH_PHONE_CHECKER_REGEX))) {
             //replace 00 ou 0X  par +33
             if (telWithoutSpace.startsWith("00")) {
-                telWithoutSpace = telWithoutSpace.replace("00", "+33");
-            } else if (telWithoutSpace.startsWith("0")) {
+                telWithoutSpace = telWithoutSpace.replace("00", "+");
+            } else if (telWithoutSpace.startsWith("06")|| telWithoutSpace.startsWith("07")) {
                 telWithoutSpace = telWithoutSpace.replace("0", "+33");
             }
+            //else this is not a French mobile number
+
         }
         return telWithoutSpace;
     }
