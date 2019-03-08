@@ -106,6 +106,19 @@ public class PaymentWithRedirectionServiceTest {
     }
 
     @Test
+    public void handleSessionExpiredKOMalformedUrl() throws Exception {
+        when(httpClient.getOrder(any(TransactionStatusRequest.class))).thenThrow(new MalformedResponseException(new HttpCallException("this is an error", "foo")));
+        TransactionStatusRequest request = createDefaultTransactionStatusRequest("HDEV-1550072222649");
+        PaymentResponse response = service.handleSessionExpired(request);
+
+        Assertions.assertTrue(response instanceof PaymentResponseFailure);
+        PaymentResponseFailure failureResponse = (PaymentResponseFailure) response;
+        Assertions.assertNotNull(failureResponse);
+        Assertions.assertEquals(FailureCause.COMMUNICATION_ERROR, failureResponse.getFailureCause());
+        Assertions.assertNotNull(failureResponse.getPartnerTransactionId());
+    }
+
+    @Test
     public void returnResponseFailure() throws MalformedResponseException{
         SlimpayFailureResponse failureResponse = BeansUtils.createMockedSlimpayFailureResponse();
         PaymentResponse response = service.returnResponse(failureResponse, "1");
