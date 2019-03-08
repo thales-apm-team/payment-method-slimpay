@@ -6,6 +6,7 @@ import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
+import com.payline.payment.slimpay.exception.MalformedResponseException;
 import com.payline.payment.slimpay.utils.properties.constants.OrderStatus;
 import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionStatus;
 import com.slimpay.hapiclient.hal.CustomRel;
@@ -98,7 +99,7 @@ public class BeansUtils {
     }
 
     //Mocked response
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponse(String state) {
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponse(String state) throws MalformedResponseException {
         SlimpayOrderResponse OrderResponse = SlimpayOrderResponse.fromJson("{\n" +
                 "   \"_links\":    {\n" +
                 "      \"self\": {\"href\": \"https://api.preprod.slimpay.com/orders/ff4ea3a6-303e-11e9-9d34-000000000000\"},\n" +
@@ -128,23 +129,23 @@ public class BeansUtils {
         return OrderResponse;
     }
 
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseOpen() {
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponseOpen() throws MalformedResponseException {
         return createMockedSlimpayOrderResponse(OrderStatus.OPEN_RUNNING);
     }
 
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosed() {
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosed() throws MalformedResponseException {
         return createMockedSlimpayOrderResponse(OrderStatus.CLOSED_COMPLETED);
     }
 
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAborted() {
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAborted() throws MalformedResponseException {
         return createMockedSlimpayOrderResponse(OrderStatus.CLOSED_ABORTED);
     }
 
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAbortedByClient() {
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAbortedByClient() throws MalformedResponseException {
         return createMockedSlimpayOrderResponse(OrderStatus.CLOSED_ABORTED_BY_CLIENT);
     }
 
-    public static SlimpayFailureResponse createMockedSlimpayFailureResponse() {
+    public static SlimpayFailureResponse createMockedSlimpayFailureResponse() throws MalformedResponseException {
         String jsonError = "{\n" +
                 "   \"code\": 901,\n" +
                 "   \"message\": \"Slimpay order : This error is mocked for test\"\n" +
@@ -153,7 +154,7 @@ public class BeansUtils {
     }
 
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentIn(String executionStatus) {
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentIn(String executionStatus)  throws MalformedResponseException{
         return SlimpayPaymentResponse.fromJson(" {  " +
                 " \"id\": \"8212f471-3432-11e9-ad8f-000000000000\",\n" +
                 "   \"scheme\": \"SEPA.DIRECT_DEBIT.CORE\",\n" +
@@ -173,7 +174,7 @@ public class BeansUtils {
 
     }
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentOut(String executionStatus) {
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOut(String executionStatus)  throws MalformedResponseException{
         return SlimpayPaymentResponse.fromJson("{\n" +
                 "    \"id\": \"edbd987c-23e1-11e9-ad0d-000000000000\",\n" +
                 "    \"scheme\": \"SEPA.CREDIT_TRANSFER\",\n" +
@@ -192,26 +193,26 @@ public class BeansUtils {
                 "}");
     }
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutTopProcess() {
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutTopProcess()  throws MalformedResponseException{
         return createMockedSlimpayPaymentOut(PaymentExecutionStatus.TOP_PROCESS);
     }
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutProcessed() {
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutProcessed()  throws MalformedResponseException{
         return createMockedSlimpayPaymentOut(PaymentExecutionStatus.PROCESSED);
     }
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutRejected() {
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutRejected()  throws MalformedResponseException{
         return createMockedSlimpayPaymentOut(PaymentExecutionStatus.REJECTED);
     }
 
-    public static SlimpayFailureResponse createMockedSlimpayPaymentOutError() {
+    public static SlimpayFailureResponse createMockedSlimpayPaymentOutError() throws MalformedResponseException{
         String jsonError = "{\n" +
                 "   \"code\": 901,\n" +
                 "   \"message\": \"Duplicate order : order Y-ORDER-REF- for creditor paylinemerchanttest1 already exists\"\n" +
                 "}";
         return SlimpayFailureResponse.fromJson(jsonError);
     }
-    public static SlimpayFailureResponse createMockedCancelPaymentError() {
+    public static SlimpayFailureResponse createMockedCancelPaymentError() throws MalformedResponseException {
         String jsonError = "{\n" +
                 "   \"code\": 903,\n" +
                 "   \"message\": \"Illegal state : Cannot find cancellable direct debit with id=7232101\"\n" +

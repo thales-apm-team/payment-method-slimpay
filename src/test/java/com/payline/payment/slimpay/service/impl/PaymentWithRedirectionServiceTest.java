@@ -4,6 +4,7 @@ import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
 import com.payline.payment.slimpay.exception.HttpCallException;
+import com.payline.payment.slimpay.exception.MalformedResponseException;
 import com.payline.payment.slimpay.utils.BeansUtils;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionStatus;
@@ -105,7 +106,7 @@ public class PaymentWithRedirectionServiceTest {
     }
 
     @Test
-    public void returnResponseFailure() {
+    public void returnResponseFailure() throws MalformedResponseException{
         SlimpayFailureResponse failureResponse = BeansUtils.createMockedSlimpayFailureResponse();
         PaymentResponse response = service.returnResponse(failureResponse, "1");
 
@@ -115,7 +116,7 @@ public class PaymentWithRedirectionServiceTest {
     }
 
     @Test
-    public void returnResponseOPEN() {
+    public void returnResponseOPEN() throws MalformedResponseException {
         SlimpayOrderResponse orderResponse = BeansUtils.createMockedSlimpayOrderResponseOpen();
         PaymentResponse response = service.returnResponse(orderResponse, "1");
 
@@ -125,7 +126,7 @@ public class PaymentWithRedirectionServiceTest {
     }
 
     @Test
-    public void returnResponseClosedAbortedByClient() {
+    public void returnResponseClosedAbortedByClient() throws MalformedResponseException {
         SlimpayOrderResponse orderResponse = BeansUtils.createMockedSlimpayOrderResponseClosedAbortedByClient();
         PaymentResponse response = service.returnResponse(orderResponse, "1");
 
@@ -135,7 +136,7 @@ public class PaymentWithRedirectionServiceTest {
     }
 
     @Test
-    public void returnResponseClosedAborted() {
+    public void returnResponseClosedAborted() throws MalformedResponseException{
         SlimpayOrderResponse orderResponse = BeansUtils.createMockedSlimpayOrderResponseClosedAborted();
         PaymentResponse response = service.returnResponse(orderResponse, "1");
 
@@ -145,7 +146,7 @@ public class PaymentWithRedirectionServiceTest {
     }
 
     @Test
-    public void returnResponseClosedCompleted() {
+    public void returnResponseClosedCompleted() throws MalformedResponseException {
         SlimpayOrderResponse orderResponse = BeansUtils.createMockedSlimpayOrderResponseClosed();
         PaymentResponse response = service.returnResponse(orderResponse, "1");
 
@@ -153,7 +154,7 @@ public class PaymentWithRedirectionServiceTest {
     }
 
     @Test
-    public void returnResponseClosedOther() {
+    public void returnResponseClosedOther() throws MalformedResponseException{
         SlimpayOrderResponse orderResponse = BeansUtils.createMockedSlimpayOrderResponse("foo");
         PaymentResponse response = service.returnResponse(orderResponse, "1");
 

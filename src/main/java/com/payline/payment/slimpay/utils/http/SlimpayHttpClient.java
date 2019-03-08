@@ -1,10 +1,7 @@
 package com.payline.payment.slimpay.utils.http;
 
 import com.payline.payment.slimpay.bean.response.*;
-import com.payline.payment.slimpay.exception.HttpCallException;
-import com.payline.payment.slimpay.exception.InvalidDataException;
-import com.payline.payment.slimpay.exception.PluginTechnicalException;
-import com.payline.payment.slimpay.exception.SlimpayHttpException;
+import com.payline.payment.slimpay.exception.*;
 import com.payline.payment.slimpay.service.impl.RequestConfigServiceImpl;
 import com.payline.payment.slimpay.utils.SlimpayConstants;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
@@ -304,10 +301,11 @@ public class SlimpayHttpClient {
 
     }
 
-    private SlimpayResponse getSlimpayResponse(Resource response) throws HttpCallException {
+    private SlimpayResponse getSlimpayResponse(Resource response) throws PluginTechnicalException {
         if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getOrder");
         }
+
         if (response.getState() != null) {
             LOGGER.info(ORDER_FOUND_MESSAGE);
             return SlimpayOrderResponse.fromJson(response.getState().toString());
@@ -474,7 +472,7 @@ public class SlimpayHttpClient {
 
     }
 
-    private SlimpayResponse getSlimpayResponse(CustomRel relPayment, Resource response) throws HttpCallException {
+    private SlimpayResponse getSlimpayResponse(CustomRel relPayment, Resource response) throws PluginTechnicalException {
         if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.searchPayment");
         }
