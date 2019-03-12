@@ -21,9 +21,9 @@ import java.util.Locale;
 import static com.payline.payment.slimpay.utils.properties.constants.LogoConstants.*;
 
 
-public interface ThalesPaymentFormConfigurationService extends PaymentFormConfigurationService {
+public interface DefaultPaymentFormConfigurationService extends PaymentFormConfigurationService {
 
-    Logger LOGGER = LogManager.getLogger(ThalesPaymentFormConfigurationService.class);
+    Logger LOGGER = LogManager.getLogger(DefaultPaymentFormConfigurationService.class);
     I18nService i18n = I18nService.getInstance();
 
     @Override
@@ -43,7 +43,7 @@ public interface ThalesPaymentFormConfigurationService extends PaymentFormConfig
     default PaymentFormLogo getLogo(String s, Locale locale) {
 
         String fileName = LogoPropertiesEnum.INSTANCE.get(LOGO_FILE_NAME);
-        InputStream input = ThalesPaymentFormConfigurationService.class.getClassLoader().getResourceAsStream(fileName);
+        InputStream input = DefaultPaymentFormConfigurationService.class.getClassLoader().getResourceAsStream(fileName);
         if (input == null) {
             LOGGER.error("Unable to load the logo {}", LOGO_FILE_NAME);
             throw new RuntimeException("Unable to load the logo " + LOGO_FILE_NAME);
