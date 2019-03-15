@@ -147,4 +147,56 @@ public class SlimpayErrorMapper {
 
 
     }
+
+    /**
+     * Map Slimpay Payment issue with Payline FailureCause
+     * @param error the slimpay returnRasonCode
+     * @return
+     */
+    public static FailureCause handleSlimpayPaymentError(String error) {
+
+        if (error != null) {
+            String errorUpperCase = error.toUpperCase().replace("\"", "");
+            switch (errorUpperCase) {
+                case "CNOR":
+                case "DNOR":
+                case "RR01":
+                case "RR02":
+                case "RR03":
+                case "RR04":
+                case "SL01":
+                    return FailureCause.PAYMENT_PARTNER_ERROR;
+                case "AC04":
+                case "AC06":
+                case "AC13":
+                case "AG01":
+                case "AG02":
+                case "AM04":
+                case "AM05":
+                case "MS02":
+                case "MD06":
+                case "MD07":
+                    return FailureCause.REFUSED;
+                case "AC01":
+                case "BE05":
+                case "MD01":
+                case "MD02":
+                case "RC01":
+                    return FailureCause.INVALID_DATA;
+                case "MS03":
+                    return FailureCause.PARTNER_UNKNOWN_ERROR;
+                case "FF01":
+                    return FailureCause.INVALID_FIELD_FORMAT;
+                case "FOCR":
+                    return FailureCause.CANCEL;
+                default:
+                    return FailureCause.PARTNER_UNKNOWN_ERROR;
+            }
+
+        }
+        else   return FailureCause.PARTNER_UNKNOWN_ERROR;
+
+
+    }
+
 }

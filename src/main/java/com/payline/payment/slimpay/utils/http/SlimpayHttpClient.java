@@ -11,6 +11,7 @@ import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.logger.LogManager;
 import com.slimpay.hapiclient.exception.HttpException;
+import com.slimpay.hapiclient.exception.RelNotFoundException;
 import com.slimpay.hapiclient.hal.CustomRel;
 import com.slimpay.hapiclient.hal.Resource;
 import com.slimpay.hapiclient.http.Follow;
@@ -39,12 +40,14 @@ public class SlimpayHttpClient {
     private static final String ORDER_NOT_FOUND_MESSAGE = "Fail to find the order";
     private static final String PAYMENT_FOUND_MESSAGE = "Payment found";
     private static final String PAYMENT_NOT_FOUND_MESSAGE = "Fail to find the payment";
+    private static final String REL_NOT_FOUND_MESSAGE = "Rel not found";
     private static final String ID = "id";
     private static final String SUBSCRIBER_REFERENCE = "subcriberReference";
     private static final String MANDATE_REFERENCE = "mandateReference";
     private static final String SCHEME = "scheme";
     private static final String DIRECTION = "direction";
     private static final String CURRENCY = "direction";
+    private static final String PAYMENT_ENDPOINT = "/payments/";
 
     /**
      * Instantiate a HTTP client with default values.
@@ -472,9 +475,98 @@ public class SlimpayHttpClient {
 
     }
 
+    /**
+     * find reject reason of a payment from a RedirectionPaymentResquest
+     *
+     * @param request
+     * @param paymentId
+     * @return String the reject return reasonCode
+     * @throws PluginTechnicalException
+     */
+    public String getPaymentRejectReason(RedirectionPaymentRequest request, String paymentId) throws PluginTechnicalException {
+        Oauth2BasicAuthentication authentication = createAuthentication(request);
+        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
+        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
+        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
+        CustomRel rel = new CustomRel(ns + SlimpayConstants.GET_PAYMENT_ISSUES_URL);
+        CustomRel relPaymentIssue = new CustomRel("paymentIssues");
+
+        String entryPointUrl = url + PAYMENT_ENDPOINT + paymentId;
+        Follow follow = new Follow.Builder(rel)
+                .setMethod(Method.GET)
+                .setUrlVariable(ID, paymentId)
+                .build();
+
+        try {
+            Resource response = request(url, profile, authentication, follow, entryPointUrl);
+
+            //Get PaymentReject cause
+            return getPaymentReturnReasonCode(relPaymentIssue, response);
+        }
+
+        catch (RelNotFoundException e){
+            LOGGER.error(REL_NOT_FOUND_MESSAGE);
+            throw new HttpCallException(REL_NOT_FOUND_MESSAGE, "SlimpayHttpClient.getPaymentRejectReason");
+        }
+    }
+
+    /**
+     * find reject reason of a payment from a RedirectionPaymentResquest
+     *
+     * @param request
+     * @param paymentId
+     * @return String the reject return reasonCode
+     * @throws PluginTechnicalException
+     */
+    public String getPaymentRejectReason(TransactionStatusRequest request, String paymentId) throws PluginTechnicalException {
+        Oauth2BasicAuthentication authentication = createAuthentication(request);
+        String url = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_URL_KEY);
+        String profile = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_PROFILE_KEY);
+        String ns = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.API_NS_KEY);
+
+        //faire une map avec url, profilens
+        CustomRel rel = new CustomRel(ns + SlimpayConstants.GET_PAYMENT_ISSUES_URL);
+        CustomRel relPaymentIssue = new CustomRel("paymentIssues");
+
+        String entryPointUrl = url + PAYMENT_ENDPOINT + paymentId;
+        Follow follow = new Follow.Builder(rel)
+                .setMethod(Method.GET)
+                .setUrlVariable(ID, paymentId)
+                .build();
+
+
+        try {
+            Resource response = request(url, profile, authentication, follow, entryPointUrl);
+            //Get PaymentReject cause
+            return getPaymentReturnReasonCode(relPaymentIssue, response);
+        }
+
+        catch (RelNotFoundException e){
+            LOGGER.error(REL_NOT_FOUND_MESSAGE);
+            throw new HttpCallException(REL_NOT_FOUND_MESSAGE, "SlimpayHttpClient.getPaymentRejectReason");
+        }
+    }
+
+
+    private String getPaymentReturnReasonCode(CustomRel relPaymentIssue, Resource response) throws PluginTechnicalException {
+        if (response == null) {
+            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.searchPaymentIssue");
+        }
+        //the service called return a list of payment even when we search by mandate reference which is a unique identifier
+        List<Resource> paymentsResult = response.getEmbeddedResources(relPaymentIssue);
+        if (paymentsResult != null) {
+            LOGGER.info(PAYMENT_FOUND_MESSAGE);
+            return paymentsResult.get(0).getState().get("returnReasonCode").toString();
+        } else {
+            //return a empty String
+            LOGGER.error("Rel not found");
+            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getPaymentReturnReasonCode");        }
+    }
+
+
     private SlimpayResponse getSlimpayResponse(CustomRel relPayment, Resource response) throws PluginTechnicalException {
         if (response == null) {
-            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.searchPayment");
+            throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getSlimpayResponse");
         }
         //the service called return a list of payment even when we search by mandate reference which is a unique identifier
         List<Resource> paymentsResult = response.getEmbeddedResources(relPayment);
@@ -508,7 +600,7 @@ public class SlimpayHttpClient {
         //get paymentId from transactionAdditionalData
         PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.fromJson(request.getTransactionAdditionalData());
         String paymentId = additionalData.getPaymentId();
-        String entryPointUrl = url + "/payments/" + paymentId;
+        String entryPointUrl = url + PAYMENT_ENDPOINT+ paymentId;
 
 
         Follow follow = new Follow.Builder(relCancelPayment)
