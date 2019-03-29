@@ -1,25 +1,20 @@
 package com.payline.payment.slimpay.utils;
 
-
 import com.payline.pmapi.bean.common.Amount;
+import com.payline.pmapi.logger.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.math.BigInteger;
 import java.util.Currency;
+import java.util.Locale;
 
 import static com.payline.payment.slimpay.utils.SlimpayConstants.ERROR_MAX_LENGTH;
 
 public class PluginUtils {
 
-    public static final String PHONE_CHECKER_REGEX = "^\\+?[1-9]\\d{1,14}$";
-    //french phone number e164
-    public static final String FRENCH_PHONE_CHECKER_REGEX = "^\\+33?[1-9]\\d{9}$";
-
-    private PluginUtils() {
-        // ras.
-    }
+    private static final Logger LOGGER = LogManager.getLogger(PluginUtils.class);
 
     public static boolean isEmpty(String s) {
-
         return s == null || s.isEmpty();
     }
 
@@ -103,31 +98,35 @@ public class PluginUtils {
     }
 
     /**
-     * convert phone number to e164 format
+     * Try to convert the given phone number into international format.
+     * Spaces, dots and dashed are removed. If the given number does not start with a "+" sign,
+     * try to add the international prefix from the given locale country code.     *
      *
-     * @param telephone
-     * @return
+     * @param phoneNumber The phone number to convert, if needed.
+     * @param locale The locale, from which the country will be extracted.
+     * @return The converted phone number.
      */
-    public static String toInternationalFrenchNumber(String telephone) {
-        //suppress white space
-        String telWithoutSpace = telephone.replace(" ", "");
-        //suppress stripes
-         telWithoutSpace = telWithoutSpace.replace("-", "");
-        //suppress dots
-        telWithoutSpace = telWithoutSpace.replace(".", "");
-        //Tester si respecter regex
-        if (!(telWithoutSpace.matches(FRENCH_PHONE_CHECKER_REGEX))) {
-            //replace 00 ou 0X  par +33
-            if (telWithoutSpace.startsWith("00")) {
-                telWithoutSpace = telWithoutSpace.replace("00", "+");
-            } else if (telWithoutSpace.startsWith("06")|| telWithoutSpace.startsWith("07")) {
-                telWithoutSpace = telWithoutSpace.replace("0", "+33");
+    public static String convertToInternational(String phoneNumber, Locale locale ){
+        // Remove white spaces
+        phoneNumber = phoneNumber.replace(" ", "");
+        // Remove dashes
+        phoneNumber = phoneNumber.replace("-", "");
+        // Remove dots
+        phoneNumber = phoneNumber.replace(".", "");
+
+        if( !phoneNumber.startsWith("+") ){
+            try {
+                String phonePrefix = CountryToPhonePrefix.prefixFor( locale.getCountry() );
+                if( phoneNumber.startsWith( "0" ) ){
+                    phoneNumber = phonePrefix + phoneNumber.substring(1);
+                } else {
+                    phoneNumber = phonePrefix + phoneNumber;
+                }
+            } catch( IllegalArgumentException e ){
+                LOGGER.warn("Cannot resolve a phone prefix", e);
             }
-            //else this is not a French mobile number
-
         }
-        return telWithoutSpace;
+        return phoneNumber;
     }
-
 
 }

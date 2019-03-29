@@ -5,6 +5,7 @@ import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.bean.response.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.service.BeanAssemblerService;
+import com.payline.payment.slimpay.utils.PluginUtils;
 import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.common.Buyer;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
@@ -185,7 +186,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
      */
     @Override
     public Signatory assembleSignatory(PaymentRequest paymentRequest) {
-
+        
         Buyer buyer = paymentRequest.getBuyer();
 
         if (buyer == null) {
@@ -193,13 +194,15 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         }
 
         final Buyer.FullName fullName = buyer.getFullName();
+        String internationalCellularPhoneNumber = PluginUtils.convertToInternational( buyer.getPhoneNumbers().get(Buyer.PhoneNumberType.CELLULAR), paymentRequest.getLocale() );
+
         return Signatory.Builder.aSignatoryBuilder()
                 .withfamilyName(fullName == null ? null : fullName.getFirstName())
                 .withGivenName(fullName == null ? null : fullName.getLastName())
                 .withHonorificPrefix(getHonorificCode(fullName == null ? null : fullName.getCivility()))
                 .withBilingAddress(assembleBillingAddress(paymentRequest))
                 .withEmail(buyer.getEmail())
-                .withTelephone(buyer.getPhoneNumbers().get(Buyer.PhoneNumberType.CELLULAR))
+                .withTelephone( internationalCellularPhoneNumber )
                 .build();
     }
 

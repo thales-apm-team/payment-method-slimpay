@@ -90,7 +90,7 @@ public class Signatory extends SlimpayBean {
         }
 
         public Signatory.Builder withTelephone(String telephone) {
-            this.telephone = toInternationalFrenchNumber(telephone);
+            this.telephone = telephone;
             return this;
         }
 
@@ -100,16 +100,14 @@ public class Signatory extends SlimpayBean {
         }
 
         private Signatory.Builder verifyIntegrity() {
-
-            //to do logger les champs manquants obligatoire ??
             if (this.familyName == null) {
                 LOGGER.warn(FAMILY_NAME_WARN);
             }
             if (this.givenName == null) {
                 LOGGER.warn(GIVEN_NAME_WARN);
             }
-           //Phone number must strat by + and can contains white spaces or "-"
-            if (this.telephone != null && !this.telephone.matches(FRENCH_PHONE_CHECKER_REGEX)) {
+            //Phone number must start by +
+            if (this.telephone != null && !this.telephone.startsWith("+")) {
                 LOGGER.warn(TELEPHONE_WARN);
             }
             return this;
