@@ -1,6 +1,8 @@
 package com.payline.payment.slimpay.bean.response;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.payline.payment.slimpay.exception.MalformedResponseException;
 
 public class SlimpayOrderResponse extends SlimpayResponse {
 
@@ -70,9 +72,12 @@ public class SlimpayOrderResponse extends SlimpayResponse {
      * @param json a SlimPay payment
      * @return a SlimpayPaymentResponse
      */
-    public static SlimpayOrderResponse fromJson(String json) {
+    public static SlimpayOrderResponse fromJson(String json) throws MalformedResponseException {
         Gson parser = new Gson();
-        return parser.fromJson(json, SlimpayOrderResponse.class);
-
-    }
+        try {
+            return parser.fromJson(json, SlimpayOrderResponse.class);
+        }
+        catch( JsonSyntaxException e ){
+            throw new MalformedResponseException( e );
+        }    }
 }

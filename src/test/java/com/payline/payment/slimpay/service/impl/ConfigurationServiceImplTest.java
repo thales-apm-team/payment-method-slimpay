@@ -41,7 +41,6 @@ public class ConfigurationServiceImplTest {
     private Map<String, String> accountInfo = new HashMap<>();
 
     private static Environment environment = TestUtils.ENVIRONMENT;
-    ;
 
     @BeforeAll
     public void setUp() {

@@ -1,21 +1,19 @@
 package com.payline.payment.slimpay.service.impl;
 
-import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
+import com.payline.pmapi.bean.notification.request.NotificationRequest;
+import com.payline.pmapi.bean.notification.response.NotificationResponse;
+import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class NotificationServiceTest {
 
 
-    @Spy
-    SlimpayHttpClient httpClient;
-
-    @InjectMocks
     NotificationServiceImpl service;
 
     @BeforeAll
@@ -27,11 +25,15 @@ public class NotificationServiceTest {
 
     @Test
     public void parse() {
-//ras
+        NotificationRequest notificationRequest = Mockito.mock(NotificationRequest.class);
+        NotificationResponse response = service.parse(notificationRequest);
+        Assertions.assertNotNull(response);
     }
 
     @Test
     public void notifyTransactionStatus() {
-//ras
- }
+        NotifyTransactionStatusRequest notifyTransactionStatusRequest = Mockito.mock(NotifyTransactionStatusRequest.class);
+        service.notifyTransactionStatus(notifyTransactionStatusRequest);
+        // void ras
+    }
 }

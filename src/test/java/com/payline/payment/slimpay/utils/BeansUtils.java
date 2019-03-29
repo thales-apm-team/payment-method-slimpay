@@ -6,6 +6,7 @@ import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
+import com.payline.payment.slimpay.exception.MalformedResponseException;
 import com.payline.payment.slimpay.utils.properties.constants.OrderStatus;
 import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionStatus;
 import com.slimpay.hapiclient.hal.CustomRel;
@@ -16,9 +17,6 @@ import com.slimpay.hapiclient.http.JsonBody;
 import com.slimpay.hapiclient.http.Method;
 
 import javax.json.Json;
-import javax.json.JsonObject;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BeansUtils {
 
@@ -101,7 +99,7 @@ public class BeansUtils {
     }
 
     //Mocked response
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponse(String state) {
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponse(String state) throws MalformedResponseException {
         SlimpayOrderResponse OrderResponse = SlimpayOrderResponse.fromJson("{\n" +
                 "   \"_links\":    {\n" +
                 "      \"self\": {\"href\": \"https://api.preprod.slimpay.com/orders/ff4ea3a6-303e-11e9-9d34-000000000000\"},\n" +
@@ -131,32 +129,32 @@ public class BeansUtils {
         return OrderResponse;
     }
 
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseOpen() {
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponseOpen() throws MalformedResponseException {
         return createMockedSlimpayOrderResponse(OrderStatus.OPEN_RUNNING);
     }
 
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosed() {
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosed() throws MalformedResponseException {
         return createMockedSlimpayOrderResponse(OrderStatus.CLOSED_COMPLETED);
     }
 
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAborted() {
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAborted() throws MalformedResponseException {
         return createMockedSlimpayOrderResponse(OrderStatus.CLOSED_ABORTED);
     }
 
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAbortedByClient() {
+    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAbortedByClient() throws MalformedResponseException {
         return createMockedSlimpayOrderResponse(OrderStatus.CLOSED_ABORTED_BY_CLIENT);
     }
 
-    public static SlimpayFailureResponse createMockedSlimpayFailureResponse() {
+    public static SlimpayFailureResponse createMockedSlimpayFailureResponse() throws MalformedResponseException {
         String jsonError = "{\n" +
                 "   \"code\": 901,\n" +
-                "   \"message\": \"Duplicate order : order Y-ORDER-REF- for creditor paylinemerchanttest1 already exists\"\n" +
+                "   \"message\": \"Slimpay order : This error is mocked for test\"\n" +
                 "}";
         return SlimpayFailureResponse.fromJson(jsonError);
     }
 
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentIn(String executionStatus) {
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentIn(String executionStatus)  throws MalformedResponseException{
         return SlimpayPaymentResponse.fromJson(" {  " +
                 " \"id\": \"8212f471-3432-11e9-ad8f-000000000000\",\n" +
                 "   \"scheme\": \"SEPA.DIRECT_DEBIT.CORE\",\n" +
@@ -176,7 +174,7 @@ public class BeansUtils {
 
     }
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentOut(String executionStatus) {
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOut(String executionStatus)  throws MalformedResponseException{
         return SlimpayPaymentResponse.fromJson("{\n" +
                 "    \"id\": \"edbd987c-23e1-11e9-ad0d-000000000000\",\n" +
                 "    \"scheme\": \"SEPA.CREDIT_TRANSFER\",\n" +
@@ -195,26 +193,26 @@ public class BeansUtils {
                 "}");
     }
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutTopProcess() {
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutTopProcess()  throws MalformedResponseException{
         return createMockedSlimpayPaymentOut(PaymentExecutionStatus.TOP_PROCESS);
     }
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutProcessed() {
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutProcessed()  throws MalformedResponseException{
         return createMockedSlimpayPaymentOut(PaymentExecutionStatus.PROCESSED);
     }
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutRejected() {
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutRejected()  throws MalformedResponseException{
         return createMockedSlimpayPaymentOut(PaymentExecutionStatus.REJECTED);
     }
 
-    public static SlimpayFailureResponse createMockedSlimpayPaymentOutError() {
+    public static SlimpayFailureResponse createMockedSlimpayPaymentOutError() throws MalformedResponseException{
         String jsonError = "{\n" +
                 "   \"code\": 901,\n" +
                 "   \"message\": \"Duplicate order : order Y-ORDER-REF- for creditor paylinemerchanttest1 already exists\"\n" +
                 "}";
         return SlimpayFailureResponse.fromJson(jsonError);
     }
-    public static SlimpayFailureResponse createMockedCancelPaymentError() {
+    public static SlimpayFailureResponse createMockedCancelPaymentError() throws MalformedResponseException {
         String jsonError = "{\n" +
                 "   \"code\": 903,\n" +
                 "   \"message\": \"Illegal state : Cannot find cancellable direct debit with id=7232101\"\n" +
@@ -222,26 +220,107 @@ public class BeansUtils {
         return SlimpayFailureResponse.fromJson(jsonError);
     }
 
-    public static Resource createMockedResource() {
-        JsonObject state = Json.createObjectBuilder()
-                .add("id", 1)
-                .add("reference", 1)
-                .add("state", 1)
-                .add("locale", 1)
-                .build();
 
-        Map<Rel, Object> links = new HashMap<>();
-        links.put(new CustomRel("https://api.slimpay.net/alps#extended-user-approval"), "https://api.preprod.slimpay.com/creditors/paylinemerchanttest1/orders/HDEV-1550076312981/extended-user-approval{?mode}");
-        links.put(new CustomRel("https://api.slimpay.net/alps#cancel-order"), "https://api.preprod.slimpay.com/orders/c6542999-2fae-11e9-9d34-000000000000/cancellation");
-        links.put(new CustomRel("https://api.slimpay.net/alps#get-order-items"), "https://api.preprod.slimpay.com/orders/c6542999-2fae-11e9-9d34-000000000000/order-items");
 
-        String resourceJson = "";
+    public static Resource createMockedResourcePayment(String state, String executionStatus){
+        String resourceJson = "{\n" +
+                "   \"_links\":    {\n" +
+                "      \"self\": {\"href\": \"https://api.preprod.slimpay.com/payments/aeb615bc-35d7-11e9-ad8f-000000000000\"},\n" +
+                "      \"profile\": {\"href\": \"https://api.preprod.slimpay.com/alps/v1/payments\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-creditor\": {\"href\": \"https://api.preprod.slimpay.com/creditors/paylinemerchanttest1\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-subscriber\": {\"href\": \"https://api.preprod.slimpay.com/creditors/paylinemerchanttest1/subscribers/Client2\"},\n" +
+                "      \"https://api.slimpay.net/alps#patch-payment\": {\"href\": \"https://api.preprod.slimpay.com/payments/aeb615bc-35d7-11e9-ad8f-000000000000\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-debtor-bank-account\": {\"href\": \"https://api.preprod.slimpay.com/payments/aeb615bc-35d7-11e9-ad8f-000000000000/debtor-bank-account\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-mandate\": {\"href\": \"https://api.preprod.slimpay.com/mandates/ad81b42b-35d7-11e9-8de4-000000000000\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-destination-bank-account\": {\"href\": \"https://api.preprod.slimpay.com/bank-accounts/323d8f33-02b2-11e9-8506-000000000000\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-origin-bank-account\": {\"href\": \"https://api.preprod.slimpay.com/bank-accounts/c8d45521-2ea9-11e9-a9a1-000000000000\"}\n" +
+                "   },\n" +
+                "   \"id\": \"aeb615bc-35d7-11e9-ad8f-000000000000\",\n" +
+                "   \"scheme\": \"SEPA.DIRECT_DEBIT.CORE\",\n" +
+                "   \"reference\": \"HDEV-1550753594140\",\n" +
+                "   \"direction\": \"IN\",\n" +
+                "   \"amount\": \"408.00\",\n" +
+                "   \"currency\": \"EUR\",\n" +
+                "   \"label\": \"softDescriptor\",\n" +
+                "   \"sequenceType\": \"RCUR\",\n" +
+                "   \"state\": \""+state+"\",\n" +
+                "   \"executionStatus\": \""+executionStatus+"\",\n" +
+                "   \"replayCount\": 0,\n" +
+                "   \"executionDate\": \"2019-02-24T23:00:00.000+0000\",\n" +
+                "   \"dateCreated\": \"2019-02-21T12:53:28.000+0000\",\n" +
+                "   \"confirmed\": false\n" +
+                "}";
 
         return Resource.fromJson(resourceJson);
 
+    }   public static Resource createMockedResourceOrder(String state){
+        String resourceJson = "{\n" +
+                "   \"_links\":    {\n" +
+                "      \"self\": {\"href\": \"https://api.preprod.slimpay.com/orders/ff4ea3a6-303e-11e9-9d34-000000000000\"},\n" +
+                "      \"profile\": {\"href\": \"https://api.preprod.slimpay.com/alps/v1/orders\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-creditor\": {\"href\": \"https://api.preprod.slimpay.com/creditors/paylinemerchanttest1\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-subscriber\": {\"href\": \"https://api.preprod.slimpay.com/orders/ff4ea3a6-303e-11e9-9d34-000000000000/subscriber\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-order-items\": {\"href\": \"https://api.preprod.slimpay.com/orders/ff4ea3a6-303e-11e9-9d34-000000000000/order-items\"},\n" +
+                "      \"https://api.slimpay.net/alps#user-approval\": {\"href\": \"https://checkout.preprod.slimpay.com/userApproval?accessCode=spi5LZZtKKSEvMk3ogLghiOzAFUsKb1cTznTeh88yEHM5ES31r8Dm3kx21tAJF\"},\n" +
+                "      \"https://api.slimpay.net/alps#extended-user-approval\":       {\n" +
+                "         \"href\": \"https://api.preprod.slimpay.com/creditors/paylinemerchanttest1/orders/Y-ORDER-REF-1550138270755/extended-user-approval{?mode}\",\n" +
+                "         \"templated\": true\n" +
+                "      },\n" +
+                "      \"https://api.slimpay.net/alps#cancel-order\": {\"href\": \"https://api.preprod.slimpay.com/orders/ff4ea3a6-303e-11e9-9d34-000000000000/cancellation\"}\n" +
+                "   },\n" +
+                "   \"id\": \"ff4ea3a6-303e-11e9-9d34-000000000000\",\n" +
+                "   \"reference\": \"Y-ORDER-REF-1550138270755\",\n" +
+                "   \"state\": \"" + state + "\",\n" +
+                "   \"locale\": \"fr\",\n" +
+                "   \"started\": true,\n" +
+                "   \"dateCreated\": \"2019-02-14T09:57:54.083+0000\",\n" +
+                "   \"dateStarted\": \"2019-02-14T09:57:54.083+0000\",\n" +
+                "   \"paymentScheme\": \"SEPA.DIRECT_DEBIT.CORE\",\n" +
+                "   \"sendUserApproval\": true,\n" +
+                "   \"checkoutActor\": \"end_user\"\n" +
+                "}";
 
+        return Resource.fromJson(resourceJson);
+    }
+    public static Resource createEmptyMockedRessource() {
+        return Resource.fromJson("{}");
     }
 
+
+
+
+
+    public static Resource createResourceWithEmbeded(String state, String executionStatus){
+        String resourceJson = "{\n" +
+                "   \"_embedded\":    {\n" +
+                "      \"self\": {\"href\": \"https://api.preprod.slimpay.com/payments/aeb615bc-35d7-11e9-ad8f-000000000000\"},\n" +
+                "      \"profile\": {\"href\": \"https://api.preprod.slimpay.com/alps/v1/payments\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-creditor\": {\"href\": \"https://api.preprod.slimpay.com/creditors/paylinemerchanttest1\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-subscriber\": {\"href\": \"https://api.preprod.slimpay.com/creditors/paylinemerchanttest1/subscribers/Client2\"},\n" +
+                "      \"https://api.slimpay.net/alps#patch-payment\": {\"href\": \"https://api.preprod.slimpay.com/payments/aeb615bc-35d7-11e9-ad8f-000000000000\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-debtor-bank-account\": {\"href\": \"https://api.preprod.slimpay.com/payments/aeb615bc-35d7-11e9-ad8f-000000000000/debtor-bank-account\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-mandate\": {\"href\": \"https://api.preprod.slimpay.com/mandates/ad81b42b-35d7-11e9-8de4-000000000000\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-destination-bank-account\": {\"href\": \"https://api.preprod.slimpay.com/bank-accounts/323d8f33-02b2-11e9-8506-000000000000\"},\n" +
+                "      \"https://api.slimpay.net/alps#get-origin-bank-account\": {\"href\": \"https://api.preprod.slimpay.com/bank-accounts/c8d45521-2ea9-11e9-a9a1-000000000000\"}\n" +
+                "   },\n" +
+                "   \"id\": \"aeb615bc-35d7-11e9-ad8f-000000000000\",\n" +
+                "   \"scheme\": \"SEPA.DIRECT_DEBIT.CORE\",\n" +
+                "   \"reference\": \"HDEV-1550753594140\",\n" +
+                "   \"direction\": \"IN\",\n" +
+                "   \"amount\": \"408.00\",\n" +
+                "   \"currency\": \"EUR\",\n" +
+                "   \"label\": \"softDescriptor\",\n" +
+                "   \"sequenceType\": \"RCUR\",\n" +
+                "   \"state\": \""+state+"\",\n" +
+                "   \"executionStatus\": \""+executionStatus+"\",\n" +
+                "   \"replayCount\": 0,\n" +
+                "   \"executionDate\": \"2019-02-24T23:00:00.000+0000\",\n" +
+                "   \"dateCreated\": \"2019-02-21T12:53:28.000+0000\",\n" +
+                "   \"confirmed\": false\n" +
+                "}";
+
+        return Resource.fromJson(resourceJson);
+    }
     public static Follow createDefaultFollow(){
         Rel rel = new CustomRel("testFollow");
 

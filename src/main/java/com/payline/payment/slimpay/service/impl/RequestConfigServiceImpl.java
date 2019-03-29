@@ -22,16 +22,15 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
     INSTANCE;
 
 
-    private enum PaylineParameterType {
+    protected enum PaylineParameterType {
         CONTRACT_CONFIGURATION_PARAMETER,
-        PARTNER_CONFIGURATION_PARAMETER,
-        EXT_PARTNER_CONFIGURATION_PARAMETER;
+        PARTNER_CONFIGURATION_PARAMETER;
     }
 
     /**
      * Map of all Contract or Partner parameters
      */
-    private static final Map<String, PaylineParameterType> PARAMETERS_MAP = new HashMap<>();
+    protected static final Map<String, PaylineParameterType> PARAMETERS_MAP = new HashMap<>();
 
     static {
         // add contract config data
@@ -45,9 +44,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
         PARAMETERS_MAP.put(SlimpayConstants.API_URL_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
         PARAMETERS_MAP.put(SlimpayConstants.API_PROFILE_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
         PARAMETERS_MAP.put(SlimpayConstants.API_NS_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
-        PARAMETERS_MAP.put(SlimpayConstants.API_URL_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
-        PARAMETERS_MAP.put(SlimpayConstants.API_PROFILE_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
-        PARAMETERS_MAP.put(SlimpayConstants.API_NS_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
 
         PARAMETERS_MAP.put(SlimpayConstants.APP_KEY, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
         PARAMETERS_MAP.put(SlimpayConstants.APP_SECRET, PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER);
@@ -57,17 +53,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
         // ras
     }
 
-    /**
-     * Get a contract configuration value, in order to use it as extension for one or more patner
-     * configuration key(s).
-     *
-     * @return the extesion tag
-     */
-    @Override
-    public String getExtensionKey() {
-        return null;
-    }
-
     @Override
     public String getParameterValue(ResetRequest request, String key) throws InvalidDataException {
         PaylineParameterType paylineParameterType = PARAMETERS_MAP.get(key);
@@ -75,9 +60,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
             return safeGetValue(request.getContractConfiguration(), key);
         } else if (PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
             return safeGetValue(request.getPartnerConfiguration(), key);
-        } else if (PaylineParameterType.EXT_PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
-            String ext = safeGetValue(request.getContractConfiguration(), getExtensionKey());
-            return safeGetValue(request.getPartnerConfiguration(), key, ext);
         }
         return null;
     }
@@ -90,9 +72,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
             return safeGetValue(request.getContractConfiguration(), key);
         } else if (PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
             return safeGetValue(request.getPartnerConfiguration(), key);
-        } else if (PaylineParameterType.EXT_PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
-            String ext = safeGetValue(request.getContractConfiguration(), getExtensionKey());
-            return safeGetValue(request.getPartnerConfiguration(), key, ext);
         }
         return null;
     }
@@ -104,9 +83,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
             return safeGetValue(request.getContractConfiguration(), key);
         } else if (PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
             return safeGetValue(request.getPartnerConfiguration(), key);
-        } else if (PaylineParameterType.EXT_PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
-            String ext = safeGetValue(request.getContractConfiguration(), getExtensionKey());
-            return safeGetValue(request.getPartnerConfiguration(), key, ext);
         }
         return null;
     }
@@ -118,9 +94,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
             return safeGetValue(request.getContractConfiguration(), key);
         } else if (PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
             return safeGetValue(request.getPartnerConfiguration(), key);
-        } else if (PaylineParameterType.EXT_PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
-            String ext = safeGetValue(request.getContractConfiguration(), getExtensionKey());
-            return safeGetValue(request.getPartnerConfiguration(), key, ext);
         }
         return null;
     }
@@ -132,9 +105,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
             return safeGetValue(request.getContractConfiguration(), key);
         } else if (PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
             return safeGetValue(request.getPartnerConfiguration(), key);
-        } else if (PaylineParameterType.EXT_PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
-            String ext = safeGetValue(request.getContractConfiguration(), getExtensionKey());
-            return safeGetValue(request.getPartnerConfiguration(), key, ext);
         }
         return null;
     }
@@ -146,9 +116,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
             return safeGetValue(request.getContractConfiguration(), key);
         } else if (PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
             return safeGetValue(request.getPartnerConfiguration(), key);
-        } else if (PaylineParameterType.EXT_PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
-            String ext = safeGetValue(request.getContractConfiguration(), getExtensionKey());
-            return safeGetValue(request.getPartnerConfiguration(), key, ext);
         }
         return null;
     }
@@ -160,9 +127,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
             return safeGetValue(request.getContractConfiguration(), key);
         } else if (PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
             return safeGetValue(request.getPartnerConfiguration(), key);
-        } else if (PaylineParameterType.EXT_PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
-            String ext = safeGetValue(request.getContractConfiguration(), getExtensionKey());
-            return safeGetValue(request.getPartnerConfiguration(), key, ext);
         }
         return null;
     }
@@ -174,9 +138,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
             return safeGetValue(request.getAccountInfo(), key);
         } else if (PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
             return safeGetValue(request.getPartnerConfiguration(), key);
-        } else if (PaylineParameterType.EXT_PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
-            String ext = safeGetValue(request.getAccountInfo(), getExtensionKey());
-            return safeGetValue(request.getPartnerConfiguration(), key, ext);
         }
         return null;
     }
@@ -188,9 +149,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
             return safeGetValue(request.getContractConfiguration(), key);
         } else if (PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
             return safeGetValue(request.getPartnerConfiguration(), key);
-        } else if (PaylineParameterType.EXT_PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
-            String ext = safeGetValue(request.getContractConfiguration(), getExtensionKey());
-            return safeGetValue(request.getPartnerConfiguration(), key, ext);
         }
         return null;
     }
@@ -202,9 +160,6 @@ public enum RequestConfigServiceImpl implements RequestConfigService {
             return safeGetValue(request.getContractConfiguration(), key);
         } else if (PaylineParameterType.PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
             return safeGetValue(request.getPartnerConfiguration(), key);
-        } else if (PaylineParameterType.EXT_PARTNER_CONFIGURATION_PARAMETER == paylineParameterType) {
-            String ext = safeGetValue(request.getContractConfiguration(), getExtensionKey());
-            return safeGetValue(request.getPartnerConfiguration(), key, ext);
         }
         return null;
     }

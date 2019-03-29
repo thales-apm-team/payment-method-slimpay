@@ -68,7 +68,21 @@ public class SignatoryTest {
                 .withGivenName("John")
                 .withBilingAddress(createDefaultBillingAddress())
                 .withEmail("toto@emailcom")
-                .withTelephone("0725262729")
+                .withTelephone("000")
+                .build();
+        //test on logs
+        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Signatory.TELEPHONE_WARN));
+
+    }
+    @Test
+    public void signatoryForeignTelephone(){
+        signatory = Signatory.Builder.aSignatoryBuilder()
+                .withHonorificPrefix("Mr")
+                .withfamilyName("Doe")
+                .withGivenName("John")
+                .withBilingAddress(createDefaultBillingAddress())
+                .withEmail("toto@emailcom")
+                .withTelephone("+1-202-555-014")
                 .build();
         //test on logs
         Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Signatory.TELEPHONE_WARN));

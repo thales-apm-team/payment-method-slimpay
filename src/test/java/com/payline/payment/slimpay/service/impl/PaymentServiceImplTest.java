@@ -3,6 +3,7 @@ package com.payline.payment.slimpay.service.impl;
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.exception.HttpCallException;
+import com.payline.payment.slimpay.exception.MalformedResponseException;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
@@ -114,13 +115,6 @@ public class PaymentServiceImplTest {
     }
 
 
-
-
-
-
-
-
-
     @Test
     public void paymentRequestResponseNull() throws Exception {
         Mockito.doReturn(null).when(httpClient).createOrder(any(PaymentRequest.class), any(JsonBody.class));
@@ -148,4 +142,21 @@ public class PaymentServiceImplTest {
         Assertions.assertEquals(FailureCause.INVALID_DATA, responseFailure.getFailureCause());
 
     }
+
+    @Test
+    public void paymentRequestKOExceptionMalformedUrl() throws Exception {
+        when(httpClient.createOrder(any(PaymentRequest.class), any(JsonBody.class))).thenThrow(new MalformedResponseException(new HttpCallException("this is an error", "foo")));
+
+        PaymentRequest request = createBadPaymentRequest();
+        PaymentResponse response = service.paymentRequest(request);
+
+        Assertions.assertEquals(PaymentResponseFailure.class, response.getClass());
+        PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
+        Assertions.assertNotNull(responseFailure.getFailureCause());
+        Assertions.assertNotNull(responseFailure.getPartnerTransactionId());
+        Assertions.assertEquals(FailureCause.COMMUNICATION_ERROR, responseFailure.getFailureCause());
+        Assertions.assertNotNull(responseFailure.getErrorCode());
+
+    }
+
 }

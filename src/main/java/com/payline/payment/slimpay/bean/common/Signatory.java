@@ -4,6 +4,8 @@ import com.payline.payment.slimpay.utils.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static com.payline.payment.slimpay.utils.PluginUtils.*;
+
 public class Signatory extends SlimpayBean {
 
     private static final Logger LOGGER = LogManager.getLogger(Signatory.class);
@@ -46,7 +48,7 @@ public class Signatory extends SlimpayBean {
         return billingAddress;
     }
 
-    public Signatory(Signatory.Builder builder) {
+    private Signatory(Signatory.Builder builder) {
         this.honorificPrefix = builder.honorificPrefix;
         this.familyName = builder.familyName;
         this.givenName = builder.givenName;
@@ -98,14 +100,13 @@ public class Signatory extends SlimpayBean {
         }
 
         private Signatory.Builder verifyIntegrity() {
-
-            //to do logger les champs manquants obligatoire ??
             if (this.familyName == null) {
                 LOGGER.warn(FAMILY_NAME_WARN);
             }
             if (this.givenName == null) {
                 LOGGER.warn(GIVEN_NAME_WARN);
             }
+            //Phone number must start by +
             if (this.telephone != null && !this.telephone.startsWith("+")) {
                 LOGGER.warn(TELEPHONE_WARN);
             }

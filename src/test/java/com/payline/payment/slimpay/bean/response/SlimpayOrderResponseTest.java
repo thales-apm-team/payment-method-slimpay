@@ -1,5 +1,6 @@
 package com.payline.payment.slimpay.bean.response;
 
+import com.payline.payment.slimpay.exception.MalformedResponseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,7 @@ public class SlimpayOrderResponseTest {
 
 
     @Test
-    public void  OrderResponseFromJsonTest(){
+    public void  OrderResponseFromJsonTest() throws MalformedResponseException {
 
         String json = ("{\n" +
                 "   \"_links\":    {\n" +
@@ -50,5 +51,13 @@ public class SlimpayOrderResponseTest {
         Assertions.assertTrue(orderResponse.isStarted());
 
 
+    }
+
+    @Test
+    public void slimpayOrderResponseMalformedJson(){
+            Assertions.assertThrows(MalformedResponseException.class,()->{
+                String json = ("{malformed !!}");
+                    orderResponse = SlimpayOrderResponse.fromJson(json);
+                });
     }
 }
