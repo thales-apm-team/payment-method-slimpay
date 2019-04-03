@@ -118,7 +118,7 @@ public class RefundServiceImplTest {
 
     @Test
     public void cancelPaymentTestKO() throws Exception {
-        SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.TOP_PROCESS);
+        SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS);
         Mockito.doReturn(paymentMocked).when(httpClient).getPayment(Mockito.any(RefundRequest.class));
 
         when(httpClient.cancelPayment(any(RefundRequest.class),any(JsonBody.class))).thenReturn(paymentMocked);

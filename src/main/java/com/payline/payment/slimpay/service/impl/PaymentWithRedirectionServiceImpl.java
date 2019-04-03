@@ -290,11 +290,11 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                     .withPartnerTransactionId(partnerTransactionId)
                     .build();
         }
-        //todo a confirmer  decommenter si un payment ayant le Statut TOP_PROCESS TO_REPLAY doit renvoyer un PaymentResponseOnHold
+        //todo a confirmer  decommenter si un payment ayant le Statut TO_PROCESS TO_REPLAY doit renvoyer un PaymentResponseOnHold
 
 /*
             //  toprocess and to retry return an PaymentResponseOnHold
-               else if (executionStatus.equals(PaymentExecutionStatus.TOP_PROCESS) || executionStatus.equals(PaymentExecutionStatus.TO_REPLAY)) {
+               else if (executionStatus.equals(PaymentExecutionStatus.TO_PROCESS) || executionStatus.equals(PaymentExecutionStatus.TO_REPLAY)) {
                     return PaymentResponseOnHold.PaymentResponseOnHoldBuilder
                             .aPaymentResponseOnHold()
                             .withPartnerTransactionId(partnerTransactionId)

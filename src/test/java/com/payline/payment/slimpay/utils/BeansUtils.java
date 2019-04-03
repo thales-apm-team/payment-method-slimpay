@@ -194,7 +194,7 @@ public class BeansUtils {
     }
 
     public static SlimpayPaymentResponse createMockedSlimpayPaymentOutTopProcess()  throws MalformedResponseException{
-        return createMockedSlimpayPaymentOut(PaymentExecutionStatus.TOP_PROCESS);
+        return createMockedSlimpayPaymentOut(PaymentExecutionStatus.TO_PROCESS);
     }
 
     public static SlimpayPaymentResponse createMockedSlimpayPaymentOutProcessed()  throws MalformedResponseException{

@@ -70,7 +70,7 @@ public class SlimpayHttpClientTest {
 
     @Test
     public void getPaymentIdTestOK() throws PluginTechnicalException {
-        SlimpayResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.TOP_PROCESS);
+        SlimpayResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS);
         Mockito.doReturn(paymentMocked).when(mockedClient).searchPayment(any(RedirectionPaymentRequest.class));
         RedirectionPaymentRequest request = createRedirectionPaymentRequest("123");
 

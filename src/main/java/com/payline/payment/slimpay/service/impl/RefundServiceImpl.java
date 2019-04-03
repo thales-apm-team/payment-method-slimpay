@@ -52,7 +52,7 @@ public class RefundServiceImpl implements RefundService {
                             .withFailureCause(FailureCause.REFUSED)
                             .withPartnerTransactionId(partnerTransactionId)
                             .build();
-                } else if (executionStatus.equals(PaymentExecutionStatus.TOP_PROCESS) || executionStatus.equals(PaymentExecutionStatus.TO_REPLAY)) {
+                } else if (executionStatus.equals(PaymentExecutionStatus.TO_PROCESS) || executionStatus.equals(PaymentExecutionStatus.TO_REPLAY)) {
                     //do cancellation
                     return this.cancelPayment(refundRequest);
 

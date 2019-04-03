@@ -54,7 +54,7 @@ public class PaymentWithRedirectionServiceTest {
     public void finalizeRedirectionPaymentOK() throws Exception {
         when(httpClient.getOrder(any(RedirectionPaymentRequest.class))).thenReturn(BeansUtils.createMockedSlimpayOrderResponseClosed());
 
-        SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.TOP_PROCESS);
+        SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS);
         Mockito.doReturn(paymentMocked).when(httpClient).searchPayment(Mockito.any(RedirectionPaymentRequest.class));
 
         RedirectionPaymentRequest request = createRedirectionPaymentRequest("ORDER-DEV-1549638902921");
@@ -71,7 +71,7 @@ public class PaymentWithRedirectionServiceTest {
     public void finalizeRedirectionPaymentToProcess() throws Exception {
         when(httpClient.getOrder(any(RedirectionPaymentRequest.class))).thenReturn(BeansUtils.createMockedSlimpayOrderResponseClosed());
 
-        SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.TOP_PROCESS);
+        SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS);
         Mockito.doReturn(paymentMocked).when(httpClient).searchPayment(Mockito.any(RedirectionPaymentRequest.class));
 
         RedirectionPaymentRequest request = createRedirectionPaymentRequest("ORDER-DEV-1549638902921");
@@ -461,7 +461,7 @@ public class PaymentWithRedirectionServiceTest {
 
     @Test
     public void returnPaymentResponseFromRedirectionPaymentRequestResponseToProcess() throws PluginTechnicalException{
-        SlimpayResponse paymentResponse = BeansUtils.createMockedSlimpayPaymentIn(PaymentExecutionStatus.TOP_PROCESS);
+        SlimpayResponse paymentResponse = BeansUtils.createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS);
         PaymentResponse response = service.returnPaymentResponseFromRedirectionPaymentRequest(redirectionStatusRequest,paymentResponse, "1","120");
 
         //uncomment this section if payment with status toprocess must return  PaymentResponseOnHold
@@ -607,7 +607,7 @@ public class PaymentWithRedirectionServiceTest {
 
     @Test
     public void returnPaymentResponseFromTransactionStatusRequestResponseToProcess() throws PluginTechnicalException{
-        SlimpayResponse paymentResponse = BeansUtils.createMockedSlimpayPaymentIn(PaymentExecutionStatus.TOP_PROCESS);
+        SlimpayResponse paymentResponse = BeansUtils.createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS);
         PaymentResponse response = service.returnPaymentResponseFromTransactionStatusRequest(transactionStatusRequest,paymentResponse, "1","120");
 
         //uncomment this section if payment with status toprocess must return  PaymentResponseOnHold
