@@ -71,15 +71,15 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         if (paymentRequest == null) {
             throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
         } else {
-            return Payment.Builder.aPaymentBuilder()
+            Payment.Builder paymentBuilder = Payment.Builder.aPaymentBuilder()
                     .withReference(paymentRequest.getTransactionId())
                     .withScheme(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, FIRST_PAYMENT_SCHEME))
                     .withDirection(Direction.IN.name())
                     .withAction(CREATE)
                     .withAmount(createStringAmount(paymentRequest.getAmount()))
                     .withCurrency(getCurrencyAsString(paymentRequest.getAmount()))
-                    .withLabel(paymentRequest.getSoftDescriptor())
-                    .build();
+                    .withLabel(paymentRequest.getSoftDescriptor());
+            return paymentBuilder.build();
         }
     }
 

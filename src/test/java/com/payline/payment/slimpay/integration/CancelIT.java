@@ -30,9 +30,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
@@ -132,8 +132,23 @@ public class CancelIT extends AbstractPaymentIntegration {
     }
 
 
+    /**
+     * For the cancel test to pass, for now, it is necessary to play it in debug and set the field executionDate
+     * on the {@link com.payline.payment.slimpay.bean.common.Payment} bean
+     * in {@link com.payline.payment.slimpay.service.impl.BeanAssemblerServiceImpl#assemblePayin(PaymentRequest)}.
+     *
+     * The first block of code in this test case provide the string to pass to the method
+     * {@link com.payline.payment.slimpay.bean.common.Payment.Builder#withExecutionDate(String)}, before the objet is built.
+     */
     @Test
     public void fullCancelTest() {
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        df.setTimeZone(tz);
+        Calendar c = Calendar.getInstance();
+        c.setTime( new Date());
+        c.add(Calendar.DATE, 4);
+        df.format( c.getTime() );
 
         //Make paymentRequest  with executionDate  = J+4
         PaymentRequest paymentRequest = createDefaultPaymentRequest();
