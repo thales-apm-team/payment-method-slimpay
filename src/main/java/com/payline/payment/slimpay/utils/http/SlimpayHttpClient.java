@@ -410,7 +410,7 @@ public class SlimpayHttpClient {
         String scheme = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.MANDATE_PAYIN_SCHEME);
         //Order reference
         String mandateReference = request.getTransactionId();
-        String paymentReference = request.getOrder().getReference();
+        String paymentReference = request.getTransactionId();
         String currency = request.getAmount().getCurrency().toString();
         CustomRel relPayment = new CustomRel("payments");
 
@@ -454,7 +454,7 @@ public class SlimpayHttpClient {
         String scheme = RequestConfigServiceImpl.INSTANCE.getParameterValue(request, SlimpayConstants.MANDATE_PAYIN_SCHEME);
         //Order reference
         String mandateReference = request.getTransactionId();
-        String paymentReference = request.getOrder().getReference();
+        String paymentReference = request.getTransactionId();
         String currency = request.getAmount().getCurrency().toString();
         CustomRel relPayment = new CustomRel("payments");
 
