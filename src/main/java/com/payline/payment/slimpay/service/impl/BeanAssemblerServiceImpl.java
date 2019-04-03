@@ -186,7 +186,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
      */
     @Override
     public Signatory assembleSignatory(PaymentRequest paymentRequest) {
-        
+
         Buyer buyer = paymentRequest.getBuyer();
 
         if (buyer == null) {

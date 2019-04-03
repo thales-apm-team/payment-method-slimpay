@@ -129,22 +129,6 @@ public class BeansUtils {
         return OrderResponse;
     }
 
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseOpen() throws MalformedResponseException {
-        return createMockedSlimpayOrderResponse(OrderStatus.OPEN_RUNNING);
-    }
-
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosed() throws MalformedResponseException {
-        return createMockedSlimpayOrderResponse(OrderStatus.CLOSED_COMPLETED);
-    }
-
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAborted() throws MalformedResponseException {
-        return createMockedSlimpayOrderResponse(OrderStatus.CLOSED_ABORTED);
-    }
-
-    public static SlimpayOrderResponse createMockedSlimpayOrderResponseClosedAbortedByClient() throws MalformedResponseException {
-        return createMockedSlimpayOrderResponse(OrderStatus.CLOSED_ABORTED_BY_CLIENT);
-    }
-
     public static SlimpayFailureResponse createMockedSlimpayFailureResponse() throws MalformedResponseException {
         String jsonError = "{\n" +
                 "   \"code\": 901,\n" +

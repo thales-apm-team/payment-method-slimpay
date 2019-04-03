@@ -147,6 +147,7 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
         }
         catch( JsonSyntaxException e ){
             throw new MalformedResponseException( e );
-        }    }
+        }
+    }
 
 }

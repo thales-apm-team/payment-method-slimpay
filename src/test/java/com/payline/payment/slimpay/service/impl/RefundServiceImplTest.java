@@ -7,6 +7,7 @@ import com.payline.payment.slimpay.exception.MalformedResponseException;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionStatus;
 import com.payline.pmapi.bean.common.FailureCause;
+import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
@@ -24,6 +25,7 @@ import org.mockito.MockitoAnnotations;
 import static com.payline.payment.slimpay.utils.BeansUtils.*;
 import static com.payline.payment.slimpay.utils.TestUtils.createRefundRequest;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -43,14 +45,11 @@ public class RefundServiceImplTest {
 
     @Test
     public void refundRequestTestOK() throws Exception {
-
         String transactionId = "HDEV-1550072222649";
         SlimpayPaymentResponse payout = createMockedSlimpayPaymentOutTopProcess();
-        when(httpClient.createPayout(any(RefundRequest.class), any(JsonBody.class))).thenReturn(payout);
+        Mockito.doReturn(payout).when(httpClient).createPayout(any(PartnerConfiguration.class), Mockito.any(JsonBody.class));
         SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.PROCESSED);
-
-        Mockito.doReturn(payout).when(httpClient).createPayout(Mockito.any(RefundRequest.class), Mockito.any(JsonBody.class));
-        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(Mockito.any(RefundRequest.class));
+        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(any(PartnerConfiguration.class), anyString());
 
         RefundRequest request = createRefundRequest(transactionId, "100");
         RefundResponse refundResponse = service.refundRequest(request);
@@ -68,7 +67,7 @@ public class RefundServiceImplTest {
         String transactionId = "HDEV-1550072222649";
         SlimpayFailureResponse spErrorMocked = createMockedSlimpayFailureResponse();
 
-        Mockito.doReturn(spErrorMocked).when(httpClient).getPayment(Mockito.any(RefundRequest.class));
+        Mockito.doReturn(spErrorMocked).when(httpClient).getPayment(any(PartnerConfiguration.class), anyString());
 
         RefundRequest request = createRefundRequest(transactionId, "100");
         RefundResponse refundResponse = service.refundRequest(request);
@@ -83,11 +82,9 @@ public class RefundServiceImplTest {
     @Test
     public void refundRequestTestKO() throws Exception {
         SlimpayFailureResponse payoutError = createMockedSlimpayPaymentOutError();
-        when(httpClient.createPayout(any(RefundRequest.class), any(JsonBody.class))).thenReturn(payoutError);
+        Mockito.doReturn(payoutError).when(httpClient).createPayout(any(PartnerConfiguration.class), any(JsonBody.class));
         SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.PROCESSED);
-
-        Mockito.doReturn(payoutError).when(httpClient).createPayout(Mockito.any(RefundRequest.class), Mockito.any(JsonBody.class));
-        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(Mockito.any(RefundRequest.class));
+        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(any(PartnerConfiguration.class), anyString());
         //too much money
         RefundRequest request = createRefundRequest("Y-ORDER-REF-1550495902513", "10000000");
         RefundResponse refundResponse = service.refundRequest(request);
@@ -103,9 +100,9 @@ public class RefundServiceImplTest {
     @Test
     public void refundRequestTestKOException() throws Exception {
         SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.PROCESSED);
-        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(Mockito.any(RefundRequest.class));
+        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(any(PartnerConfiguration.class), anyString());
 
-        when(httpClient.createPayout(any(RefundRequest.class), any(JsonBody.class))).thenThrow(new HttpCallException("this is an error", "foo"));
+        when(httpClient.createPayout(any(PartnerConfiguration.class), any(JsonBody.class))).thenThrow(new HttpCallException("this is an error", "foo"));
         //too much money
         RefundRequest request = createRefundRequest("HDEV-1550072222649", "10000000");
         RefundResponse refundResponse = service.refundRequest(request);
@@ -119,9 +116,9 @@ public class RefundServiceImplTest {
     @Test
     public void cancelPaymentTestKO() throws Exception {
         SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS);
-        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(Mockito.any(RefundRequest.class));
+        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(any(PartnerConfiguration.class), anyString());
 
-        when(httpClient.cancelPayment(any(RefundRequest.class),any(JsonBody.class))).thenReturn(paymentMocked);
+        when(httpClient.cancelPayment(any(PartnerConfiguration.class), anyString(), any(JsonBody.class))).thenReturn(paymentMocked);
         //too much money
         RefundRequest request = createRefundRequest("HDEV-1550072222649", "10000000");
         RefundResponse refundResponse = service.cancelPayment(request);
@@ -135,7 +132,7 @@ public class RefundServiceImplTest {
     public void cancelPaymentTestOK() throws Exception {
 
         SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.NOT_PROCESSED);
-        when(httpClient.cancelPayment(any(RefundRequest.class),any(JsonBody.class))).thenReturn(paymentMocked);
+        when(httpClient.cancelPayment(any(PartnerConfiguration.class), anyString(), any(JsonBody.class))).thenReturn(paymentMocked);
         //too much money
         RefundRequest request = createRefundRequest("HDEV-1550072222649", "1000");
         RefundResponse refundResponse = service.cancelPayment(request);
@@ -149,9 +146,9 @@ public class RefundServiceImplTest {
     @Test
     public void cancelPaymentInvalidResponse() throws Exception {
         SlimpayFailureResponse paymentMocked = createMockedCancelPaymentError();
-        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(Mockito.any(RefundRequest.class));
+        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(any(PartnerConfiguration.class), anyString());
 
-        when(httpClient.cancelPayment(any(RefundRequest.class),any(JsonBody.class))).thenReturn(paymentMocked);
+        when(httpClient.cancelPayment(any(PartnerConfiguration.class), anyString(), any(JsonBody.class))).thenReturn(paymentMocked);
         RefundRequest request = createRefundRequest("HDEV-1550072222649", "1000");
         RefundResponse refundResponse = service.cancelPayment(request);
 
@@ -166,9 +163,9 @@ public class RefundServiceImplTest {
     @Test
     public void cancelPaymentKOMalformedResponse() throws Exception {
         SlimpayFailureResponse paymentMocked = createMockedCancelPaymentError();
-        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(Mockito.any(RefundRequest.class));
+        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(any(PartnerConfiguration.class), anyString());
 
-        when(httpClient.cancelPayment(Mockito.any(RefundRequest.class),any(JsonBody.class))).thenThrow(new MalformedResponseException(new HttpCallException("this is an error", "foo")));
+        when(httpClient.cancelPayment(any(PartnerConfiguration.class), anyString(), any(JsonBody.class))).thenThrow(new MalformedResponseException(new HttpCallException("this is an error", "foo")));
         RefundRequest request = createRefundRequest("HDEV-1550072222649", "1000");
         RefundResponse refundResponse = service.cancelPayment(request);
 
@@ -183,9 +180,9 @@ public class RefundServiceImplTest {
     @Test
     public void refundPaymentKOMalformedResponse() throws Exception {
         SlimpayPaymentResponse paymentMocked = createMockedSlimpayPaymentIn(PaymentExecutionStatus.PROCESSED);
-        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(Mockito.any(RefundRequest.class));
+        Mockito.doReturn(paymentMocked).when(httpClient).getPayment(any(PartnerConfiguration.class), anyString());
 
-        when(httpClient.createPayout(Mockito.any(RefundRequest.class),any(JsonBody.class))).thenThrow(new MalformedResponseException(new HttpCallException("this is an error", "foo")));
+        when(httpClient.createPayout(any(PartnerConfiguration.class),any(JsonBody.class))).thenThrow(new MalformedResponseException(new HttpCallException("this is an error", "foo")));
         RefundRequest request = createRefundRequest("HDEV-1550072222649", "1000");
         RefundResponse refundResponse = service.refundRequest(request);
 

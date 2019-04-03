@@ -2,6 +2,7 @@ package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.common.Payment;
 import com.payline.payment.slimpay.bean.request.SlimpayCancelRequest;
+import com.payline.payment.slimpay.bean.response.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayResponse;
@@ -31,7 +32,7 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public RefundResponse refundRequest(RefundRequest refundRequest) {
-
+        
         String partnerTransactionId = refundRequest.getPartnerTransactionId();
         try {
             /*Get payment status first, according to his execution status do or not do refund
@@ -39,8 +40,9 @@ public class RefundServiceImpl implements RefundService {
               if paymentExecutionStatus is toprocess or toreplay we must do a cancel,
                else we do a refund
             */
-            SlimpayResponse paymentResp = httpClient.getPayment(refundRequest);
-            if (SlimpayPaymentResponse.class.equals(paymentResp.getClass())) {
+            PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.fromJson(refundRequest.getTransactionAdditionalData());
+            SlimpayResponse paymentResp = httpClient.getPayment(refundRequest.getPartnerConfiguration(), additionalData.getPaymentId());
+            if (paymentResp instanceof SlimpayPaymentResponse) {
                 SlimpayPaymentResponse paymentToRefund = (SlimpayPaymentResponse) paymentResp;
                 String executionStatus = paymentToRefund.getExecutionStatus();
                 if (executionStatus.equals(PaymentExecutionStatus.NOT_PROCESSED)) {
@@ -61,8 +63,8 @@ public class RefundServiceImpl implements RefundService {
                     //Create a payment with direction from creditor to subscriber (payout)
                     Payment slimpayPayoutRequest = beanAssembleService.assemblePayout(refundRequest);
                     //refund a payment
-                    SlimpayResponse refundResponse = httpClient.createPayout(refundRequest, slimpayPayoutRequest.toJsonBody());
-                    if (refundResponse.getClass() == SlimpayFailureResponse.class) {
+                    SlimpayResponse refundResponse = httpClient.createPayout(refundRequest.getPartnerConfiguration(), slimpayPayoutRequest.toJsonBody());
+                    if (refundResponse instanceof SlimpayFailureResponse) {
                         SlimpayFailureResponse slimpayPayoutFailureResponse = (SlimpayFailureResponse) refundResponse;
                         return RefundResponseFailure.RefundResponseFailureBuilder
                                 .aRefundResponseFailure()
@@ -100,12 +102,14 @@ public class RefundServiceImpl implements RefundService {
 
     //note Rel not accessible passer private
     public RefundResponse cancelPayment(RefundRequest refundRequest) {
-
         String partnerTransactionId = refundRequest.getPartnerTransactionId();
         JsonBody cancelRequest = new SlimpayCancelRequest(SlimpayCancelRequest.reasonCode.CUST).toJsonBody();
+
         try {
-            SlimpayResponse slimpayResponse = httpClient.cancelPayment(refundRequest, cancelRequest);
-            if (SlimpayPaymentResponse.class == slimpayResponse.getClass()) {
+            PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.fromJson(refundRequest.getTransactionAdditionalData());
+            SlimpayResponse slimpayResponse = httpClient.cancelPayment(refundRequest.getPartnerConfiguration(), additionalData.getPaymentId(), cancelRequest);
+
+            if (slimpayResponse instanceof SlimpayPaymentResponse) {
                 SlimpayPaymentResponse paymentResponse = (SlimpayPaymentResponse) slimpayResponse;
                 //Cancellation is OK
                 if ((paymentResponse.getExecutionStatus().equals(PaymentExecutionStatus.NOT_PROCESSED))) {
