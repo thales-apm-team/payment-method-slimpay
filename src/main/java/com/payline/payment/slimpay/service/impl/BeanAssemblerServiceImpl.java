@@ -197,8 +197,8 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         String internationalCellularPhoneNumber = PluginUtils.convertToInternational( buyer.getPhoneNumbers().get(Buyer.PhoneNumberType.CELLULAR), paymentRequest.getLocale() );
 
         return Signatory.Builder.aSignatoryBuilder()
-                .withfamilyName(fullName == null ? null : fullName.getFirstName())
-                .withGivenName(fullName == null ? null : fullName.getLastName())
+                .withfamilyName(fullName == null ? null : fullName.getLastName())
+                .withGivenName(fullName == null ? null : fullName.getFirstName())
                 .withHonorificPrefix(getHonorificCode(fullName == null ? null : fullName.getCivility()))
                 .withBilingAddress(assembleBillingAddress(paymentRequest))
                 .withEmail(buyer.getEmail())
