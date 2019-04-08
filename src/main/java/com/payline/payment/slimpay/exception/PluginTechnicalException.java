@@ -14,7 +14,7 @@ public class PluginTechnicalException extends Exception {
 
     private static final Logger LOGGER = LogManager.getLogger(PluginTechnicalException.class);
 
-    private static final Integer MAX_LENGHT = 50;
+    private static final Integer MAX_LENGTH = 50;
     private static final String NO_TRANSACTION = "NO_TRANSACTION_YET";
 
     private final String message;
@@ -93,7 +93,7 @@ public class PluginTechnicalException extends Exception {
 
 
     public String getTruncatedErrorCodeOrLabel() {
-        return PluginUtils.truncate(this.getErrorCodeOrLabel(), MAX_LENGHT);
+        return PluginUtils.truncate(this.getErrorCodeOrLabel(), MAX_LENGTH);
     }
 
     @Override
