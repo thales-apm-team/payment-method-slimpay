@@ -1,6 +1,10 @@
 package com.payline.payment.slimpay.service.impl;
 
+import com.payline.payment.slimpay.exception.HttpCallException;
+import com.payline.payment.slimpay.exception.InvalidDataException;
+import com.payline.payment.slimpay.exception.MalformedResponseException;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
+import com.payline.payment.slimpay.utils.BeansUtils;
 import com.payline.payment.slimpay.utils.TestUtils;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.payment.slimpay.utils.properties.constants.OrderStatus;
@@ -133,6 +137,40 @@ public class PaymentWithRedirectionServiceTest {
         }
     }
 
+    @Test
+    public void checkOrder_exception() throws PluginTechnicalException {
+        // Mock exception during getOrder()
+        Mockito.doThrow( new HttpCallException("Exception message longer than 50 characters (which is the maximum allowed", "SlimpayHttpClient.getOrder") )
+                .when( httpClient )
+                .getOrder( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
+
+        // when: calling method checkOrder()
+        PaymentResponse response = service.checkOrder(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer() );
+
+        // then: response is a failure, with valid failure cause and error code
+        assertTrue( response instanceof PaymentResponseFailure );
+        assertNotNull( ((PaymentResponseFailure)response).getFailureCause() );
+        assertNotNull( ((PaymentResponseFailure)response).getErrorCode() );
+        assertTrue( ((PaymentResponseFailure)response).getErrorCode().length() <= 50 );
+    }
+
+    @Test
+    public void checkOrder_partnerError() throws PluginTechnicalException {
+        // Mock order state: partner error
+        Mockito.doReturn( BeansUtils.createMockedSlimpayFailureResponse() )
+                .when( httpClient )
+                .getOrder( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
+
+        // when: calling method checkOrder()
+        PaymentResponse response = service.checkOrder(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer() );
+
+        // then: response is a failure, with valid failure cause and error code
+        assertTrue( response instanceof PaymentResponseFailure );
+        assertNotNull( ((PaymentResponseFailure)response).getFailureCause() );
+        assertNotNull( ((PaymentResponseFailure)response).getErrorCode() );
+        assertTrue( ((PaymentResponseFailure)response).getErrorCode().length() <= 50 );
+    }
+
     /**
      * Test set build upon the documentation :
      * https://payline.atlassian.net/wiki/spaces/APMSDK/pages/1192919570/Slimpay+-+Analyse#Slimpay-Analyse-Descriptiondesdiff%C3%A9rents%C3%A9tatsd'unpaiement(etremboursement)
@@ -170,6 +208,41 @@ public class PaymentWithRedirectionServiceTest {
             assertNotNull( ((PaymentResponseFailure)response).getErrorCode() );
         }
     }
+
+    @Test
+    public void checkPayment_exception() throws PluginTechnicalException {
+        // Mock exception during searchPayment()
+        Mockito.doThrow( new InvalidDataException("Exception message longer than 50 characters (which is the maximum allowed", "request.partnerConfiguration") )
+                .when( httpClient )
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+
+        // when: calling method checkPayment()
+        PaymentResponse response = service.checkPayment(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), createMockedSlimpayOrderResponse( OrderStatus.CLOSED_COMPLETED ) );
+
+        // then: response is a failure, with valid failure cause and error code
+        assertTrue( response instanceof PaymentResponseFailure );
+        assertNotNull( ((PaymentResponseFailure)response).getFailureCause() );
+        assertNotNull( ((PaymentResponseFailure)response).getErrorCode() );
+        assertTrue( ((PaymentResponseFailure)response).getErrorCode().length() <= 50 );
+    }
+
+    @Test
+    public void checkPayment_partnerError() throws PluginTechnicalException {
+        // Mock partner error returned by searchPayment()
+        Mockito.doReturn( BeansUtils.createMockedSlimpayFailureResponse() )
+                .when( httpClient )
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+
+        // when: calling method checkPayment()
+        PaymentResponse response = service.checkPayment(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), createMockedSlimpayOrderResponse( OrderStatus.CLOSED_COMPLETED ) );
+
+        // then: response is a failure, with valid failure cause and error code
+        assertTrue( response instanceof PaymentResponseFailure );
+        assertNotNull( ((PaymentResponseFailure)response).getFailureCause() );
+        assertNotNull( ((PaymentResponseFailure)response).getErrorCode() );
+        assertTrue( ((PaymentResponseFailure)response).getErrorCode().length() <= 50 );
+    }
+
 
     /**
      * Test set build from the documentation :
@@ -209,8 +282,46 @@ public class PaymentWithRedirectionServiceTest {
         assertNotNull( failureResponse.getErrorCode() );
     }
 
-    // TODO: simuler une exception pendant httpClient.getOrder
-    // TODO: tester le cas où getOrder renvoie une erreur
-    // TODO: simuler une exception pendant httpClient.searchPayment
-    // TODO: simuler une exception pendant httpClient.getPaymentRejectReason
+    @Test
+    public void checkPaymentIssue_exception() throws PluginTechnicalException {
+        // Mock payment state : 'rejected', the only case in which we get the payment-issues
+        Mockito.doReturn(createMockedSlimpayPaymentIn( PaymentExecutionStatus.REJECTED ))
+                .when( httpClient )
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+        // Mock exception during getPaymentRejectReason()
+        Mockito.doThrow( new HttpCallException("Exception message longer than 50 characters (which is the maximum allowed", "SlimpayHttpClient.getPaymentRejectReason") )
+                .when( httpClient )
+                .getPaymentRejectReason( any(PartnerConfiguration.class), anyString() );
+
+        // when: calling method checkPayment()
+        PaymentResponse response = service.checkPayment(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), createMockedSlimpayOrderResponse( OrderStatus.CLOSED_COMPLETED ) );
+
+        // then: response is a failure, with valid failure cause and error code
+        assertTrue( response instanceof PaymentResponseFailure );
+        assertNotNull( ((PaymentResponseFailure)response).getFailureCause() );
+        assertNotNull( ((PaymentResponseFailure)response).getErrorCode() );
+        assertTrue( ((PaymentResponseFailure)response).getErrorCode().length() <= 50 );
+    }
+
+    @Test
+    public void checkPaymentIssue_unknownReasonCode() throws PluginTechnicalException {
+        // Mock payment state : 'rejected', the only case in which we get the payment-issues
+        Mockito.doReturn(createMockedSlimpayPaymentIn( PaymentExecutionStatus.REJECTED ))
+                .when( httpClient )
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+        // Mock getPaymentRejectReason() returns null
+        Mockito.doReturn( "UNKNOWN" )
+                .when( httpClient )
+                .getPaymentRejectReason( any(PartnerConfiguration.class), anyString() );
+
+        // when: calling method checkPayment()
+        PaymentResponse response = service.checkPayment(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), createMockedSlimpayOrderResponse( OrderStatus.CLOSED_COMPLETED ) );
+
+        // then: response is a failure, with valid failure cause and error code
+        assertTrue( response instanceof PaymentResponseFailure );
+        assertNotNull( ((PaymentResponseFailure)response).getFailureCause() );
+        assertNotNull( ((PaymentResponseFailure)response).getErrorCode() );
+        assertTrue( ((PaymentResponseFailure)response).getErrorCode().length() <= 50 );
+    }
+
 }
