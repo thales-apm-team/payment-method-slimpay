@@ -70,17 +70,17 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     public Payment assemblePayin(PaymentRequest paymentRequest) throws InvalidDataException {
         if (paymentRequest == null) {
             throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
-        } else {
-            Payment.Builder paymentBuilder = Payment.Builder.aPaymentBuilder()
-                    .withReference(paymentRequest.getTransactionId())
-                    .withScheme(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, FIRST_PAYMENT_SCHEME))
-                    .withDirection(Direction.IN.name())
-                    .withAction(CREATE)
-                    .withAmount(createStringAmount(paymentRequest.getAmount()))
-                    .withCurrency(getCurrencyAsString(paymentRequest.getAmount()))
-                    .withLabel(paymentRequest.getSoftDescriptor());
-            return paymentBuilder.build();
         }
+
+        Payment.Builder paymentBuilder = Payment.Builder.aPaymentBuilder()
+                .withReference(paymentRequest.getTransactionId())
+                .withScheme(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, FIRST_PAYMENT_SCHEME))
+                .withDirection(Direction.IN.name())
+                .withAction(CREATE)
+                .withAmount(createStringAmount(paymentRequest.getAmount()))
+                .withCurrency(getCurrencyAsString(paymentRequest.getAmount()))
+                .withLabel(paymentRequest.getSoftDescriptor());
+        return paymentBuilder.build();
     }
 
     /**
@@ -93,28 +93,27 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     public Payment assemblePayout(RefundRequest refundRequest) throws InvalidDataException {
         if (refundRequest == null) {
             throw new InvalidDataException("RefundRequest is null or empty", "RefundRequest is null");
-        } else {
-            //use mandate or Subscriber reference for payout
-            PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.fromJson(refundRequest.getTransactionAdditionalData());
-            String mandateReference = additionalData.getMandateReference();
-            String reference = refundRequest.getOrder() == null ? null : refundRequest.getOrder().getReference();
-
-            return Payment.Builder.aPaymentBuilder()
-                    .withReference(reference)
-                    .withScheme(PAYOUT_SCHEME)
-                    .withDirection(Direction.OUT.name())
-                    .withAmount(createStringAmount(refundRequest.getAmount()))
-                    .withCurrency(getCurrencyAsString(refundRequest.getAmount()))
-                    .withLabel(refundRequest.getSoftDescriptor())
-                    .withCorrelationId(refundRequest.getPartnerTransactionId())
-//                .withSubscriber(new Subscriber(refundRequest.getBuyer().getCustomerIdentifier()))
-                    .withCreditor(new Creditor(RequestConfigServiceImpl.INSTANCE.getParameterValue(refundRequest, CREDITOR_REFERENCE_KEY)))
-                    .withMandate(Mandate.Builder.aMandateBuilder()
-                            .withReference(mandateReference)
-                            .build())
-                    .build();
-
         }
+
+        //use mandate or Subscriber reference for payout
+        PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.fromJson(refundRequest.getTransactionAdditionalData());
+        String mandateReference = additionalData.getMandateReference();
+        String reference = refundRequest.getOrder() == null ? null : refundRequest.getOrder().getReference();
+
+        return Payment.Builder.aPaymentBuilder()
+                .withReference(reference)
+                .withScheme(PAYOUT_SCHEME)
+                .withDirection(Direction.OUT.name())
+                .withAmount(createStringAmount(refundRequest.getAmount()))
+                .withCurrency(getCurrencyAsString(refundRequest.getAmount()))
+                .withLabel(refundRequest.getSoftDescriptor())
+                .withCorrelationId(refundRequest.getPartnerTransactionId())
+//                .withSubscriber(new Subscriber(refundRequest.getBuyer().getCustomerIdentifier()))
+                .withCreditor(new Creditor(RequestConfigServiceImpl.INSTANCE.getParameterValue(refundRequest, CREDITOR_REFERENCE_KEY)))
+                .withMandate(Mandate.Builder.aMandateBuilder()
+                        .withReference(mandateReference)
+                        .build())
+                .build();
     }
 
     /**
@@ -127,13 +126,11 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     public SlimPayOrderItem assembleOrderItemMandate(PaymentRequest paymentRequest) throws InvalidDataException {
         if (paymentRequest == null) {
             throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
-        } else {
-            return SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder()
-                    .withType(Type.SIGN_MANDATE.key)
-                    .withMandate(assembleMandate(paymentRequest))
-                    .build();
-
         }
+        return SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder()
+                .withType(Type.SIGN_MANDATE.key)
+                .withMandate(assembleMandate(paymentRequest))
+                .build();
     }
 
 
@@ -147,12 +144,11 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     public SlimPayOrderItem assembleOrderItemPayment(PaymentRequest paymentRequest) throws InvalidDataException {
         if (paymentRequest == null) {
             throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
-        } else {
-            return SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder()
-                    .withType(Type.PAYMENT.key)
-                    .withPayin(assemblePayin(paymentRequest))
-                    .build();
         }
+        return SlimPayOrderItem.Builder.aSlimPayOrderItemBuilder()
+                .withType(Type.PAYMENT.key)
+                .withPayin(assemblePayin(paymentRequest))
+                .build();
     }
 
     /**
@@ -165,17 +161,26 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     public Mandate assembleMandate(PaymentRequest paymentRequest) throws InvalidDataException {
         if (paymentRequest == null) {
             throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
-        } else {
-            return Mandate.Builder.aMandateBuilder()
-                    .withReference(paymentRequest.getTransactionId())
-                    .withStandard(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, MANDATE_STANDARD_KEY))
-                    .withAction(CREATE)
-                    .withPaymentScheme(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, MANDATE_PAYIN_SCHEME))
-                    .withCreateSequenceType(PONCTUEL)
-                    .withSequenceType(PONCTUEL)
-                    .withSignatory(assembleSignatory(paymentRequest))
-                    .build();
         }
+        return Mandate.Builder.aMandateBuilder()
+                .withReference(assembleMandateReference(paymentRequest.getTransactionId()))
+                .withStandard(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, MANDATE_STANDARD_KEY))
+                .withAction(CREATE)
+                .withPaymentScheme(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, MANDATE_PAYIN_SCHEME))
+                .withCreateSequenceType(PONCTUEL)
+                .withSequenceType(PONCTUEL)
+                .withSignatory(assembleSignatory(paymentRequest))
+                .build();
+    }
+
+    /**
+     * Assemble the mandate reference.
+     *
+     * @param transactionId Request transaction ID
+     * @return the mandate reference.
+     */
+    public String assembleMandateReference( String transactionId ){
+        return "RUM" + transactionId;
     }
 
     /**
@@ -238,27 +243,30 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     public SlimpayOrderRequest assembleSlimPayOrderRequest(PaymentRequest paymentRequest) throws InvalidDataException {
         if (paymentRequest == null) {
             throw new InvalidDataException(EMPTY_REQUEST_ERROR_MESSAGE, IS_NULL);
-        } else {
-            Environment environment = paymentRequest.getEnvironment();
-            Locale locale = paymentRequest.getLocale();
-            Buyer buyer = paymentRequest.getBuyer();
-            return SlimpayOrderRequest.Builder.aSlimPayOrderRequestBuilder()
-                    .withReference(paymentRequest.getTransactionId())
-                    .withSubscriber(new Subscriber(buyer == null ? null : buyer.getCustomerIdentifier()))
-                    .withCreditor(new Creditor(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, CREDITOR_REFERENCE_KEY)))
-                    .withSuccessUrl(environment == null ? null : environment.getRedirectionReturnURL())
-                    .withFailureUrl(environment == null ? null : environment.getRedirectionReturnURL())
-                    .withCancelUrl(environment == null ? null : environment.getRedirectionCancelURL())
-                    .withLocale(locale == null ? null : locale.getLanguage())
-                    .withStarted(true)
-                    //send by mail user approval link
-                    .withSendUserApproval(true)
-                    .withItems(new SlimPayOrderItem[]{
-                            assembleOrderItemMandate(paymentRequest),
-                            assembleOrderItemPayment(paymentRequest)
-                    })
-                    .build();
         }
+        else if( paymentRequest.getOrder() == null ){
+            throw new InvalidDataException("PaymentRequest order is null", "paymentRequest.order");
+        }
+
+        Environment environment = paymentRequest.getEnvironment();
+        Locale locale = paymentRequest.getLocale();
+        Buyer buyer = paymentRequest.getBuyer();
+        return SlimpayOrderRequest.Builder.aSlimPayOrderRequestBuilder()
+                .withReference(paymentRequest.getOrder().getReference())
+                .withSubscriber(new Subscriber(buyer == null ? null : buyer.getCustomerIdentifier()))
+                .withCreditor(new Creditor(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, CREDITOR_REFERENCE_KEY)))
+                .withSuccessUrl(environment == null ? null : environment.getRedirectionReturnURL())
+                .withFailureUrl(environment == null ? null : environment.getRedirectionReturnURL())
+                .withCancelUrl(environment == null ? null : environment.getRedirectionCancelURL())
+                .withLocale(locale == null ? null : locale.getLanguage())
+                .withStarted(true)
+                //send by mail user approval link
+                .withSendUserApproval(true)
+                .withItems(new SlimPayOrderItem[]{
+                        assembleOrderItemMandate(paymentRequest),
+                        assembleOrderItemPayment(paymentRequest)
+                })
+                .build();
     }
 
     /**

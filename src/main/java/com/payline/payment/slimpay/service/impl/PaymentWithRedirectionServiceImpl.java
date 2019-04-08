@@ -9,6 +9,7 @@ import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionSt
 import com.payline.pmapi.bean.common.*;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
+import com.payline.pmapi.bean.payment.Order;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
@@ -26,12 +27,14 @@ import static com.payline.payment.slimpay.utils.properties.constants.OrderStatus
 public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirectionService {
 
     private static final Logger LOGGER = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
+
     private static final String SUCCESS_MESSAGE = "COMMANDE_OK";
     private static final String CANCELLATION_CLIENT_MESSAGE = "Cancelled by client";
     private static final String CANCELLATION_SERVER_MESSAGE = "Cancelled by server";
     private static final String NOT_PROCESSED_PAYMENT = "Payment not processed";
-    private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
 
+    private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
+    private BeanAssemblerServiceImpl beanAssembleService = BeanAssemblerServiceImpl.getInstance();
 
     @Override
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {
@@ -40,7 +43,8 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 redirectionPaymentRequest.getContractConfiguration(),
                 redirectionPaymentRequest.getTransactionId(),
                 redirectionPaymentRequest.getAmount(),
-                redirectionPaymentRequest.getBuyer()
+                redirectionPaymentRequest.getBuyer(),
+                redirectionPaymentRequest.getOrder()
         );
     }
 
@@ -51,7 +55,8 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 transactionStatusRequest.getContractConfiguration(),
                 transactionStatusRequest.getTransactionId(),
                 transactionStatusRequest.getAmount(),
-                transactionStatusRequest.getBuyer()
+                transactionStatusRequest.getBuyer(),
+                transactionStatusRequest.getOrder()
         );
     }
 
@@ -66,10 +71,10 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
      *
      * @return The {@link PaymentResponse} representing the state of the transaction.
      */
-    PaymentResponse checkOrder( PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration, String transactionId, Amount amount, Buyer buyer ){
+    PaymentResponse checkOrder( PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration, String transactionId, Amount amount, Buyer buyer, Order order ){
         try {
             // Get the order's data
-            SlimpayResponse orderResponse = httpClient.getOrder(partnerConfiguration, contractConfiguration, transactionId );
+            SlimpayResponse orderResponse = httpClient.getOrder(partnerConfiguration, contractConfiguration, order.getReference() );
 
             // Fail to get order
             if (orderResponse instanceof SlimpayFailureResponse) {
@@ -143,8 +148,9 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             SlimpayResponse searchPaymentResponse = httpClient.searchPayment(
                     partnerConfiguration,
                     contractConfiguration,
-                    buyer.getCustomerIdentifier(),
                     transactionId,
+                    beanAssembleService.assembleMandateReference( transactionId ),
+                    buyer.getCustomerIdentifier(),
                     amount.getCurrency() );
 
             // SlimpayResponse is a failure: we were unable to get the payment's data

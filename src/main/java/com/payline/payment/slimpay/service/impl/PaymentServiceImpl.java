@@ -96,7 +96,7 @@ public class PaymentServiceImpl implements PaymentService {
                                 .build();
                         return PaymentResponseRedirect.PaymentResponseRedirectBuilder.aPaymentResponseRedirect()
                                 .withRedirectionRequest(redirectionRequest)
-                                .withPartnerTransactionId(slimpayOrderRequest.getReference())
+                                .withPartnerTransactionId(paymentRequest.getTransactionId())
                                 .withStatusCode(slimpayOrderSuccessResponse.getState())
                                 .withRequestContext(requestContext)
                                 .build();

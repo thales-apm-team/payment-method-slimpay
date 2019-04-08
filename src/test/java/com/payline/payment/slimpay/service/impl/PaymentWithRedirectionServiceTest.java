@@ -2,7 +2,6 @@ package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.exception.HttpCallException;
 import com.payline.payment.slimpay.exception.InvalidDataException;
-import com.payline.payment.slimpay.exception.MalformedResponseException;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.BeansUtils;
 import com.payline.payment.slimpay.utils.TestUtils;
@@ -69,7 +68,7 @@ public class PaymentWithRedirectionServiceTest {
         // Mock payment state
         Mockito.doReturn(createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS))
                 .when(httpClient)
-                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), anyString(), any(Currency.class) );
 
         // when: calling method finalizeRedirectionPayment()
         PaymentResponse response = service.finalizeRedirectionPayment(createRedirectionPaymentRequest(TRANSACTION_ID));
@@ -124,10 +123,10 @@ public class PaymentWithRedirectionServiceTest {
         // Mock payment state (in case it's needed) : 'toprocess', as it is at the end of the process
         Mockito.doReturn(createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS))
                 .when( httpClient )
-                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), anyString(), any(Currency.class) );
 
         // when: calling method checkOrder()
-        PaymentResponse response = service.checkOrder(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer() );
+        PaymentResponse response = service.checkOrder(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), TestUtils.createDefaultOrder() );
 
         // then: response is as expected
         assertTrue( expectedResponseClass.isInstance( response ) );
@@ -145,7 +144,7 @@ public class PaymentWithRedirectionServiceTest {
                 .getOrder( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
 
         // when: calling method checkOrder()
-        PaymentResponse response = service.checkOrder(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer() );
+        PaymentResponse response = service.checkOrder(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), TestUtils.createDefaultOrder() );
 
         // then: response is a failure, with valid failure cause and error code
         assertTrue( response instanceof PaymentResponseFailure );
@@ -162,7 +161,7 @@ public class PaymentWithRedirectionServiceTest {
                 .getOrder( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
 
         // when: calling method checkOrder()
-        PaymentResponse response = service.checkOrder(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer() );
+        PaymentResponse response = service.checkOrder(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), TestUtils.createDefaultOrder() );
 
         // then: response is a failure, with valid failure cause and error code
         assertTrue( response instanceof PaymentResponseFailure );
@@ -192,7 +191,7 @@ public class PaymentWithRedirectionServiceTest {
         // Mock payment state
         Mockito.doReturn(createMockedSlimpayPaymentIn( inputPaymentStatus ))
                 .when( httpClient )
-                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), anyString(), any(Currency.class) );
         // Mock payment-issues
         Mockito.doReturn( "AC04" )
                 .when( httpClient )
@@ -214,7 +213,7 @@ public class PaymentWithRedirectionServiceTest {
         // Mock exception during searchPayment()
         Mockito.doThrow( new InvalidDataException("Exception message longer than 50 characters (which is the maximum allowed", "request.partnerConfiguration") )
                 .when( httpClient )
-                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), anyString(), any(Currency.class) );
 
         // when: calling method checkPayment()
         PaymentResponse response = service.checkPayment(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), createMockedSlimpayOrderResponse( OrderStatus.CLOSED_COMPLETED ) );
@@ -231,7 +230,7 @@ public class PaymentWithRedirectionServiceTest {
         // Mock partner error returned by searchPayment()
         Mockito.doReturn( BeansUtils.createMockedSlimpayFailureResponse() )
                 .when( httpClient )
-                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), anyString(), any(Currency.class) );
 
         // when: calling method checkPayment()
         PaymentResponse response = service.checkPayment(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), createMockedSlimpayOrderResponse( OrderStatus.CLOSED_COMPLETED ) );
@@ -266,7 +265,7 @@ public class PaymentWithRedirectionServiceTest {
         // Mock payment state : 'rejected', the only case in which we get the payment-issues
         Mockito.doReturn(createMockedSlimpayPaymentIn( PaymentExecutionStatus.REJECTED ))
                 .when( httpClient )
-                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), anyString(), any(Currency.class) );
         // Mock payment-issue
         Mockito.doReturn( returnReasonCode )
                 .when( httpClient )
@@ -287,7 +286,7 @@ public class PaymentWithRedirectionServiceTest {
         // Mock payment state : 'rejected', the only case in which we get the payment-issues
         Mockito.doReturn(createMockedSlimpayPaymentIn( PaymentExecutionStatus.REJECTED ))
                 .when( httpClient )
-                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), anyString(), any(Currency.class) );
         // Mock exception during getPaymentRejectReason()
         Mockito.doThrow( new HttpCallException("Exception message longer than 50 characters (which is the maximum allowed", "SlimpayHttpClient.getPaymentRejectReason") )
                 .when( httpClient )
@@ -308,7 +307,7 @@ public class PaymentWithRedirectionServiceTest {
         // Mock payment state : 'rejected', the only case in which we get the payment-issues
         Mockito.doReturn(createMockedSlimpayPaymentIn( PaymentExecutionStatus.REJECTED ))
                 .when( httpClient )
-                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), any(Currency.class) );
+                .searchPayment( any(PartnerConfiguration.class),any(ContractConfiguration.class), anyString(), anyString(), anyString(), any(Currency.class) );
         // Mock getPaymentRejectReason() returns null
         Mockito.doReturn( "UNKNOWN" )
                 .when( httpClient )
