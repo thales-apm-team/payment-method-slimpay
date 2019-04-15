@@ -1,16 +1,16 @@
 package com.payline.payment.slimpay.utils.service;
 
 import com.payline.payment.slimpay.utils.properties.constants.LogoConstants;
-import com.payline.payment.slimpay.utils.properties.service.LogoPropertiesEnum;
+import com.payline.payment.slimpay.utils.properties.service.LogoProperties;
 import com.payline.payment.slimpay.utils.properties.service.PropertiesService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
-class LogoPropertiesEnumTest {
+class LogoPropertiesTest {
 
-    private PropertiesService service = LogoPropertiesEnum.INSTANCE;
+    private PropertiesService service = LogoProperties.INSTANCE;
 
     @Test
     void getFilename() {

@@ -2,15 +2,15 @@ package com.payline.payment.slimpay.utils.service;
 
 import com.payline.payment.slimpay.utils.properties.constants.ConfigurationConstants;
 import com.payline.payment.slimpay.utils.properties.service.PropertiesService;
-import com.payline.payment.slimpay.utils.properties.service.ReleasePropertiesEnum;
+import com.payline.payment.slimpay.utils.properties.service.ReleaseProperties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
-class ReleasePropertiesEnumTest {
+class ReleasePropertiesTest {
 
-    private PropertiesService service = ReleasePropertiesEnum.INSTANCE;
+    private PropertiesService service = ReleaseProperties.INSTANCE;
 
     @Test
     void getFilename() {

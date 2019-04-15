@@ -6,7 +6,7 @@ import com.payline.payment.slimpay.utils.PluginUtils;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.payment.slimpay.utils.i18n.I18nService;
 import com.payline.payment.slimpay.utils.properties.constants.ConfigurationConstants;
-import com.payline.payment.slimpay.utils.properties.service.ReleasePropertiesEnum;
+import com.payline.payment.slimpay.utils.properties.service.ReleaseProperties;
 import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
@@ -178,11 +178,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public ReleaseInformation getReleaseInformation() {
 
-        LocalDate date = LocalDate.parse(ReleasePropertiesEnum.INSTANCE.get(ConfigurationConstants.RELEASE_DATE),
+        LocalDate date = LocalDate.parse(ReleaseProperties.INSTANCE.get(ConfigurationConstants.RELEASE_DATE),
                 DateTimeFormatter.ofPattern(ConfigurationConstants.RELEASE_DATE_FORMAT));
         return ReleaseInformation.ReleaseBuilder.aRelease()
                 .withDate(date)
-                .withVersion(ReleasePropertiesEnum.INSTANCE.get(ConfigurationConstants.RELEASE_VERSION))
+                .withVersion(ReleaseProperties.INSTANCE.get(ConfigurationConstants.RELEASE_VERSION))
                 .build();
     }
 

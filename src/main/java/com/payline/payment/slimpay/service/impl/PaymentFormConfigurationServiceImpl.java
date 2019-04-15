@@ -13,15 +13,13 @@ import java.util.Locale;
 /**
  * Created on 27/08/2018.
  */
-public class PaymentFormConfigurationServiceImpl implements DefaultPaymentFormConfigurationService {
-
+public class PaymentFormConfigurationServiceImpl extends DefaultPaymentFormConfigurationService {
 
     private I18nService i18n;
 
     public PaymentFormConfigurationServiceImpl() {
         i18n = I18nService.getInstance();
     }
-
 
     @Override
     public PaymentFormConfigurationResponse getPaymentFormConfiguration(PaymentFormConfigurationRequest request) {
