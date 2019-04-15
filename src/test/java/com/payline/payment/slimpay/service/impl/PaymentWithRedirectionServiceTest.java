@@ -253,9 +253,10 @@ public class PaymentWithRedirectionServiceTest {
         return Stream.of(
                 Arguments.of("AC01", FailureCause.INVALID_DATA),
                 Arguments.of("AC06", FailureCause.REFUSED),
-                // Arguments.of("AG02", FailureCause.INVALID_FIELD_FORMAT), // TODO: change the mapping
+                Arguments.of("AG02", FailureCause.INVALID_FIELD_FORMAT),
                 Arguments.of("CNOR", FailureCause.PAYMENT_PARTNER_ERROR),
-                Arguments.of("FOCR", FailureCause.CANCEL)
+                Arguments.of("FOCR", FailureCause.CANCEL),
+                Arguments.of("UNKNOWN", FailureCause.PARTNER_UNKNOWN_ERROR)
         );
     }
 
