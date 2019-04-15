@@ -20,7 +20,6 @@ public class SlimpayErrorMapper {
     }
 
     public static FailureCause handleSlimpayError(SlimpayError error) {
-
         if (error == null) {
             return FailureCause.PAYMENT_PARTNER_ERROR;
         }
@@ -160,7 +159,7 @@ public class SlimpayErrorMapper {
      */
     public static FailureCause handleSlimpayPaymentError(String error) {
         if( error == null ){
-            return FailureCause.PARTNER_UNKNOWN_ERROR;
+            return FailureCause.PAYMENT_PARTNER_ERROR;
         }
 
         String errorUpperCase = error.toUpperCase().replace("\"", "");
