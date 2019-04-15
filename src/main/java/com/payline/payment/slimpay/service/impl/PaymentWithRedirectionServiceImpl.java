@@ -150,8 +150,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                     contractConfiguration,
                     transactionId,
                     beanAssembleService.assembleMandateReference( transactionId ),
-                    buyer.getCustomerIdentifier(),
-                    amount.getCurrency() );
+                    buyer.getCustomerIdentifier() );
 
             // SlimpayResponse is a failure: we were unable to get the payment's data
             if( searchPaymentResponse instanceof SlimpayFailureResponse ) {

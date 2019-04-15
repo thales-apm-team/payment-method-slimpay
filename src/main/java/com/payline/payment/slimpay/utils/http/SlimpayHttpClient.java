@@ -277,15 +277,14 @@ public class SlimpayHttpClient {
      *
      * @param partnerConfiguration The {@link PartnerConfiguration} data
      * @param contractConfiguration The {@link ContractConfiguration} data
+     * @param paymentReference The payment (payin) reference
+     * @param mandateReference The mandate reference
      * @param subscriberReference The subscriber reference, also known as client reference
-     * @param transactionId the unique transaction identifier, which acts as both mandate reference and payment reference
-     * @param currency The transaction currency
      * @return
      * @throws PluginTechnicalException
      */
     public SlimpayResponse searchPayment(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration,
-                                         String paymentReference, String mandateReference, String subscriberReference,
-                                         Currency currency ) throws PluginTechnicalException {
+                                         String paymentReference, String mandateReference, String subscriberReference ) throws PluginTechnicalException {
         if( partnerConfiguration == null ){
             throw new InvalidDataException("Partner configuration must not be null", "request.partnerConfiguration");
         }
@@ -301,7 +300,6 @@ public class SlimpayHttpClient {
                 .setUrlVariable(SUBSCRIBER_REFERENCE, subscriberReference)
                 .setUrlVariable(MANDATE_REFERENCE, mandateReference)
                 .setUrlVariable(REFERENCE, paymentReference)
-                .setUrlVariable(CURRENCY, currency.toString())
                 .setUrlVariable(SCHEME, contractConfiguration.getProperty( SlimpayConstants.MANDATE_PAYIN_SCHEME ))
                 .setUrlVariable(DIRECTION, "IN")
                 .build();
