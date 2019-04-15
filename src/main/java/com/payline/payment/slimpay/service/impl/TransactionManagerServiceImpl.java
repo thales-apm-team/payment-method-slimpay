@@ -14,7 +14,6 @@ public class TransactionManagerServiceImpl implements TransactionManagerService 
 
     private static final Logger LOGGER = LogManager.getLogger(TransactionManagerServiceImpl.class);
     private static final String MANDATE_REFERENCE = "mandateReference";
-    private static final String MANDATE_ID = "mandateId";
     private static final String ORDER_ID = "orderId";
     private static final String ORDER_REFERENCE = "orderReference";
     private static final String PAYMENT_ID = "paymentId";
@@ -29,7 +28,6 @@ public class TransactionManagerServiceImpl implements TransactionManagerService 
             try {
                 PaymentResponseSuccessAdditionalData paymentResponseSuccessAdditionalData = gson.fromJson(additionalDataJson, PaymentResponseSuccessAdditionalData.class);
                 additionalDataMap.put(MANDATE_REFERENCE, paymentResponseSuccessAdditionalData.getMandateReference());
-                additionalDataMap.put(MANDATE_ID, paymentResponseSuccessAdditionalData.getMandateId());
                 additionalDataMap.put(ORDER_ID, paymentResponseSuccessAdditionalData.getOrderId());
                 additionalDataMap.put(ORDER_REFERENCE, paymentResponseSuccessAdditionalData.getOrderReference());
                 additionalDataMap.put(PAYMENT_ID, paymentResponseSuccessAdditionalData.getPaymentId());
@@ -38,7 +36,6 @@ public class TransactionManagerServiceImpl implements TransactionManagerService 
             } catch (JsonSyntaxException e) {
                 LOGGER.error("Additional data syntax incorrect", e);
                 throw new JsonSyntaxException("Additional data syntax incorrect [{}]", e);
-
             }
         }
         return additionalDataMap;

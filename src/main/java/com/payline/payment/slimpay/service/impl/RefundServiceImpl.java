@@ -27,7 +27,6 @@ public class RefundServiceImpl implements RefundService {
     private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
     private BeanAssemblerServiceImpl beanAssembleService = BeanAssemblerServiceImpl.getInstance();
     private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
-    private String NOT_REFUNDABLE_PAYMENT = "unable to refund or cancel a not processed payment";
 
 
     @Override
@@ -50,7 +49,7 @@ public class RefundServiceImpl implements RefundService {
                     LOGGER.error("unable to refund or cancel a not processed payment");
                     return RefundResponseFailure.RefundResponseFailureBuilder
                             .aRefundResponseFailure()
-                            .withErrorCode(truncateError(NOT_REFUNDABLE_PAYMENT))
+                            .withErrorCode(truncateError("Unable to refund or cancel a not processed payment"))
                             .withFailureCause(FailureCause.REFUSED)
                             .withPartnerTransactionId(partnerTransactionId)
                             .build();

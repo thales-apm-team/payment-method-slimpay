@@ -203,13 +203,12 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
                 // Else, the payment is treated as OK
                 default:
-                    String reference = slimpayOrderResponse.getReference();
                     PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.Builder
                             .aPaymentResponseSuccessAdditionalData()
                             .withOrderId(slimpayOrderResponse.getId())
-                            .withOrderReference(reference)
-                            .withMandateReference(reference)
-                            .withPaymentReference(reference)
+                            .withOrderReference(slimpayOrderResponse.getReference())
+                            .withMandateReference(beanAssembleService.assembleMandateReference(transactionId))
+                            .withPaymentReference(transactionId)
                             .withPaymentId(paymentId)
                             .build();
                     return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
@@ -218,7 +217,6 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                             .withPartnerTransactionId(transactionId)
                             .withTransactionDetails(new EmptyTransactionDetails())
                             .build();
-
             }
 
         } catch (PluginTechnicalException e) {
