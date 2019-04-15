@@ -156,9 +156,16 @@ public class SlimpayHttpClient {
         LOGGER.info("Order created");
         SlimpayOrderResponse orderSuccessResponse = SlimpayOrderResponse.fromJson(response.getState().toString());
         //add confirm url on the response
-        String confirmationUrl = response.getLink(new CustomRel(ns + API_REL_USER_APPROVAL)).getHref();
-        // TODO: Catch RelNotFoundException exception and handle it properly !
-        orderSuccessResponse.setUrlApproval(confirmationUrl);
+        try {
+            String confirmationUrl = response.getLink(new CustomRel(ns + API_REL_USER_APPROVAL)).getHref();
+            orderSuccessResponse.setUrlApproval(confirmationUrl);
+        }
+        catch( RelNotFoundException e ){
+            // If we encounter this error, it means the returned resource does not have a link "user-approval"
+            LOGGER.error( "Cannot find 'user-approval' link in the server response" );
+            throw new PluginTechnicalException( e, "redirect URL not found in the server response" );
+        }
+
         return orderSuccessResponse;
     }
 
@@ -344,15 +351,7 @@ public class SlimpayHttpClient {
                 .setUrlVariable(ID, paymentId)
                 .build();
 
-        Resource response;
-        try {
-            response = this.sendRequest(partnerConfiguration, follow, entryPointUrl);
-        }
-        catch (RelNotFoundException e){
-            // TODO: find when that can happen and a more explicit message
-            LOGGER.error(REL_NOT_FOUND_MESSAGE);
-            throw new HttpCallException(REL_NOT_FOUND_MESSAGE, "SlimpayHttpClient.getPaymentRejectReason");
-        }
+        Resource response = this.sendRequest(partnerConfiguration, follow, entryPointUrl);
 
         if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getPaymentRejectReason");
@@ -426,7 +425,7 @@ public class SlimpayHttpClient {
      * @throws SlimpayHttpException
      */
     Resource sendRequest(PartnerConfiguration partnerConfiguration, Follow follow)
-            throws SlimpayHttpException {
+            throws PluginTechnicalException {
         return sendRequest( partnerConfiguration, follow, null );
     }
 
@@ -440,7 +439,7 @@ public class SlimpayHttpClient {
      * @throws SlimpayHttpException
      */
     Resource sendRequest(PartnerConfiguration partnerConfiguration, Follow follow, String entryPoint)
-            throws SlimpayHttpException {
+            throws PluginTechnicalException {
         Oauth2BasicAuthentication authentication = new Oauth2BasicAuthentication.Builder()
                 .setTokenEndPointUrl( API_ENDPOINT_TOKEN )
                 .setUserid( partnerConfiguration.getProperty( SlimpayConstants.APP_KEY ))
@@ -467,7 +466,7 @@ public class SlimpayHttpClient {
      * @return
      * @throws SlimpayHttpException
      */
-    Resource doSendRequest(HapiClient client, Follow follow) throws SlimpayHttpException {
+    Resource doSendRequest(HapiClient client, Follow follow) throws PluginTechnicalException {
         final long start = System.currentTimeMillis();
         int count = 0;
         Resource response = null;
@@ -478,19 +477,19 @@ public class SlimpayHttpClient {
                 LOGGER.info("Start partner call... [URL: {}]", client.getApiUrl());
 
                 response = client.send(follow);
-                // TODO: catch RelNotFoundException exception and handle it !
 
                 final long end = System.currentTimeMillis();
-                LOGGER.info("End partner call [T: {}ms] [CODE: {}]", end - start); // ajouter le code de reponse (200)
+                LOGGER.info("End partner call [T: {}ms] [CODE: {}]", end - start);
             } catch (HttpException e) {
                 exception = e;
-                response = null;
+            } catch( RelNotFoundException e ){
+                throw new PluginTechnicalException( e, "Relation type not found" );
             } finally {
                 count++;
             }
         }
 
-        if (exception != null) {
+        if( response == null && exception != null ){
             throw new SlimpayHttpException(exception);
         }
 

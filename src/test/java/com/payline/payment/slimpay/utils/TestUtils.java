@@ -70,7 +70,7 @@ public class TestUtils {
      **/
 
 
-    private static final Map<String, String> PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
+    public static final Map<String, String> PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
         put(API_URL_KEY, "https://api.preprod.slimpay.com");
         put(API_PROFILE_KEY, "https://api.slimpay.net/alps/v1");
         put(API_NS_KEY, "https://api.slimpay.net/alps");
@@ -78,7 +78,7 @@ public class TestUtils {
     }};
 
 
-    private static final Map<String, String> SENSITIVE_PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
+    public static final Map<String, String> SENSITIVE_PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
         put(APP_SECRET, "n32cXdaS0ZOACV8688ltKovAO6lquL4wKjZHnvyO");
 
     }};

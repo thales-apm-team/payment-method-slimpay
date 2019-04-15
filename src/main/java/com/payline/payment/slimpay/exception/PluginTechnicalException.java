@@ -43,7 +43,6 @@ public class PluginTechnicalException extends Exception {
         this.errorCodeOrLabel = errorCodeOrLabel;
         slimpayError = null;
         LOGGER.error(errorCodeOrLabel, e);
-
     }
 
     /**
@@ -56,7 +55,6 @@ public class PluginTechnicalException extends Exception {
         slimpayError = SlimpayError.fromJson(errorString);
         this.errorCodeOrLabel = slimpayError == null ? null : slimpayError.toPaylineError();
         LOGGER.error(errorCodeOrLabel, e);
-
     }
 
 
