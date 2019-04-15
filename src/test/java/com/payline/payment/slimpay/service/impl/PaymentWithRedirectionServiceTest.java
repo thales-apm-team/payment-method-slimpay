@@ -76,7 +76,7 @@ public class PaymentWithRedirectionServiceTest {
 
         // then: response is a success
         assertTrue(response instanceof PaymentResponseSuccess);
-        // TODO: change it if payment with status 'toprocess' must return a PaymentResponseOnHold
+        // TODO: change it if payment with status 'toprocess' must return a PaymentResponseOnHold (see PAYLAPMEXT-124)
     }
 
     /**
@@ -177,10 +177,10 @@ public class PaymentWithRedirectionServiceTest {
      */
     private static Stream<Arguments> checkPaymentTestSet() {
         return Stream.of(
-                Arguments.of(PaymentExecutionStatus.TO_PROCESS, PaymentResponseSuccess.class, null), // TODO: OnHold ?
+                Arguments.of(PaymentExecutionStatus.TO_PROCESS, PaymentResponseSuccess.class, null), // TODO: OnHold ? (see PAYLAPMEXT-124)
                 Arguments.of(PaymentExecutionStatus.PROCESSING, PaymentResponseSuccess.class, null),
                 Arguments.of(PaymentExecutionStatus.NOT_PROCESSED, PaymentResponseFailure.class, FailureCause.REFUSED),
-                Arguments.of(PaymentExecutionStatus.TO_REPLAY, PaymentResponseSuccess.class, null), // TODO: OnHold ?
+                Arguments.of(PaymentExecutionStatus.TO_REPLAY, PaymentResponseSuccess.class, null), // TODO: OnHold ? (see PAYLAPMEXT-124)
                 Arguments.of(PaymentExecutionStatus.PROCESSED, PaymentResponseSuccess.class, null),
                 Arguments.of(PaymentExecutionStatus.REJECTED, PaymentResponseFailure.class, FailureCause.REFUSED) // mocked reason code AC04 => REFUSED
         );
