@@ -3,6 +3,7 @@ package com.payline.payment.slimpay.exception;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
+import com.payline.pmapi.bean.reset.response.impl.ResetResponseFailure;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -68,10 +69,20 @@ class PluginTechnicalExceptionTest {
     void toRefundResponseFailure() {
         pluginTechnicalException = new PluginTechnicalException((Exception) null, "errorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabel");
 
-        RefundResponseFailure refundResponseFailure = pluginTechnicalException.toRefundResponseFailure();
+        RefundResponseFailure refundResponseFailure = pluginTechnicalException.toRefundResponseFailure( null );
         Assertions.assertEquals(FailureCause.PARTNER_UNKNOWN_ERROR, refundResponseFailure.getFailureCause());
         Assertions.assertTrue(refundResponseFailure.getErrorCode().contains("errorCodeOrLabel"));
         Assertions.assertEquals(50, refundResponseFailure.getErrorCode().length());
+    }
+
+    @Test
+    void toResetResponseFailure() {
+        pluginTechnicalException = new PluginTechnicalException((Exception) null, "errorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabel");
+
+        ResetResponseFailure resetResponseFailure = pluginTechnicalException.toResetResponseFailure( null );
+        Assertions.assertEquals(FailureCause.PARTNER_UNKNOWN_ERROR, resetResponseFailure.getFailureCause());
+        Assertions.assertTrue(resetResponseFailure.getErrorCode().contains("errorCodeOrLabel"));
+        Assertions.assertEquals(50, resetResponseFailure.getErrorCode().length());
     }
 
     @Test

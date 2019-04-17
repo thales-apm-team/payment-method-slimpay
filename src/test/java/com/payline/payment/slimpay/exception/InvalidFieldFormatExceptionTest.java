@@ -3,6 +3,7 @@ package com.payline.payment.slimpay.exception;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
+import com.payline.pmapi.bean.reset.response.impl.ResetResponseFailure;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ class InvalidFieldFormatExceptionTest {
 
     @Test
     void toPaymentResponseFailure() {
-        invalidFieldFormatException = new InvalidFieldFormatException((String) null, "errorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabel");
+        invalidFieldFormatException = new InvalidFieldFormatException( null, "errorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabel");
 
         PaymentResponseFailure paymentResponseFailure = invalidFieldFormatException.toPaymentResponseFailure();
         Assertions.assertEquals(FailureCause.INVALID_FIELD_FORMAT, paymentResponseFailure.getFailureCause());
@@ -40,11 +41,21 @@ class InvalidFieldFormatExceptionTest {
 
     @Test
     void toRefundResponseFailure() {
-        invalidFieldFormatException = new InvalidFieldFormatException((String) null, "errorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabel");
+        invalidFieldFormatException = new InvalidFieldFormatException( null, "errorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabel");
 
-        RefundResponseFailure refundResponseFailure = invalidFieldFormatException.toRefundResponseFailure();
+        RefundResponseFailure refundResponseFailure = invalidFieldFormatException.toRefundResponseFailure( null );
         Assertions.assertEquals(FailureCause.INVALID_FIELD_FORMAT, refundResponseFailure.getFailureCause());
         Assertions.assertTrue(refundResponseFailure.getErrorCode().contains("errorCodeOrLabel"));
         Assertions.assertEquals(50, refundResponseFailure.getErrorCode().length());
+    }
+
+    @Test
+    void toResetResponseFailure() {
+        invalidFieldFormatException = new InvalidFieldFormatException( null, "errorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabel");
+
+        ResetResponseFailure resetResponseFailure = invalidFieldFormatException.toResetResponseFailure( null );
+        Assertions.assertEquals(FailureCause.INVALID_FIELD_FORMAT, resetResponseFailure.getFailureCause());
+        Assertions.assertTrue(resetResponseFailure.getErrorCode().contains("errorCodeOrLabel"));
+        Assertions.assertEquals(50, resetResponseFailure.getErrorCode().length());
     }
 }

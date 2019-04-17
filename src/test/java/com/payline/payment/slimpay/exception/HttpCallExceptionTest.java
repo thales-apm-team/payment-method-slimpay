@@ -3,6 +3,7 @@ package com.payline.payment.slimpay.exception;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
+import com.payline.pmapi.bean.reset.response.impl.ResetResponseFailure;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -42,9 +43,19 @@ class HttpCallExceptionTest {
     void toRefundResponseFailure() {
         httpCallException = new HttpCallException((String) null, "errorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabel");
 
-        RefundResponseFailure refundResponseFailure = httpCallException.toRefundResponseFailure();
+        RefundResponseFailure refundResponseFailure = httpCallException.toRefundResponseFailure( null );
         Assertions.assertEquals(FailureCause.COMMUNICATION_ERROR, refundResponseFailure.getFailureCause());
         Assertions.assertTrue(refundResponseFailure.getErrorCode().contains("errorCodeOrLabel"));
         Assertions.assertEquals(50, refundResponseFailure.getErrorCode().length());
+    }
+
+    @Test
+    void toResetResponseFailure() {
+        httpCallException = new HttpCallException((String) null, "errorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabelerrorCodeOrLabel");
+
+        ResetResponseFailure resetResponseFailure = httpCallException.toResetResponseFailure( null );
+        Assertions.assertEquals(FailureCause.COMMUNICATION_ERROR, resetResponseFailure.getFailureCause());
+        Assertions.assertTrue(resetResponseFailure.getErrorCode().contains("errorCodeOrLabel"));
+        Assertions.assertEquals(50, resetResponseFailure.getErrorCode().length());
     }
 }

@@ -258,18 +258,28 @@ public class SlimpayHttpClient {
                 .setUrlVariable(ID, paymentId)
                 .build();
 
-        Resource response = this.sendRequest(partnerConfiguration, follow);
+        Resource payment = this.sendRequest(partnerConfiguration, follow);
 
-        if (response == null) {
+        if (payment == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getPayment");
         }
-        if (response.getState() == null) {
+        if (payment.getState() == null) {
             LOGGER.info("Fail to find the payment");
-            return SlimpayFailureResponse.fromJson(response.toString());
+            return SlimpayFailureResponse.fromJson(payment.toString());
         }
 
         LOGGER.info("Payment found");
-        return SlimpayPaymentResponse.fromJson(response.getState().toString());
+
+        // Check if this payment can be cancelled
+        boolean cancellable = true;
+        CustomRel relCancelPayment = new CustomRel(ns + API_REL_CANCEL_PAYMENT);
+        try {
+            payment.getLink(relCancelPayment);
+        } catch( RelNotFoundException e ){
+            cancellable = false;
+        }
+
+        return SlimpayPaymentResponse.fromJson(payment.getState().toString(), cancellable);
     }
 
     /**

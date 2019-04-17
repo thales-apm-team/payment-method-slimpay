@@ -12,6 +12,7 @@ import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
+import com.payline.pmapi.bean.reset.request.ResetRequest;
 import com.payline.pmapi.logger.LogManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.Logger;
@@ -191,6 +192,21 @@ public class TestUtils {
                 .withTransactionAdditionalData(ADDITIONAL_DATA)
                 .build();
     }
+
+    public static ResetRequest createResetRequest(String transactionId){
+        return ResetRequest.ResetRequestBuilder.aResetRequest()
+                .withAmount(AMOUNT)
+                .withBuyer(createDefaultBuyer())
+                .withContractConfiguration(CONTRACT_CONFIGURATION)
+                .withEnvironment(ENVIRONMENT)
+                .withOrder(createOrder(transactionId, AMOUNT))
+                .withPartnerConfiguration(PARTNER_CONFIGURATION)
+                .withPartnerTransactionId(TRANSACTION_ID)
+                .withTransactionAdditionalData(ADDITIONAL_DATA)
+                .withTransactionId(transactionId)
+                .build();
+    }
+
 
     public static RedirectionPaymentRequest createRedirectionPaymentRequest(String transactionId) {
         return RedirectionPaymentRequest.builder()

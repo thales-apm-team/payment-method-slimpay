@@ -137,8 +137,11 @@ public class BeansUtils {
         return SlimpayFailureResponse.fromJson(jsonError);
     }
 
-
     public static SlimpayPaymentResponse createMockedSlimpayPaymentIn(String executionStatus)  throws MalformedResponseException{
+        return createMockedSlimpayPaymentIn( executionStatus, null );
+    }
+
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentIn(String executionStatus, Boolean cancellable)  throws MalformedResponseException{
         return SlimpayPaymentResponse.fromJson(" {  " +
                 " \"id\": \"8212f471-3432-11e9-ad8f-000000000000\",\n" +
                 "   \"scheme\": \"SEPA.DIRECT_DEBIT.CORE\",\n" +
@@ -149,13 +152,12 @@ public class BeansUtils {
                 "   \"label\": \"softDescriptor\",\n" +
                 "   \"sequenceType\": \"RCUR\",\n" +
                 "   \"state\": \"accepted\",\n" +
-                "    \"executionStatus\": \"" + executionStatus + "\",\n" +
+                "   \"executionStatus\": \"" + executionStatus + "\",\n" +
                 "   \"replayCount\": 0,\n" +
                 "   \"executionDate\": \"2019-02-20T23:00:00.000+0000\",\n" +
                 "   \"dateCreated\": \"2019-02-19T10:38:35.000+0000\",\n" +
                 "   \"confirmed\": false" +
-                "}");
-
+                "}", cancellable );
     }
 
     public static SlimpayPaymentResponse createMockedSlimpayPaymentOut(String executionStatus)  throws MalformedResponseException{
@@ -177,18 +179,6 @@ public class BeansUtils {
                 "}");
     }
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutTopProcess()  throws MalformedResponseException{
-        return createMockedSlimpayPaymentOut(PaymentExecutionStatus.TO_PROCESS);
-    }
-
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutProcessed()  throws MalformedResponseException{
-        return createMockedSlimpayPaymentOut(PaymentExecutionStatus.PROCESSED);
-    }
-
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentOutRejected()  throws MalformedResponseException{
-        return createMockedSlimpayPaymentOut(PaymentExecutionStatus.REJECTED);
-    }
-
     public static SlimpayFailureResponse createMockedSlimpayPaymentOutError() throws MalformedResponseException{
         String jsonError = "{\n" +
                 "   \"code\": 901,\n" +
@@ -196,6 +186,7 @@ public class BeansUtils {
                 "}";
         return SlimpayFailureResponse.fromJson(jsonError);
     }
+
     public static SlimpayFailureResponse createMockedCancelPaymentError() throws MalformedResponseException {
         String jsonError = "{\n" +
                 "   \"code\": 903,\n" +
@@ -203,8 +194,6 @@ public class BeansUtils {
                 "}";
         return SlimpayFailureResponse.fromJson(jsonError);
     }
-
-
 
     public static Resource createMockedResourcePayment(String state, String executionStatus){
         String resourceJson = "{\n" +
@@ -236,8 +225,9 @@ public class BeansUtils {
                 "}";
 
         return Resource.fromJson(resourceJson);
+    }
 
-    }   public static Resource createMockedResourceOrder(String state){
+    public static Resource createMockedResourceOrder(String state){
         String resourceJson = "{\n" +
                 "   \"_links\":    {\n" +
                 "      \"self\": {\"href\": \"https://api.preprod.slimpay.com/orders/ff4ea3a6-303e-11e9-9d34-000000000000\"},\n" +
@@ -266,13 +256,10 @@ public class BeansUtils {
 
         return Resource.fromJson(resourceJson);
     }
+
     public static Resource createEmptyMockedRessource() {
         return Resource.fromJson("{}");
     }
-
-
-
-
 
     public static Resource createResourceWithEmbeded(String state, String executionStatus){
         String resourceJson = "{\n" +
@@ -305,6 +292,7 @@ public class BeansUtils {
 
         return Resource.fromJson(resourceJson);
     }
+
     public static Follow createDefaultFollow(){
         Rel rel = new CustomRel("testFollow");
 
@@ -320,6 +308,5 @@ public class BeansUtils {
                                 )
                 ))
                 .build();
-
     }
 }
