@@ -48,14 +48,13 @@ public class RefundServiceImpl implements RefundService {
                         .build();
             }
 
-            SlimpayPaymentResponse paymentToRefund = (SlimpayPaymentResponse) paymentResp;
-
             // Can't refund a payment which has not been processed
-            if( PaymentExecutionStatus.NOT_PROCESSED.equals( paymentToRefund.getExecutionStatus() ) ){
-                LOGGER.error("payment executionStatus is 'notprocessed'");
+            SlimpayPaymentResponse paymentToRefund = (SlimpayPaymentResponse) paymentResp;
+            if( !PaymentExecutionStatus.PROCESSED.equals( paymentToRefund.getExecutionStatus() ) ){
+                LOGGER.error("payment executionStatus is not PROCESSED");
                 return RefundResponseFailure.RefundResponseFailureBuilder
                         .aRefundResponseFailure()
-                        .withErrorCode("payment executionStatus is 'notprocessed'")
+                        .withErrorCode("payment executionStatus is not PROCESSED")
                         .withFailureCause(FailureCause.REFUSED)
                         .withPartnerTransactionId(partnerTransactionId)
                         .build();
