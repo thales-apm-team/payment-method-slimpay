@@ -1,5 +1,6 @@
 package com.payline.payment.slimpay.service.impl;
 
+
 import com.payline.payment.slimpay.exception.HttpCallException;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
@@ -26,7 +27,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Currency;
 import java.util.stream.Stream;
 
 import static com.payline.payment.slimpay.utils.BeansUtils.createMockedSlimpayOrderResponse;

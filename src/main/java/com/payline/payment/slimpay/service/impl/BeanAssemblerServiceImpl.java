@@ -13,6 +13,7 @@ import com.payline.pmapi.bean.payment.Environment;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import static com.payline.payment.slimpay.utils.PluginUtils.createStringAmount;
@@ -43,6 +44,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     private static final String FOO = "foo";
     private static final String PONCTUEL = "OOFF";
     private static final String EMPTY_REQUEST_ERROR_MESSAGE = "PaymentRequest is null or empty";
+    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 
     /**
@@ -74,6 +76,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
 
         Payment.Builder paymentBuilder = Payment.Builder.aPaymentBuilder()
                 .withReference(paymentRequest.getTransactionId())
+                .withExecutionDate( new SimpleDateFormat(DATE_FORMAT).format( paymentRequest.getDifferedActionDate()))
                 .withScheme(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, FIRST_PAYMENT_SCHEME))
                 .withDirection(Direction.IN.name())
                 .withAction(CREATE)

@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -134,6 +135,7 @@ public class TestUtils {
                 .withContractConfiguration(CONTRACT_CONFIGURATION)
                 .withOrder(createDefaultOrder())
                 .withBuyer(createDefaultBuyer())
+                .withDifferedActionDate(createDifferedDate())
                 .withTransactionId(TRANSACTION_ID)
                 .withSoftDescriptor(SOFT_DESCRIPTOR)
                 .withEnvironment(ENVIRONMENT)
@@ -154,6 +156,7 @@ public class TestUtils {
                 .withBuyer(createDefaultBuyer())
                 .withTransactionId("DEV-1549623741449")
                 .withSoftDescriptor(SOFT_DESCRIPTOR)
+                .withDifferedActionDate(createDifferedDate())
                 .withEnvironment(ENVIRONMENT)
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
                 .build();
@@ -243,6 +246,7 @@ public class TestUtils {
                 .withLocale(LOCALE_FR)
                 .withTransactionId(TRANSACTION_ID)
                 .withSoftDescriptor(SOFT_DESCRIPTOR)
+                .withDifferedActionDate(createDifferedDate())
                 .withPaymentFormContext(createDefaultPaymentFormContext(TEST_PHONE_NUMBER))
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
                 .withLocale(LOCALE_FR)
@@ -474,5 +478,16 @@ public class TestUtils {
                 .build();
     }
 
+
+    private static Date createDifferedDate(){
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Calendar c = Calendar.getInstance();
+        c.setTime( new Date());
+        c.add(Calendar.DATE, 4);
+        df.format( c.getTime() );
+
+        return c.getTime();
+    }
 
 }
