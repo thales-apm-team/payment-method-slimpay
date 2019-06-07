@@ -5,6 +5,7 @@ import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.bean.response.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.service.BeanAssemblerService;
+import com.payline.payment.slimpay.service.RequestConfigService;
 import com.payline.payment.slimpay.utils.PluginUtils;
 import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.common.Buyer;
@@ -22,7 +23,9 @@ import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
 
 public class BeanAssemblerServiceImpl implements BeanAssemblerService {
 
-    public static final String IS_NULL = "PaymentRequest is null";
+    private static final String IS_NULL = "PaymentRequest is null";
+
+    private RequestConfigService requestConfigService = RequestConfigServiceImpl.INSTANCE;
 
     //two values allowed to create a payment
     private enum Direction {
@@ -77,7 +80,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         Payment.Builder paymentBuilder = Payment.Builder.aPaymentBuilder()
                 .withReference(paymentRequest.getTransactionId())
                 .withExecutionDate( new SimpleDateFormat(DATE_FORMAT).format( paymentRequest.getDifferedActionDate()))
-                .withScheme(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, FIRST_PAYMENT_SCHEME))
+                .withScheme(requestConfigService.getParameterValue(paymentRequest, FIRST_PAYMENT_SCHEME))
                 .withDirection(Direction.IN.name())
                 .withAction(CREATE)
                 .withAmount(createStringAmount(paymentRequest.getAmount()))
@@ -112,7 +115,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
                 .withLabel(refundRequest.getSoftDescriptor())
                 .withCorrelationId(refundRequest.getPartnerTransactionId())
 //                .withSubscriber(new Subscriber(refundRequest.getBuyer().getCustomerIdentifier()))
-                .withCreditor(new Creditor(RequestConfigServiceImpl.INSTANCE.getParameterValue(refundRequest, CREDITOR_REFERENCE_KEY)))
+                .withCreditor(new Creditor(requestConfigService.getParameterValue(refundRequest, CREDITOR_REFERENCE_KEY)))
                 .withMandate(Mandate.Builder.aMandateBuilder()
                         .withReference(mandateReference)
                         .build())
@@ -167,9 +170,9 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         }
         return Mandate.Builder.aMandateBuilder()
                 .withReference(assembleMandateReference(paymentRequest.getTransactionId()))
-                .withStandard(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, MANDATE_STANDARD_KEY))
+                .withStandard(requestConfigService.getParameterValue(paymentRequest, MANDATE_STANDARD_KEY))
                 .withAction(CREATE)
-                .withPaymentScheme(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, MANDATE_PAYIN_SCHEME))
+                .withPaymentScheme(requestConfigService.getParameterValue(paymentRequest, MANDATE_PAYIN_SCHEME))
                 .withCreateSequenceType(PONCTUEL)
                 .withSequenceType(PONCTUEL)
                 .withSignatory(assembleSignatory(paymentRequest))
@@ -252,15 +255,20 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         }
 
         Environment environment = paymentRequest.getEnvironment();
+        String returnUrl = null, cancelUrl = null;
+        if( environment != null ){
+            returnUrl = environment.getRedirectionReturnURL();
+            cancelUrl = environment.getRedirectionCancelURL();
+        }
         Locale locale = paymentRequest.getLocale();
         Buyer buyer = paymentRequest.getBuyer();
         return SlimpayOrderRequest.Builder.aSlimPayOrderRequestBuilder()
                 .withReference(paymentRequest.getOrder().getReference())
                 .withSubscriber(new Subscriber(buyer == null ? null : buyer.getCustomerIdentifier()))
-                .withCreditor(new Creditor(RequestConfigServiceImpl.INSTANCE.getParameterValue(paymentRequest, CREDITOR_REFERENCE_KEY)))
-                .withSuccessUrl(environment == null ? null : environment.getRedirectionReturnURL())
-                .withFailureUrl(environment == null ? null : environment.getRedirectionReturnURL())
-                .withCancelUrl(environment == null ? null : environment.getRedirectionCancelURL())
+                .withCreditor(new Creditor(requestConfigService.getParameterValue(paymentRequest, CREDITOR_REFERENCE_KEY)))
+                .withSuccessUrl(returnUrl)
+                .withFailureUrl(returnUrl)
+                .withCancelUrl(cancelUrl)
                 .withLocale(locale == null ? null : locale.getLanguage())
                 .withStarted(true)
                 //send by mail user approval link
@@ -289,7 +297,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
 
         return SlimpayOrderRequest.Builder.aSlimPayOrderRequestBuilder()
                 .withSubscriber(new Subscriber(FOO))
-                .withCreditor(new Creditor(RequestConfigServiceImpl.INSTANCE.getParameterValue(request, CREDITOR_REFERENCE_KEY)))
+                .withCreditor(new Creditor(requestConfigService.getParameterValue(request, CREDITOR_REFERENCE_KEY)))
                 .withSuccessUrl(environment == null ? null : environment.getRedirectionReturnURL())
                 .withFailureUrl(environment == null ? null : environment.getRedirectionReturnURL())
                 .withCancelUrl(environment == null ? null : environment.getRedirectionCancelURL())
@@ -339,9 +347,9 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
 
         return Mandate.Builder.aMandateBuilder()
                 .withReference(reference)
-                .withStandard(RequestConfigServiceImpl.INSTANCE.getParameterValue(request, MANDATE_STANDARD_KEY))
+                .withStandard(requestConfigService.getParameterValue(request, MANDATE_STANDARD_KEY))
                 .withAction(CREATE)
-                .withPaymentScheme(RequestConfigServiceImpl.INSTANCE.getParameterValue(request, MANDATE_PAYIN_SCHEME))
+                .withPaymentScheme(requestConfigService.getParameterValue(request, MANDATE_PAYIN_SCHEME))
                 .withSignatory(signatory)
                 .build();
     }

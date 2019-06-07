@@ -99,7 +99,7 @@ public class ResetServiceImpl implements ResetService {
             }
 
         } catch (PluginTechnicalException e) {
-            LOGGER.error("An error occurred during the reset process");
+            LOGGER.error("An error occurred during the reset process", e);
             return e.toResetResponseFailure(partnerTransactionId);
         }
     }

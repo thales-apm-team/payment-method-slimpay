@@ -15,7 +15,7 @@ public class PluginTechnicalException extends Exception {
 
     private static final Logger LOGGER = LogManager.getLogger(PluginTechnicalException.class);
 
-    private static final Integer MAX_LENGTH = 50;
+    private static final int MAX_LENGTH = 50;
     private static final String NO_TRANSACTION = "NO_TRANSACTION_YET";
 
     private final String message;

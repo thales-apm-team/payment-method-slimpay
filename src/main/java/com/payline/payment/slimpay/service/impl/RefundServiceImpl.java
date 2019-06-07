@@ -84,7 +84,7 @@ public class RefundServiceImpl implements RefundService {
             }
 
         } catch (PluginTechnicalException e) {
-            LOGGER.error("An error occurred during the refund process");
+            LOGGER.error("An error occurred during the refund process", e);
             return e.toRefundResponseFailure(partnerTransactionId);
         }
     }
