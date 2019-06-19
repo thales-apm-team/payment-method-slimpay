@@ -32,7 +32,7 @@ compileJava.options.encoding = 'UTF-8'
 
 ext {
     paymentMethodApiVersion = '1.2'
-    paymentMethodIntegrationVersion = '1.0'
+    paymentMethodIntegrationVersion = '1.2'
     mockitoVersion = '2.19.0'
     releaseDirectoryPath = 'D:/build'
 }
