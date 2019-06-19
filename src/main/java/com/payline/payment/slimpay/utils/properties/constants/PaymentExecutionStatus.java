@@ -10,7 +10,7 @@ public class PaymentExecutionStatus {
     public static final String  CONTESTED = "contested";
     public static final String  TO_REPLAY = "toreplay";
     public static final String  TO_GENERATE = "togenerate";
-    public static final String  TOP_PROCESS = "toprocess";
+    public static final String TO_PROCESS = "toprocess";
 
     private PaymentExecutionStatus() {
         //ras

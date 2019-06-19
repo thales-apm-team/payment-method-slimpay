@@ -7,6 +7,7 @@ import com.payline.payment.slimpay.utils.BeansUtils;
 import com.payline.payment.slimpay.utils.SlimpayConstants;
 import com.payline.payment.slimpay.utils.TestUtils;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
+import com.payline.payment.slimpay.utils.properties.constants.OrderStatus;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
@@ -79,7 +80,7 @@ public class ConfigurationServiceImplTest {
 
     @Test
     public void checkOK() throws Exception {
-        when(httpClient.testConnection(any(), any())).thenReturn(BeansUtils.createMockedSlimpayOrderResponseOpen());
+        when(httpClient.testConnection(any(), any())).thenReturn(BeansUtils.createMockedSlimpayOrderResponse( OrderStatus.OPEN_RUNNING ));
         ContractParametersCheckRequest contractParametersCheckRequest = TestUtils.createContractParametersCheckRequest();
 
         Map<String, String> errors = service.check(contractParametersCheckRequest);

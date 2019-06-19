@@ -43,6 +43,12 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
     private String correlationId;
     private String label;
 
+    private Boolean cancellable;
+
+    public String getAction() {
+        return action;
+    }
+
     public String getId() {
         return id;
     }
@@ -127,26 +133,43 @@ public class SlimpayPaymentResponse extends SlimpayResponse {
         return label;
     }
 
-    public String getAction() {
-        return action;
+    public Boolean isCancellable(){
+        return cancellable;
     }
 
     private SlimpayPaymentResponse() {
     }
 
     /**
-     * Create a SlimpayPaymentResponse from a  json returned by Slimpay server
+     * Create a SlimpayPaymentResponse from a json returned by Slimpay server.
      *
      * @param json a SlimPay payment
+     * @param isCancellable true if the payment can be cancelled, false if it can't and null if we don't know
      * @return a SlimpayPaymentResponse
+     * @throws MalformedResponseException if the JSON content is not properly formatted
      */
-    public static SlimpayPaymentResponse fromJson(String json) throws MalformedResponseException {
+    public static SlimpayPaymentResponse fromJson(String json, Boolean isCancellable) throws MalformedResponseException {
         Gson parser = new Gson();
         try {
-            return parser.fromJson(json, SlimpayPaymentResponse.class);
+            SlimpayPaymentResponse response = parser.fromJson(json, SlimpayPaymentResponse.class);
+            response.cancellable = isCancellable;
+            return response;
         }
         catch( JsonSyntaxException e ){
             throw new MalformedResponseException( e );
-        }    }
+        }
+    }
+
+    /**
+     * Create a SlimpayPaymentResponse from a json returned by Slimpay server.
+     * Default method for the case in which we don't pass isCancellable argument.
+     *
+     * @param json a SlimPay payment
+     * @return a SlimpayPaymentResponse
+     * @throws MalformedResponseException if the JSON content is not properly formatted
+     */
+    public static SlimpayPaymentResponse fromJson(String json) throws MalformedResponseException {
+        return fromJson(json, null);
+    }
 
 }

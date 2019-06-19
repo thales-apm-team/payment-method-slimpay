@@ -9,9 +9,6 @@ public class PaymentResponseSuccessAdditionalData extends SlimpayBean {
     @SerializedName("mandateReference")
     private String mandateReference;
 
-    @SerializedName("mandateId")
-    private String mandateId;
-
     @SerializedName("paymentReference")
     private String paymentReference;
 
@@ -31,10 +28,6 @@ public class PaymentResponseSuccessAdditionalData extends SlimpayBean {
 
     public String getMandateReference() {
         return mandateReference;
-    }
-
-    public String getMandateId() {
-        return mandateId;
     }
 
     public String getPaymentReference() {
@@ -60,7 +53,6 @@ public class PaymentResponseSuccessAdditionalData extends SlimpayBean {
 
     public static final class Builder {
         private String mandateReference;
-        private String mandateId;
         private String paymentReference;
         private String paymentId;
         private String orderReference;
@@ -75,11 +67,6 @@ public class PaymentResponseSuccessAdditionalData extends SlimpayBean {
 
         public PaymentResponseSuccessAdditionalData.Builder withMandateReference(String mandateReference) {
             this.mandateReference = mandateReference;
-            return this;
-        }
-
-        public PaymentResponseSuccessAdditionalData.Builder withMandateId(String mandateId) {
-            this.mandateId = mandateId;
             return this;
         }
 
@@ -105,7 +92,6 @@ public class PaymentResponseSuccessAdditionalData extends SlimpayBean {
 
         public PaymentResponseSuccessAdditionalData build() {
             PaymentResponseSuccessAdditionalData paymentResponseSuccessAdditionalData = new PaymentResponseSuccessAdditionalData();
-            paymentResponseSuccessAdditionalData.mandateId = this.mandateId;
             paymentResponseSuccessAdditionalData.mandateReference = this.mandateReference;
             paymentResponseSuccessAdditionalData.paymentId = this.paymentId;
             paymentResponseSuccessAdditionalData.orderReference = this.orderReference;

@@ -56,7 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
         JsonBody jsonOrderRequest = slimpayOrderRequest.toJsonBody();
         try {
             //Initialise order
-            SlimpayResponse slimpayOrderResponse = httpClient.createOrder(paymentRequest, jsonOrderRequest);
+            SlimpayResponse slimpayOrderResponse = httpClient.createOrder(paymentRequest.getPartnerConfiguration(), jsonOrderRequest);
             if (slimpayOrderResponse == null) {
                 LOGGER.debug("createOrder response is null !");
                 LOGGER.error("Payment is null");
@@ -68,7 +68,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
             //return  a paymentResponseRedirect
             else {
-                if (slimpayOrderResponse.getClass() == SlimpayFailureResponse.class) {
+                if (slimpayOrderResponse instanceof SlimpayFailureResponse) {
                     // payment Failed return  a PaymentResponseFailure with Slimpay error
                     SlimpayFailureResponse slimpayOrderFailureResponse = (SlimpayFailureResponse) slimpayOrderResponse;
                     return PaymentResponseFailure.PaymentResponseFailureBuilder
@@ -96,7 +96,7 @@ public class PaymentServiceImpl implements PaymentService {
                                 .build();
                         return PaymentResponseRedirect.PaymentResponseRedirectBuilder.aPaymentResponseRedirect()
                                 .withRedirectionRequest(redirectionRequest)
-                                .withPartnerTransactionId(slimpayOrderRequest.getReference())
+                                .withPartnerTransactionId(paymentRequest.getTransactionId())
                                 .withStatusCode(slimpayOrderSuccessResponse.getState())
                                 .withRequestContext(requestContext)
                                 .build();

@@ -52,17 +52,6 @@ public class SlimpayConstants {
     public static final String API_PROFILE_KEY = "apiProfile";
     public static final String API_NS_KEY = "apiNs";
 
-
-    //REQUESTS
-    public static final String TOKEN_ENDPOINT = "/oauth/token";
-    public static final String CREATE_ORDER_URL = "#create-orders";
-    public static final String CREATE_PAYOUT_URL = "#create-payouts";
-    public static final String GET_ORDER_URL = "#get-orders";
-    public static final String CANCEL_PAYMENT_URL = "#cancel-payment";
-    public static final String GET_PAYMENT_URL = "#search-payment-by-id";
-    public static final String SEARCH_PAYMENT_URL = "#search-payments";
-    public static final String GET_PAYMENT_ISSUES_URL = "#get-payment-issues";
-
     //INTERNAL KEYS
     public static final String ORDER_REFERENCE = "orderReference";
     public static final String ORDER_ID = "orderId";

@@ -28,9 +28,8 @@ public class TransactionManagerServiceImplTest {
                 "paymentReference: \"ref0001\",paymentId: \"Transaction01\"}";
         additionalData = service.readAdditionalData(dataJson, "PaymentResponseSuccessAdditionalData");
         Assertions.assertNotNull(additionalData);
-        Assertions.assertEquals(6, additionalData.size());
+        Assertions.assertEquals(5, additionalData.size());
         Assertions.assertEquals("ref0001", additionalData.get("mandateReference"));
-        Assertions.assertEquals("id001", additionalData.get("mandateId"));
         Assertions.assertEquals("ref0001", additionalData.get("orderReference"));
         Assertions.assertEquals("Transaction01", additionalData.get("orderId"));
         Assertions.assertEquals("ref0001", additionalData.get("paymentReference"));
