@@ -5,9 +5,11 @@ import com.payline.payment.slimpay.exception.SlimpayHttpException;
 import com.slimpay.hapiclient.exception.HttpException;
 import com.slimpay.hapiclient.exception.HttpServerErrorException;
 import com.slimpay.hapiclient.exception.RelNotFoundException;
+import com.slimpay.hapiclient.hal.CustomRel;
 import com.slimpay.hapiclient.hal.Resource;
 import com.slimpay.hapiclient.http.Follow;
 import com.slimpay.hapiclient.http.HapiClient;
+import com.slimpay.hapiclient.http.Method;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -30,10 +32,16 @@ public class SlimpayHttpClientTest {
     @Mock
     private HapiClient hapiClient;
 
+    private Follow testFollow;
+
     @BeforeEach
     public void setup() {
         slimpayHttpClient = SlimpayHttpClient.getInstance();
         MockitoAnnotations.initMocks(this);
+
+        testFollow = new Follow.Builder(new CustomRel("rel_name"))
+                .setMethod(Method.GET)
+                .build();
     }
 
     @Test
@@ -45,7 +53,8 @@ public class SlimpayHttpClientTest {
                 .send( any(Follow.class) );
 
         // when calling doSendRequest
-        Resource result = slimpayHttpClient.doSendRequest( hapiClient, mock(Follow.class) );
+
+        Resource result = slimpayHttpClient.doSendRequest( hapiClient, testFollow );
 
         // this resource is returned
         assertEquals( expectedResource, result );
@@ -61,7 +70,7 @@ public class SlimpayHttpClientTest {
                 .thenReturn( expectedResource );
 
         // when calling doSendRequest
-        Resource result = slimpayHttpClient.doSendRequest( hapiClient, mock(Follow.class) );
+        Resource result = slimpayHttpClient.doSendRequest( hapiClient, testFollow );
 
         // the resource is returned
         assertEquals( expectedResource, result );
@@ -76,7 +85,7 @@ public class SlimpayHttpClientTest {
 
         // when calling doSendRequest, a SlimpayHttpException is thrown
         assertThrows( SlimpayHttpException.class, () ->
-                slimpayHttpClient.doSendRequest(hapiClient, mock(Follow.class))
+                slimpayHttpClient.doSendRequest(hapiClient, testFollow)
         );
     }
 
@@ -89,7 +98,7 @@ public class SlimpayHttpClientTest {
 
         // when calling doSendRequest, a PluginTechnicalException is thrown
         assertThrows( PluginTechnicalException.class, () ->
-                slimpayHttpClient.doSendRequest(hapiClient, mock(Follow.class))
+                slimpayHttpClient.doSendRequest(hapiClient, testFollow)
         );
     }
 

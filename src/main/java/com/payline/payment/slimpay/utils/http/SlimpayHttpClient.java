@@ -484,12 +484,12 @@ public class SlimpayHttpClient {
 
         while (count < 3 && response == null) {
             try {
-                LOGGER.info("Start partner call... [URL: {}]", client.getApiUrl());
+                LOGGER.info("Start call to partner API... [Method: {}, URL: {}, Rel: {}]", follow.getMethod(), client.getApiUrl(), follow.getRel().getName());
 
                 response = client.send(follow);
 
                 final long end = System.currentTimeMillis();
-                LOGGER.info("End partner call [T: {}ms] [CODE: {}]", end - start);
+                LOGGER.info("End of call to partner API [T: {}ms]", end - start);
             } catch (HttpException e) {
                 exception = e;
             } catch( RelNotFoundException e ){
