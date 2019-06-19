@@ -51,7 +51,7 @@ public class ResetServiceImpl implements ResetService {
             SlimpayPaymentResponse paymentToReset = (SlimpayPaymentResponse) paymentResp;
 
             // This payment can't be cancelled
-            if( !paymentToReset.isCancellable() ){
+            if( !Boolean.TRUE.equals(paymentToReset.isCancellable()) ){
                 LOGGER.error("payment {} can't be cancelled", paymentToReset.getId());
                 return ResetResponseFailure.ResetResponseFailureBuilder
                         .aResetResponseFailure()

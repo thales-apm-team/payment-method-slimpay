@@ -255,7 +255,8 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         }
 
         Environment environment = paymentRequest.getEnvironment();
-        String returnUrl = null, cancelUrl = null;
+        String returnUrl = null;
+        String cancelUrl = null;
         if( environment != null ){
             returnUrl = environment.getRedirectionReturnURL();
             cancelUrl = environment.getRedirectionCancelURL();
