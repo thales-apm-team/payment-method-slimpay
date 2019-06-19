@@ -21,6 +21,6 @@ class SlimpayHttpExceptionTest {
         HttpException hhtHttpException = new HttpException(null, response, json);
         SlimpayHttpException slimpayHttpException = new SlimpayHttpException(hhtHttpException);
 
-        Assertions.assertEquals(FailureCause.PARTNER_UNKNOWN_ERROR, slimpayHttpException.getFailureCause());
+        Assertions.assertEquals(FailureCause.PAYMENT_PARTNER_ERROR, slimpayHttpException.getFailureCause());
     }
 }

@@ -6,6 +6,7 @@ import com.payline.payment.slimpay.utils.PluginUtils;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
+import com.payline.pmapi.bean.reset.response.impl.ResetResponseFailure;
 import com.payline.pmapi.logger.LogManager;
 import com.slimpay.hapiclient.exception.HttpException;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +15,7 @@ public class PluginTechnicalException extends Exception {
 
     private static final Logger LOGGER = LogManager.getLogger(PluginTechnicalException.class);
 
-    private static final Integer MAX_LENGHT = 50;
+    private static final int MAX_LENGTH = 50;
     private static final String NO_TRANSACTION = "NO_TRANSACTION_YET";
 
     private final String message;
@@ -43,7 +44,6 @@ public class PluginTechnicalException extends Exception {
         this.errorCodeOrLabel = errorCodeOrLabel;
         slimpayError = null;
         LOGGER.error(errorCodeOrLabel, e);
-
     }
 
     /**
@@ -56,7 +56,6 @@ public class PluginTechnicalException extends Exception {
         slimpayError = SlimpayError.fromJson(errorString);
         this.errorCodeOrLabel = slimpayError == null ? null : slimpayError.toPaylineError();
         LOGGER.error(errorCodeOrLabel, e);
-
     }
 
 
@@ -65,25 +64,27 @@ public class PluginTechnicalException extends Exception {
     }
 
 
-    public PaymentResponseFailure toPaymentResponseFailure(String transactionId) {
-
+    public PaymentResponseFailure toPaymentResponseFailure(String partnerTransactionId) {
         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                 .withFailureCause(getFailureCause())
                 .withErrorCode(getTruncatedErrorCodeOrLabel())
-                .withPartnerTransactionId(transactionId)
+                .withPartnerTransactionId(partnerTransactionId)
                 .build();
     }
 
-    public RefundResponseFailure toRefundResponseFailure() {
-        return toRefundResponseFailure(null);
-    }
-
-    public RefundResponseFailure toRefundResponseFailure(String transactionId) {
-
+    public RefundResponseFailure toRefundResponseFailure(String partnerTransactionId) {
         return RefundResponseFailure.RefundResponseFailureBuilder.aRefundResponseFailure()
                 .withFailureCause(getFailureCause())
                 .withErrorCode(getTruncatedErrorCodeOrLabel())
-                .withPartnerTransactionId(transactionId)
+                .withPartnerTransactionId(partnerTransactionId)
+                .build();
+    }
+
+    public ResetResponseFailure toResetResponseFailure(String partnerTransactionId){
+        return ResetResponseFailure.ResetResponseFailureBuilder.aResetResponseFailure()
+                .withFailureCause(getFailureCause())
+                .withErrorCode(getTruncatedErrorCodeOrLabel())
+                .withPartnerTransactionId(partnerTransactionId)
                 .build();
     }
 
@@ -93,7 +94,7 @@ public class PluginTechnicalException extends Exception {
 
 
     public String getTruncatedErrorCodeOrLabel() {
-        return PluginUtils.truncate(this.getErrorCodeOrLabel(), MAX_LENGHT);
+        return PluginUtils.truncate(this.getErrorCodeOrLabel(), MAX_LENGTH);
     }
 
     @Override

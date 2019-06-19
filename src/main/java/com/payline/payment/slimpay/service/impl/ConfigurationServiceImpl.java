@@ -155,7 +155,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             if (errors.size() == 0) {
                 // test a create order and call the API
                 SlimpayOrderRequest request = new BeanAssemblerServiceImpl().assembleSlimPayOrderRequest(contractParametersCheckRequest);
-                httpClient.testConnection(contractParametersCheckRequest, request.toJsonBody());
+                httpClient.testConnection(contractParametersCheckRequest.getPartnerConfiguration(), request.toJsonBody());
             }
 
         } catch (PluginTechnicalException e) {

@@ -16,8 +16,6 @@ public class SlimpayHttpException extends PluginTechnicalException {
      */
     public SlimpayHttpException(HttpException e) {
         super(e);
-        LOGGER.error(this.toString());
-
     }
 
     @Override

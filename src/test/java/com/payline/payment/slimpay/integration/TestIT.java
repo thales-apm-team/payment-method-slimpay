@@ -30,34 +30,9 @@ public class TestIT extends AbstractPaymentIntegration {
     private PaymentServiceImpl paymentService = new PaymentServiceImpl();
     private PaymentWithRedirectionServiceImpl paymentWithRedirectionService = new PaymentWithRedirectionServiceImpl();
 
-    private static final String MDP_IDENTIFIER = "SDD SLimpay";
-
-    private static final Map<String, String> PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
-        put(API_URL_KEY, "https://api.preprod.slimpay.com");
-        put(API_PROFILE_KEY, "https://api.slimpay.net/alps/v1");
-        put(API_NS_KEY, "https://api.slimpay.net/alps");
-        put(APP_KEY, "monextreferral01");
-    }};
-
-    private static final Map<String, String> SENSITIVE_PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
-        put(APP_SECRET, "n32cXdaS0ZOACV8688ltKovAO6lquL4wKjZHnvyO");
-
-    }};
-
-    private static final ContractConfiguration CONTRACT_CONFIGURATION = new ContractConfiguration(MDP_IDENTIFIER, new HashMap<String, ContractProperty>() {{
-        put(CREDITOR_REFERENCE_KEY, new ContractProperty("paylinemerchanttest1"));
-        put(FIRST_PAYMENT_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
-        put(MANDATE_PAYIN_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
-        put(MANDATE_STANDARD_KEY, new ContractProperty("SEPA"));
-        put(SIGNATURE_APPROVAL_METHOD, new ContractProperty("otp"));
-        put(PAYMENT_PROCESSOR, new ContractProperty("slimpay"));
-    }}
-    );
-
     @Override
     protected Map<String, ContractProperty> generateParameterContract() {
-
-        return CONTRACT_CONFIGURATION.getContractProperties();
+        return TestUtils.CONTRACT_CONFIGURATION.getContractProperties();
     }
 
     @Override
@@ -65,8 +40,8 @@ public class TestIT extends AbstractPaymentIntegration {
 
         return PaymentFormContext.PaymentFormContextBuilder
                 .aPaymentFormContext()
-                .withPaymentFormParameter(PARTNER_CONFIGURATION_MAP)
-                .withSensitivePaymentFormParameter(SENSITIVE_PARTNER_CONFIGURATION_MAP)
+                .withPaymentFormParameter(TestUtils.PARTNER_CONFIGURATION_MAP)
+                .withSensitivePaymentFormParameter(TestUtils.SENSITIVE_PARTNER_CONFIGURATION_MAP)
                 .build();
     }
 
@@ -135,6 +110,5 @@ public class TestIT extends AbstractPaymentIntegration {
     @Override
     public PaymentRequest createDefaultPaymentRequest() {
         return TestUtils.createCompletePaymentBuilder().build();
-
     }
 }
