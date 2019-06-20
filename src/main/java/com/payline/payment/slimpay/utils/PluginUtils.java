@@ -123,7 +123,7 @@ public class PluginUtils {
                     phoneNumber = phonePrefix + phoneNumber;
                 }
             } catch( IllegalArgumentException e ){
-                LOGGER.warn("Cannot resolve a phone prefix", e);
+                LOGGER.warn("Cannot resolve a phone prefix");
             }
         }
         return phoneNumber;
