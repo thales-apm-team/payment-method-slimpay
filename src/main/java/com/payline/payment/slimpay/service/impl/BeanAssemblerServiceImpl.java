@@ -47,7 +47,7 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
     private static final String FOO = "foo";
     private static final String PONCTUEL = "OOFF";
     private static final String EMPTY_REQUEST_ERROR_MESSAGE = "PaymentRequest is null or empty";
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+    private static final String DATE_FORMAT_ISO = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 
     /**
@@ -79,13 +79,17 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
 
         Payment.Builder paymentBuilder = Payment.Builder.aPaymentBuilder()
                 .withReference(paymentRequest.getTransactionId())
-                .withExecutionDate( new SimpleDateFormat(DATE_FORMAT).format( paymentRequest.getDifferedActionDate()))
                 .withScheme(requestConfigService.getParameterValue(paymentRequest, FIRST_PAYMENT_SCHEME))
                 .withDirection(Direction.IN.name())
                 .withAction(CREATE)
                 .withAmount(createStringAmount(paymentRequest.getAmount()))
                 .withCurrency(getCurrencyAsString(paymentRequest.getAmount()))
                 .withLabel(paymentRequest.getSoftDescriptor());
+
+        if( paymentRequest.getDifferedActionDate() != null ){
+            paymentBuilder.withExecutionDate( new SimpleDateFormat(DATE_FORMAT_ISO).format( paymentRequest.getDifferedActionDate()) );
+        }
+
         return paymentBuilder.build();
     }
 
@@ -205,7 +209,12 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         }
 
         final Buyer.FullName fullName = buyer.getFullName();
-        String internationalCellularPhoneNumber = PluginUtils.convertToInternational( buyer.getPhoneNumbers().get(Buyer.PhoneNumberType.CELLULAR), paymentRequest.getLocale() );
+
+        String internationalCellularPhoneNumber = null;
+        String cellularBuyer = buyer.getPhoneNumbers().get(Buyer.PhoneNumberType.CELLULAR);
+        if( cellularBuyer != null ){
+            internationalCellularPhoneNumber = PluginUtils.convertToInternational( cellularBuyer, paymentRequest.getLocale() );
+        }
 
         return Signatory.Builder.aSignatoryBuilder()
                 .withfamilyName(fullName == null ? null : fullName.getLastName())

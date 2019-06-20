@@ -9,6 +9,7 @@ import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.exception.SlimpayHttpException;
 import com.payline.payment.slimpay.utils.SlimpayConstants;
+import com.payline.payment.slimpay.utils.properties.service.ConfigProperties;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.logger.LogManager;
@@ -28,7 +29,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.util.Currency;
 import java.util.List;
 
 public class SlimpayHttpClient {
@@ -53,6 +53,8 @@ public class SlimpayHttpClient {
     // Messages
     private static final String EMPTY_RESPONSE_MESSAGE = "response is empty";
     private static final String REL_NOT_FOUND_MESSAGE = "Rel not found";
+    private static final String PARTNER_CONFIGURATION_ERROR = "Partner configuration must not be null";
+    private static final String PARTNER_CONFIGURATION_FIELD = "request.partnerConfiguration";
 
     // URL parameters keys
     private static final String CREDITOR_REFERENCE = "creditorReference";
@@ -69,11 +71,14 @@ public class SlimpayHttpClient {
      * Instantiate a HTTP client with default values.
      */
     private SlimpayHttpClient() {
-        //Define Client builder used in every Request to Slimpay
+        int connectTimeout = Integer.parseInt(ConfigProperties.INSTANCE.get("http.connectTimeout"));
+        int requestTimeout = Integer.parseInt(ConfigProperties.INSTANCE.get("http.writeTimeout"));
+        int readTimeout = Integer.parseInt(ConfigProperties.INSTANCE.get("http.readTimeout"));
+
         final RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(2 * 1000)
-                .setConnectionRequestTimeout(3 * 1000)
-                .setSocketTimeout(4 * 1000).build();
+                .setConnectTimeout(connectTimeout * 1000)
+                .setConnectionRequestTimeout(requestTimeout * 1000)
+                .setSocketTimeout(readTimeout * 1000).build();
 
         httpClientBuilder = HttpClientBuilder.create();
         httpClientBuilder.useSystemProperties()
@@ -106,7 +111,7 @@ public class SlimpayHttpClient {
      */
     public SlimpayOrderResponse testConnection( PartnerConfiguration partnerConfiguration, JsonBody body) throws PluginTechnicalException {
         if( partnerConfiguration == null ){
-            throw new InvalidDataException("Partner configuration must not be null", "request.partnerConfiguration");
+            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
         }
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_CREATE_ORDER);
@@ -133,7 +138,7 @@ public class SlimpayHttpClient {
      */
     public SlimpayResponse createOrder( PartnerConfiguration partnerConfiguration, JsonBody body) throws PluginTechnicalException {
         if( partnerConfiguration == null ){
-            throw new InvalidDataException("Partner configuration must not be null", "request.partnerConfiguration");
+            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
         }
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_CREATE_ORDER);
@@ -178,7 +183,7 @@ public class SlimpayHttpClient {
      */
     public SlimpayResponse createPayout(PartnerConfiguration partnerConfiguration, JsonBody body) throws PluginTechnicalException {
         if( partnerConfiguration == null ){
-            throw new InvalidDataException("Partner configuration must not be null", "request.partnerConfiguration");
+            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
         }
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_CREATE_PAYOUT);
@@ -211,7 +216,7 @@ public class SlimpayHttpClient {
     public SlimpayResponse getOrder(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration, String orderReference)
             throws PluginTechnicalException {
         if( partnerConfiguration == null ){
-            throw new InvalidDataException("Partner configuration must not be null", "request.partnerConfiguration");
+            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
         }
         if( contractConfiguration == null ){
             throw new InvalidDataException("Contract configuration must not be null", "request.contractConfiguration");
@@ -248,7 +253,7 @@ public class SlimpayHttpClient {
      */
     public SlimpayResponse getPayment(PartnerConfiguration partnerConfiguration, String paymentId) throws PluginTechnicalException {
         if( partnerConfiguration == null ){
-            throw new InvalidDataException("Partner configuration must not be null", "request.partnerConfiguration");
+            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
         }
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_GET_PAYMENT);
@@ -296,7 +301,7 @@ public class SlimpayHttpClient {
     public SlimpayResponse searchPayment(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration,
                                          String paymentReference, String mandateReference, String subscriberReference ) throws PluginTechnicalException {
         if( partnerConfiguration == null ){
-            throw new InvalidDataException("Partner configuration must not be null", "request.partnerConfiguration");
+            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
         }
         if( contractConfiguration == null ){
             throw new InvalidDataException("Contract configuration must not be null", "request.contractConfiguration");
@@ -350,7 +355,7 @@ public class SlimpayHttpClient {
      */
     public String getPaymentRejectReason(PartnerConfiguration partnerConfiguration, String paymentId) throws PluginTechnicalException {
         if( partnerConfiguration == null ){
-            throw new InvalidDataException("Partner configuration must not be null", "request.partnerConfiguration");
+            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
         }
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_GET_PAYMENT_ISSUES);
@@ -400,7 +405,7 @@ public class SlimpayHttpClient {
      */
     public SlimpayResponse cancelPayment(PartnerConfiguration partnerConfiguration, String paymentId, JsonBody body) throws PluginTechnicalException {
         if( partnerConfiguration == null ){
-            throw new InvalidDataException("Partner configuration must not be null", "request.partnerConfiguration");
+            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
         }
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel relCancelPayment = new CustomRel(ns + API_REL_CANCEL_PAYMENT);

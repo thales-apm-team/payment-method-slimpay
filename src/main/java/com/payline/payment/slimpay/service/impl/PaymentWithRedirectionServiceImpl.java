@@ -183,7 +183,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                             .build();
                 // Payment not processed
                 case PaymentExecutionStatus.NOT_PROCESSED:
-                    LOGGER.error("Payment not processed");
+                    LOGGER.error(NOT_PROCESSED_PAYMENT);
                     return PaymentResponseFailure.PaymentResponseFailureBuilder
                             .aPaymentResponseFailure()
                             .withErrorCode(truncateError(NOT_PROCESSED_PAYMENT))
