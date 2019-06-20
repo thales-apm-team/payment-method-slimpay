@@ -58,8 +58,8 @@ public class SignatoryTest {
         //test on logs
         Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Signatory.FAMILY_NAME_WARN));
         Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Signatory.GIVEN_NAME_WARN));
-
     }
+
     @Test
     public void signatoryWrongTelephoneFormat(){
         signatory = Signatory.Builder.aSignatoryBuilder()
@@ -72,20 +72,5 @@ public class SignatoryTest {
                 .build();
         //test on logs
         Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Signatory.TELEPHONE_WARN));
-
-    }
-    @Test
-    public void signatoryForeignTelephone(){
-        signatory = Signatory.Builder.aSignatoryBuilder()
-                .withHonorificPrefix("Mr")
-                .withfamilyName("Doe")
-                .withGivenName("John")
-                .withBilingAddress(createDefaultBillingAddress())
-                .withEmail("toto@emailcom")
-                .withTelephone("+1-202-555-014")
-                .build();
-        //test on logs
-        Mockito.verify(mockLogger, Mockito.times(1)).warn(Mockito.eq(Signatory.TELEPHONE_WARN));
-
     }
 }

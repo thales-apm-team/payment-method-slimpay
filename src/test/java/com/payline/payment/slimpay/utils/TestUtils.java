@@ -12,12 +12,14 @@ import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
+import com.payline.pmapi.bean.reset.request.ResetRequest;
 import com.payline.pmapi.logger.LogManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -38,11 +40,8 @@ public class TestUtils {
 
 
     private static final String SOFT_DESCRIPTOR = "softDescriptor";
-    private static final String ORDER_REFERENCE = createMerchantRequestId();
-    private static final String PAYMENT_REFERENCE = createMerchantRequestId();
-    private static final String MANDATE_REFERENCE = createMerchantRequestId();
-    public static final String CONFIRM_AMOUNT = "40800";
-    //    private static final String TRANSACTION_ID = "455454545415451198120";
+    private static final String ORDER_REFERENCE = "REF-" + Calendar.getInstance().getTimeInMillis();;
+    private static final String CONFIRM_AMOUNT = "40800";
     private static final String TRANSACTION_ID = "HDEV-" + Calendar.getInstance().getTimeInMillis();
     private static final String CUSTOMER_ID = "Client2";
     private static final String ADDITIONAL_DATA = "{mandateReference: \""+TRANSACTION_ID+"\",mandateId: null," +
@@ -58,6 +57,7 @@ public class TestUtils {
     public static final Environment ENVIRONMENT = new Environment("https://notification.com/", "http://succesurl.com", "http://redirectionCancelURL.com", true);
     private static final Locale LOCALE_FR = Locale.FRANCE;
     public static final String CURRENCY_EUR = "EUR";
+    public static final Amount AMOUNT = new Amount(new BigInteger(CONFIRM_AMOUNT), Currency.getInstance(CURRENCY_EUR));
 
     private static String TEST_PHONE_NUMBER = "+33600000000";
     /**
@@ -71,11 +71,8 @@ public class TestUtils {
      * "test." + RandomStringUtils.random(5, true, false) + "@gmail.com"
      **/
 
-    private static final Amount AMOUNT = new Amount(new BigInteger(CONFIRM_AMOUNT), Currency.getInstance(CURRENCY_EUR));
-    private static final Order ORDER = Order.OrderBuilder.anOrder().withReference(TRANSACTION_ID).withAmount(AMOUNT).build();
 
-
-    private static final Map<String, String> PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
+    public static final Map<String, String> PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
         put(API_URL_KEY, "https://api.preprod.slimpay.com");
         put(API_PROFILE_KEY, "https://api.slimpay.net/alps/v1");
         put(API_NS_KEY, "https://api.slimpay.net/alps");
@@ -83,7 +80,7 @@ public class TestUtils {
     }};
 
 
-    private static final Map<String, String> SENSITIVE_PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
+    public static final Map<String, String> SENSITIVE_PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
         put(APP_SECRET, "n32cXdaS0ZOACV8688ltKovAO6lquL4wKjZHnvyO");
 
     }};
@@ -131,16 +128,14 @@ public class TestUtils {
      * @return paymentRequest created
      */
     public static PaymentRequest createDefaultPaymentRequest() {
-        final Order order = createOrder(TRANSACTION_ID);
-
-
         return PaymentRequest.builder()
                 .withAmount(AMOUNT)
                 .withBrowser(new Browser("", LOCALE_FR))
                 .withLocale(LOCALE_FR)
                 .withContractConfiguration(CONTRACT_CONFIGURATION)
-                .withOrder(order)
+                .withOrder(createDefaultOrder())
                 .withBuyer(createDefaultBuyer())
+                .withDifferedActionDate(createDifferedDate())
                 .withTransactionId(TRANSACTION_ID)
                 .withSoftDescriptor(SOFT_DESCRIPTOR)
                 .withEnvironment(ENVIRONMENT)
@@ -161,6 +156,7 @@ public class TestUtils {
                 .withBuyer(createDefaultBuyer())
                 .withTransactionId("DEV-1549623741449")
                 .withSoftDescriptor(SOFT_DESCRIPTOR)
+                .withDifferedActionDate(createDifferedDate())
                 .withEnvironment(ENVIRONMENT)
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
                 .build();
@@ -200,6 +196,21 @@ public class TestUtils {
                 .build();
     }
 
+    public static ResetRequest createResetRequest(String transactionId){
+        return ResetRequest.ResetRequestBuilder.aResetRequest()
+                .withAmount(AMOUNT)
+                .withBuyer(createDefaultBuyer())
+                .withContractConfiguration(CONTRACT_CONFIGURATION)
+                .withEnvironment(ENVIRONMENT)
+                .withOrder(createOrder(transactionId, AMOUNT))
+                .withPartnerConfiguration(PARTNER_CONFIGURATION)
+                .withPartnerTransactionId(TRANSACTION_ID)
+                .withTransactionAdditionalData(ADDITIONAL_DATA)
+                .withTransactionId(transactionId)
+                .build();
+    }
+
+
     public static RedirectionPaymentRequest createRedirectionPaymentRequest(String transactionId) {
         return RedirectionPaymentRequest.builder()
                 .withAmount(AMOUNT)
@@ -210,7 +221,7 @@ public class TestUtils {
                 .withTransactionId(transactionId)
                 .withSoftDescriptor(SOFT_DESCRIPTOR)
                 .withEnvironment(ENVIRONMENT)
-                .withOrder(createOrder(transactionId))
+                .withOrder(createDefaultOrder())
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
                 .build();
 
@@ -224,20 +235,18 @@ public class TestUtils {
      */
 
     public static PaymentRequest.Builder createCompletePaymentBuilder() {
-
         final Environment paylineEnvironment = new Environment(NOTIFICATION_URL, SUCCESS_URL, CANCEL_URL, true);
-
-        final Order order = createOrder(TRANSACTION_ID);
 
         return PaymentRequest.builder()
                 .withAmount(AMOUNT)
                 .withBrowser(new Browser("", LOCALE_FR))
                 .withContractConfiguration(CONTRACT_CONFIGURATION)
                 .withEnvironment(paylineEnvironment)
-                .withOrder(order)
+                .withOrder(createDefaultOrder())
                 .withLocale(LOCALE_FR)
                 .withTransactionId(TRANSACTION_ID)
                 .withSoftDescriptor(SOFT_DESCRIPTOR)
+                .withDifferedActionDate(createDifferedDate())
                 .withPaymentFormContext(createDefaultPaymentFormContext(TEST_PHONE_NUMBER))
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
                 .withLocale(LOCALE_FR)
@@ -246,9 +255,6 @@ public class TestUtils {
 
     //Cree une redirection payment par defaut
     public static RedirectionPaymentRequest createCompleteRedirectionPaymentBuilder() {
-
-        final Order order = createOrder(TRANSACTION_ID);
-
 
         Map<String, String> requestData = new HashMap<>();
         requestData.put(SlimpayConstants.CREDITOR_REFERENCE_KEY, "paylinemerchanttest1");
@@ -264,7 +270,7 @@ public class TestUtils {
                 .withBrowser(new Browser("", LOCALE_FR))
                 .withContractConfiguration(CONTRACT_CONFIGURATION)
                 .withEnvironment(ENVIRONMENT)
-                .withOrder(order)
+                .withOrder(createDefaultOrder())
                 .withLocale(LOCALE_FR)
                 .withTransactionId(TRANSACTION_ID)
                 .withSoftDescriptor(SOFT_DESCRIPTOR)
@@ -302,8 +308,11 @@ public class TestUtils {
     }
 
 
-    public static Order createOrder(String transactionID) {
+    public static Order createDefaultOrder(){
+        return createOrder( ORDER_REFERENCE );
+    }
 
+    public static Order createOrder(String transactionID) {
         List<Order.OrderItem> orderItems = new ArrayList<>();
         orderItems.add(createOrderItem("item1", createAmount(CURRENCY_EUR)));
         orderItems.add(createOrderItem("item2", createAmount(CURRENCY_EUR)));
@@ -432,7 +441,7 @@ public class TestUtils {
                 .withAmount(AMOUNT)
                 .withContractConfiguration(CONTRACT_CONFIGURATION)
                 .withEnvironment(ENVIRONMENT)
-                .withOrder(createOrder(transactionId))
+                .withOrder(createDefaultOrder())
                 .withBuyer(createDefaultBuyer())
                 .withPartnerConfiguration(PARTNER_CONFIGURATION)
                 .build();
@@ -455,13 +464,10 @@ public class TestUtils {
     }
 
     public static RefundRequest createDefaultRefundRequest() {
-        final Order order = createOrder(TRANSACTION_ID);
-
-
         return RefundRequest.RefundRequestBuilder.aRefundRequest()
                 .withAmount(AMOUNT)
                 .withContractConfiguration(CONTRACT_CONFIGURATION)
-                .withOrder(order)
+                .withOrder(createDefaultOrder())
                 .withBuyer(createDefaultBuyer())
                 .withSoftDescriptor(SOFT_DESCRIPTOR)
                 .withEnvironment(ENVIRONMENT)
@@ -472,5 +478,16 @@ public class TestUtils {
                 .build();
     }
 
+
+    private static Date createDifferedDate(){
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Calendar c = Calendar.getInstance();
+        c.setTime( new Date());
+        c.add(Calendar.DATE, 4);
+        df.format( c.getTime() );
+
+        return c.getTime();
+    }
 
 }

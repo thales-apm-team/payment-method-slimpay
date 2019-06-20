@@ -1,16 +1,16 @@
 package com.payline.payment.slimpay.utils.service;
 
 import com.payline.payment.slimpay.utils.properties.constants.ConfigurationConstants;
-import com.payline.payment.slimpay.utils.properties.service.ConfigPropertiesEnum;
+import com.payline.payment.slimpay.utils.properties.service.ConfigProperties;
 import com.payline.payment.slimpay.utils.properties.service.PropertiesService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
-class ConfigPropertiesEnumTest {
+class ConfigPropertiesTest {
 
-    private PropertiesService service = ConfigPropertiesEnum.INSTANCE;
+    private PropertiesService service = ConfigProperties.INSTANCE;
 
     private String key;
 
@@ -31,14 +31,14 @@ class ConfigPropertiesEnumTest {
 
     @Test
     public void getFromKeyKO() {
-        key = ConfigPropertiesEnum.INSTANCE.get("BadKey");
+        key = ConfigProperties.INSTANCE.get("BadKey");
         Assertions.assertNull(key);
 
     }
 
     @Test
     public void getFromKeyOK() {
-        key = ConfigPropertiesEnum.INSTANCE.get("http.connectTimeout");
+        key = ConfigProperties.INSTANCE.get("http.connectTimeout");
         Assertions.assertNotNull(key);
     }
 

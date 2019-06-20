@@ -1,16 +1,10 @@
 package com.payline.payment.slimpay.utils.properties.service;
 
-import com.payline.pmapi.logger.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 public interface PropertiesService {
-
-
-    Logger LOGGER = LogManager.getLogger(PropertiesService.class);
 
     /**
      * Get a config property by its name.
@@ -62,10 +56,12 @@ public interface PropertiesService {
             properties.load(inputStream);
 
         } catch (IOException e) {
-            LOGGER.error("Unable to load the file {}", fileName, e);
+            logError( "Unable to load the file " + fileName, e );
             throw new RuntimeException(e);
         }
 
     }
+
+    void logError( String message, Throwable t );
 
 }

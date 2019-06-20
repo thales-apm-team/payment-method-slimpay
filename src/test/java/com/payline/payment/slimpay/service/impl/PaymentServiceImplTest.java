@@ -5,7 +5,9 @@ import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.exception.HttpCallException;
 import com.payline.payment.slimpay.exception.MalformedResponseException;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
+import com.payline.payment.slimpay.utils.properties.constants.OrderStatus;
 import com.payline.pmapi.bean.common.FailureCause;
+import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
@@ -44,8 +46,8 @@ public class PaymentServiceImplTest {
 
     @Test
     public void paymentRequestOK() throws Exception {
-        SlimpayOrderResponse responseMocked = createMockedSlimpayOrderResponseOpen();
-        when(httpClient.createOrder(any(PaymentRequest.class), any(JsonBody.class))).thenReturn(responseMocked);
+        SlimpayOrderResponse responseMocked = createMockedSlimpayOrderResponse( OrderStatus.OPEN_RUNNING );
+        when(httpClient.createOrder(any(PartnerConfiguration.class), any(JsonBody.class))).thenReturn(responseMocked);
 
         PaymentRequest request = createDefaultPaymentRequest();
         PaymentResponse response = service.paymentRequest(request);
@@ -62,7 +64,7 @@ public class PaymentServiceImplTest {
     @Test
     public void paymentRequestKO() throws Exception {
         SlimpayFailureResponse responseMocked = createMockedSlimpayFailureResponse();
-        when(httpClient.createOrder(any(PaymentRequest.class), any(JsonBody.class))).thenReturn(responseMocked);
+        when(httpClient.createOrder(any(PartnerConfiguration.class), any(JsonBody.class))).thenReturn(responseMocked);
 
         PaymentRequest request = createBadPaymentRequest();
         PaymentResponse response = service.paymentRequest(request);
@@ -78,10 +80,10 @@ public class PaymentServiceImplTest {
 
     @Test
     public void paymentRequestKOExceptionMalFormedUrl() throws Exception {
-        SlimpayOrderResponse responseMocked = createMockedSlimpayOrderResponseClosed();
+        SlimpayOrderResponse responseMocked = createMockedSlimpayOrderResponse( OrderStatus.CLOSED_COMPLETED );
         responseMocked.setUrlApproval("foo");
 
-        when(httpClient.createOrder(any(PaymentRequest.class), any(JsonBody.class))).thenReturn(responseMocked);
+        when(httpClient.createOrder(any(PartnerConfiguration.class), any(JsonBody.class))).thenReturn(responseMocked);
         PaymentRequest request = createBadPaymentRequest();
         PaymentResponse response = service.paymentRequest(request);
 
@@ -100,7 +102,7 @@ public class PaymentServiceImplTest {
 
     @Test
     public void paymentRequestKOException() throws Exception {
-        when(httpClient.createOrder(any(PaymentRequest.class), any(JsonBody.class))).thenThrow(new HttpCallException("this is an error", "foo"));
+        when(httpClient.createOrder(any(PartnerConfiguration.class), any(JsonBody.class))).thenThrow(new HttpCallException("this is an error", "foo"));
 
         PaymentRequest request = createBadPaymentRequest();
         PaymentResponse response = service.paymentRequest(request);
@@ -117,7 +119,7 @@ public class PaymentServiceImplTest {
 
     @Test
     public void paymentRequestResponseNull() throws Exception {
-        Mockito.doReturn(null).when(httpClient).createOrder(any(PaymentRequest.class), any(JsonBody.class));
+        Mockito.doReturn(null).when(httpClient).createOrder(any(PartnerConfiguration.class), any(JsonBody.class));
 
         PaymentRequest request = createBadPaymentRequest();
         PaymentResponse response = service.paymentRequest(request);
@@ -145,7 +147,7 @@ public class PaymentServiceImplTest {
 
     @Test
     public void paymentRequestKOExceptionMalformedUrl() throws Exception {
-        when(httpClient.createOrder(any(PaymentRequest.class), any(JsonBody.class))).thenThrow(new MalformedResponseException(new HttpCallException("this is an error", "foo")));
+        when(httpClient.createOrder(any(PartnerConfiguration.class), any(JsonBody.class))).thenThrow(new MalformedResponseException(new HttpCallException("this is an error", "foo")));
 
         PaymentRequest request = createBadPaymentRequest();
         PaymentResponse response = service.paymentRequest(request);

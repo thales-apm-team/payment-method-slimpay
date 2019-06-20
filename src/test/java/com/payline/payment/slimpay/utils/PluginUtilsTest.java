@@ -67,68 +67,68 @@ public class PluginUtilsTest {
     }
 
     @Test
-    public void convertToE164_nothingToDo(){
+    public void convertToInternational_nothingToDo(){
         assertEquals( "+33601020304", PluginUtils.convertToInternational( "+33601020304", Locale.FRANCE ));
         assertEquals( "+331234", PluginUtils.convertToInternational( "+331234", Locale.FRANCE ));
     }
 
     @Test
-    public void convertToE164_removeDots(){
+    public void convertToInternational_removeDots(){
         assertEquals( "+33601020304", PluginUtils.convertToInternational( "+336.01.02.03.04", Locale.FRANCE ));
     }
 
     @Test
-    public void convertToE164_removeSpaces(){
+    public void convertToInternational_removeSpaces(){
         assertEquals( "+33601020304", PluginUtils.convertToInternational( "+336 01 02 03 04", Locale.FRANCE ));
     }
 
     @Test
-    public void convertToE164_removeDashes(){
+    public void convertToInternational_removeDashes(){
         assertEquals( "+33601020304", PluginUtils.convertToInternational( "+336-010-203-04", Locale.FRANCE ));
     }
 
     @Test
-    public void convertToE164_removeAll(){
+    public void convertToInternational_removeAll(){
         assertEquals( "+33601020304", PluginUtils.convertToInternational( "+336 010-203.04", Locale.FRANCE ));
     }
 
     @Test
-    public void convertToE164_addCountryCode_noCountryFr(){
+    public void convertToInternational_addCountryCode_noCountryFr(){
         assertEquals( "0601020304", PluginUtils.convertToInternational( "0601020304", Locale.FRENCH ));
     }
 
     @Test
-    public void convertToE164_addCountryCode_fr(){
+    public void convertToInternational_addCountryCode_fr(){
         assertEquals( "+33601020304", PluginUtils.convertToInternational( "0601020304", Locale.FRANCE ));
     }
 
     @Test
-    public void convertToE164_addCountryCode_be_fr(){
+    public void convertToInternational_addCountryCode_be_fr(){
         assertEquals( "+32451234567", PluginUtils.convertToInternational( "0451 23 45 67", new Locale("fr", "be") ));
     }
 
     @Test
-    public void convertToE164_addCountryCode_be_nl(){
+    public void convertToInternational_addCountryCode_be_nl(){
         assertEquals( "+32451234567", PluginUtils.convertToInternational( "0451 23 45 67", new Locale("nl", "be") ));
     }
 
     @Test
-    public void convertToE164_addCountryCode_nl(){
+    public void convertToInternational_addCountryCode_nl(){
         assertEquals( "+31123456789", PluginUtils.convertToInternational( "012 345 67 89", new Locale("nl", "nl") ));
     }
 
     @Test
-    public void convertToE164_addCountryCode_noCountryEn(){
+    public void convertToInternational_addCountryCode_noCountryEn(){
         assertEquals( "02041345678", PluginUtils.convertToInternational( "020 4134 5678", Locale.ENGLISH ));
     }
 
     @Test
-    public void convertToE164_addCountryCode_uk(){
+    public void convertToInternational_addCountryCode_uk(){
         assertEquals( "+442041345678", PluginUtils.convertToInternational( "020 4134 5678", Locale.UK ));
     }
 
     @Test
-    public void convertToE164_addCountryCode_us(){
+    public void convertToInternational_addCountryCode_us(){
         assertEquals( "+12135096995", PluginUtils.convertToInternational( "213-509-6995", Locale.US ));
     }
 
