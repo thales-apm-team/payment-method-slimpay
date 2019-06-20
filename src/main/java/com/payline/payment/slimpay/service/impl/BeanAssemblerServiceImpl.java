@@ -209,7 +209,12 @@ public class BeanAssemblerServiceImpl implements BeanAssemblerService {
         }
 
         final Buyer.FullName fullName = buyer.getFullName();
-        String internationalCellularPhoneNumber = PluginUtils.convertToInternational( buyer.getPhoneNumbers().get(Buyer.PhoneNumberType.CELLULAR), paymentRequest.getLocale() );
+
+        String internationalCellularPhoneNumber = null;
+        String cellularBuyer = buyer.getPhoneNumbers().get(Buyer.PhoneNumberType.CELLULAR);
+        if( cellularBuyer != null ){
+            internationalCellularPhoneNumber = PluginUtils.convertToInternational( cellularBuyer, paymentRequest.getLocale() );
+        }
 
         return Signatory.Builder.aSignatoryBuilder()
                 .withfamilyName(fullName == null ? null : fullName.getLastName())
