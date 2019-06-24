@@ -5,6 +5,7 @@ import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionStatus;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
+import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseSuccess;
@@ -56,10 +57,10 @@ public class ResetServiceImplTest {
         // In the case the payment is to_process and successfully cancelled
         doReturn( createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS, true) )
                 .when(httpClient)
-                .getPayment( any(PartnerConfiguration.class), anyString() );
+                .getPayment( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
         doReturn( createMockedSlimpayPaymentIn(PaymentExecutionStatus.NOT_PROCESSED) )
                 .when(httpClient)
-                .cancelPayment( any(PartnerConfiguration.class), anyString(), Mockito.any(JsonBody.class) );
+                .cancelPayment( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString(), Mockito.any(JsonBody.class) );
 
         // when: calling the resetRequest method
         ResetResponse resetResponse = service.resetRequest(resetRequest);
@@ -76,7 +77,7 @@ public class ResetServiceImplTest {
         // In the case the getPayment call fails
         doReturn( createMockedSlimpayFailureResponse() )
                 .when(httpClient)
-                .getPayment(any(PartnerConfiguration.class), anyString());
+                .getPayment(any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString());
 
         // when: calling the resetRequest method
         ResetResponse resetResponse = service.resetRequest(resetRequest);
@@ -91,7 +92,7 @@ public class ResetServiceImplTest {
         // In the case an exception is thrown by the getPayment method
         doThrow( new PluginTechnicalException("message", "errorCode") )
                 .when(httpClient)
-                .getPayment(any(PartnerConfiguration.class), anyString());
+                .getPayment(any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString());
 
         // when: calling the resetRequest method
         ResetResponse resetResponse = service.resetRequest(resetRequest);
@@ -106,7 +107,7 @@ public class ResetServiceImplTest {
         // In the case the payment is not cancellable
         doReturn( createMockedSlimpayPaymentIn(PaymentExecutionStatus.PROCESSED, false) )
                 .when(httpClient)
-                .getPayment( any(PartnerConfiguration.class), anyString() );
+                .getPayment( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
 
         // when: calling the resetRequest method
         ResetResponse resetResponse = service.resetRequest(resetRequest);
@@ -121,10 +122,10 @@ public class ResetServiceImplTest {
         // In the case the payment is to_process, but the cancellation fails
         doReturn( createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS, true) )
                 .when(httpClient)
-                .getPayment( any(PartnerConfiguration.class), anyString() );
+                .getPayment( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
         doReturn( createMockedCancelPaymentError() )
                 .when(httpClient)
-                .cancelPayment( any(PartnerConfiguration.class), anyString(), Mockito.any(JsonBody.class) );
+                .cancelPayment( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString(), Mockito.any(JsonBody.class) );
 
         // when: calling the resetRequest method
         ResetResponse resetResponse = service.resetRequest(resetRequest);
@@ -139,10 +140,10 @@ public class ResetServiceImplTest {
         // In the case the payment is to_process, but the cancellation throws an exception
         doReturn( createMockedSlimpayPaymentIn(PaymentExecutionStatus.TO_PROCESS, true) )
                 .when(httpClient)
-                .getPayment( any(PartnerConfiguration.class), anyString() );
+                .getPayment( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
         doReturn( createMockedCancelPaymentError() )
                 .when(httpClient)
-                .cancelPayment( any(PartnerConfiguration.class), anyString(), Mockito.any(JsonBody.class) );
+                .cancelPayment( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString(), Mockito.any(JsonBody.class) );
 
         // when: calling the resetRequest method
         ResetResponse resetResponse = service.resetRequest(resetRequest);

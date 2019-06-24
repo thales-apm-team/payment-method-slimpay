@@ -4,6 +4,7 @@ import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
 import com.payline.payment.slimpay.utils.properties.constants.PaymentExecutionStatus;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
+import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
@@ -52,10 +53,10 @@ public class RefundServiceImplTest {
         // In the case the payment is processed and the payout is successfully created
         doReturn( createMockedSlimpayPaymentIn(PaymentExecutionStatus.PROCESSED) )
                 .when(httpClient)
-                .getPayment( any(PartnerConfiguration.class), anyString() );
+                .getPayment( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
         doReturn( createMockedSlimpayPaymentOut(PaymentExecutionStatus.TO_PROCESS) )
                 .when(httpClient)
-                .createPayout( any(PartnerConfiguration.class), Mockito.any(JsonBody.class) );
+                .createPayout( any(PartnerConfiguration.class), any(ContractConfiguration.class), Mockito.any(JsonBody.class) );
 
         // when: calling the refundRequest method
         RefundResponse refundResponse = service.refundRequest(refundRequest);
@@ -72,7 +73,7 @@ public class RefundServiceImplTest {
         // In the case the getPayment call fails
         doReturn( createMockedSlimpayFailureResponse() )
                 .when(httpClient)
-                .getPayment(any(PartnerConfiguration.class), anyString());
+                .getPayment(any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString());
 
         // when: calling the refundRequest method
         RefundResponse refundResponse = service.refundRequest(refundRequest);
@@ -87,7 +88,7 @@ public class RefundServiceImplTest {
         // In the case an exception is thrown by the getPayment method
         doThrow( new PluginTechnicalException("message", "errorCode") )
                 .when(httpClient)
-                .getPayment(any(PartnerConfiguration.class), anyString());
+                .getPayment(any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString());
 
         // when: calling the refundRequest method
         RefundResponse refundResponse = service.refundRequest(refundRequest);
@@ -102,7 +103,7 @@ public class RefundServiceImplTest {
         // In the case the payment has not been processed
         doReturn( createMockedSlimpayPaymentIn(PaymentExecutionStatus.NOT_PROCESSED) )
                 .when(httpClient)
-                .getPayment( any(PartnerConfiguration.class), anyString() );
+                .getPayment( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
 
         // when: calling the refundRequest method
         RefundResponse refundResponse = service.refundRequest(refundRequest);
@@ -117,10 +118,10 @@ public class RefundServiceImplTest {
         // In the case the payout creation fails
         doReturn( createMockedSlimpayPaymentIn(PaymentExecutionStatus.PROCESSED) )
                 .when(httpClient)
-                .getPayment(any(PartnerConfiguration.class), anyString());
+                .getPayment(any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString());
         doReturn( createMockedSlimpayPaymentOutError() )
                 .when(httpClient)
-                .createPayout(any(PartnerConfiguration.class), any(JsonBody.class));
+                .createPayout(any(PartnerConfiguration.class), any(ContractConfiguration.class), any(JsonBody.class));
 
         // when: calling the refundRequest method
         RefundResponse refundResponse = service.refundRequest(refundRequest);
@@ -135,10 +136,10 @@ public class RefundServiceImplTest {
         // In the case an exception is thrown by the createPayout method
         doReturn( createMockedSlimpayPaymentIn(PaymentExecutionStatus.PROCESSED) )
                 .when(httpClient)
-                .getPayment(any(PartnerConfiguration.class), anyString());
+                .getPayment(any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString());
         doThrow( new PluginTechnicalException("message", "errorCode") )
                 .when(httpClient)
-                .createPayout(any(PartnerConfiguration.class), any(JsonBody.class));
+                .createPayout(any(PartnerConfiguration.class), any(ContractConfiguration.class), any(JsonBody.class));
 
         // when: calling the refundRequest method
         RefundResponse refundResponse = service.refundRequest(refundRequest);

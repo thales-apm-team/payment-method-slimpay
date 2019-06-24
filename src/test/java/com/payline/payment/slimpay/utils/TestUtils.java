@@ -76,13 +76,9 @@ public class TestUtils {
         put(API_URL_KEY, "https://api.preprod.slimpay.com");
         put(API_PROFILE_KEY, "https://api.slimpay.net/alps/v1");
         put(API_NS_KEY, "https://api.slimpay.net/alps");
-        put(APP_KEY, "monextreferral01");
     }};
 
-
     public static final Map<String, String> SENSITIVE_PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
-        put(APP_SECRET, "n32cXdaS0ZOACV8688ltKovAO6lquL4wKjZHnvyO");
-
     }};
 
     public static final ContractConfiguration CONTRACT_CONFIGURATION = new ContractConfiguration(MDP_IDENTIFIER, new HashMap<String, ContractProperty>() {{
@@ -92,12 +88,13 @@ public class TestUtils {
         put(MANDATE_STANDARD_KEY, new ContractProperty("SEPA"));
         put(SIGNATURE_APPROVAL_METHOD, new ContractProperty("otp"));
         put(PAYMENT_PROCESSOR, new ContractProperty("slimpay"));
+        put(APP_KEY, new ContractProperty("monextreferral01"));
+        put(APP_SECRET, new ContractProperty("n32cXdaS0ZOACV8688ltKovAO6lquL4wKjZHnvyO"));
     }}
     );
-    public static final ContractConfiguration EMPTY_CONTRACT_CONFIGURATION = new ContractConfiguration(MDP_IDENTIFIER, new HashMap<String, ContractProperty>() {{
 
-    }}
-    );
+    public static final ContractConfiguration EMPTY_CONTRACT_CONFIGURATION = new ContractConfiguration(MDP_IDENTIFIER, new HashMap<String, ContractProperty>() {{
+    }});
 
     private static final Map<String, String> ACCOUNT_INFO = new HashMap<String, String>() {{
         put(CREDITOR_REFERENCE_KEY, "paylinemerchanttest1");
@@ -106,6 +103,8 @@ public class TestUtils {
         put(SIGNATURE_APPROVAL_METHOD, "otp");
         put(MANDATE_STANDARD_KEY, "SEPA");
         put(PAYMENT_PROCESSOR, "slimpay");
+        put(APP_KEY, "monextreferral01");
+        put(APP_SECRET, "n32cXdaS0ZOACV8688ltKovAO6lquL4wKjZHnvyO");
     }};
 
     public static final PartnerConfiguration PARTNER_CONFIGURATION = new PartnerConfiguration(PARTNER_CONFIGURATION_MAP, SENSITIVE_PARTNER_CONFIGURATION_MAP);
@@ -365,7 +364,7 @@ public class TestUtils {
         return ContractParametersCheckRequest
                 .CheckRequestBuilder
                 .aCheckRequest()
-                .withContractConfiguration(EMPTY_CONTRACT_CONFIGURATION)
+                .withContractConfiguration(CONTRACT_CONFIGURATION)
                 .withAccountInfo(ACCOUNT_INFO)
                 .withEnvironment(ENVIRONMENT)
                 .withLocale(LOCALE_FR)

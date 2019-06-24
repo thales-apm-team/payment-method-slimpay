@@ -34,7 +34,8 @@ public class ResetServiceImpl implements ResetService {
         try {
             // Get the payment data
             PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.fromJson(resetRequest.getTransactionAdditionalData());
-            SlimpayResponse paymentResp = httpClient.getPayment(resetRequest.getPartnerConfiguration(), additionalData.getPaymentId());
+            SlimpayResponse paymentResp = httpClient.getPayment(resetRequest.getPartnerConfiguration(),
+                    resetRequest.getContractConfiguration(), additionalData.getPaymentId());
 
             // Response is an error : can't get the payment data
             if( paymentResp instanceof SlimpayFailureResponse){
@@ -63,7 +64,8 @@ public class ResetServiceImpl implements ResetService {
 
             // Cancel the payment
             JsonBody cancelRequest = new SlimpayCancelRequest(SlimpayCancelRequest.reasonCode.CUST).toJsonBody();
-            SlimpayResponse slimpayResponse = httpClient.cancelPayment(resetRequest.getPartnerConfiguration(), paymentToReset.getId(), cancelRequest);
+            SlimpayResponse slimpayResponse = httpClient.cancelPayment(resetRequest.getPartnerConfiguration(),
+                    resetRequest.getContractConfiguration(), paymentToReset.getId(), cancelRequest);
 
             // Cancellation failed: an error occurred
             if( slimpayResponse instanceof SlimpayFailureResponse ){

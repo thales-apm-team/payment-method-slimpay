@@ -195,7 +195,7 @@ public class PaymentWithRedirectionServiceTest {
         // Mock payment-issues
         Mockito.doReturn( "AC04" )
                 .when( httpClient )
-                .getPaymentRejectReason( any(PartnerConfiguration.class), anyString() );
+                .getPaymentRejectReason( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
 
         // when: calling method checkPayment()
         PaymentResponse response = service.checkPayment(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), createMockedSlimpayOrderResponse( OrderStatus.CLOSED_COMPLETED ) );
@@ -270,7 +270,7 @@ public class PaymentWithRedirectionServiceTest {
         // Mock payment-issue
         Mockito.doReturn( returnReasonCode )
                 .when( httpClient )
-                .getPaymentRejectReason( any(PartnerConfiguration.class), anyString() );
+                .getPaymentRejectReason( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
 
         // when: calling method checkPayment()
         PaymentResponse response = service.checkPayment(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), createMockedSlimpayOrderResponse( OrderStatus.CLOSED_COMPLETED ) );
@@ -291,7 +291,7 @@ public class PaymentWithRedirectionServiceTest {
         // Mock exception during getPaymentRejectReason()
         Mockito.doThrow( new HttpCallException("Exception message longer than 50 characters (which is the maximum allowed", "SlimpayHttpClient.getPaymentRejectReason") )
                 .when( httpClient )
-                .getPaymentRejectReason( any(PartnerConfiguration.class), anyString() );
+                .getPaymentRejectReason( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
 
         // when: calling method checkPayment()
         PaymentResponse response = service.checkPayment(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), createMockedSlimpayOrderResponse( OrderStatus.CLOSED_COMPLETED ) );
@@ -312,7 +312,7 @@ public class PaymentWithRedirectionServiceTest {
         // Mock getPaymentRejectReason() returns null
         Mockito.doReturn( "UNKNOWN" )
                 .when( httpClient )
-                .getPaymentRejectReason( any(PartnerConfiguration.class), anyString() );
+                .getPaymentRejectReason( any(PartnerConfiguration.class), any(ContractConfiguration.class), anyString() );
 
         // when: calling method checkPayment()
         PaymentResponse response = service.checkPayment(TestUtils.PARTNER_CONFIGURATION, TestUtils.CONTRACT_CONFIGURATION, TRANSACTION_ID, TestUtils.AMOUNT, TestUtils.createDefaultBuyer(), createMockedSlimpayOrderResponse( OrderStatus.CLOSED_COMPLETED ) );

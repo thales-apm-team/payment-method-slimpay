@@ -100,8 +100,23 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         signatureApproval.setValue(OTP);
         parameters.add(signatureApproval);
 
-        return parameters;
+        // app name
+        final InputParameter appName = new InputParameter();
+        appName.setKey(APP_KEY);
+        appName.setLabel(this.i18n.getMessage(APP_KEY_LABEL, locale));
+        appName.setDescription(this.i18n.getMessage(APP_KEY_DESCRIPTION, locale));
+        appName.setRequired(true);
+        parameters.add(appName);
 
+        // app secret
+        final InputParameter appSecret = new InputParameter();
+        appSecret.setKey(APP_SECRET);
+        appSecret.setLabel(this.i18n.getMessage(APP_SECRET_LABEL, locale));
+        appSecret.setDescription(this.i18n.getMessage(APP_SECRET_DESCRIPTION, locale));
+        appSecret.setRequired(true);
+        parameters.add(appSecret);
+
+        return parameters;
     }
 
     @Override
@@ -155,7 +170,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             if (errors.size() == 0) {
                 // test a create order and call the API
                 SlimpayOrderRequest request = new BeanAssemblerServiceImpl().assembleSlimPayOrderRequest(contractParametersCheckRequest);
-                httpClient.testConnection(contractParametersCheckRequest.getPartnerConfiguration(), request.toJsonBody());
+                httpClient.testConnection(contractParametersCheckRequest.getPartnerConfiguration(),
+                        contractParametersCheckRequest.getContractConfiguration(), request.toJsonBody());
             }
 
         } catch (PluginTechnicalException e) {
@@ -170,7 +186,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             }
 
         }
-
 
         return errors;
     }

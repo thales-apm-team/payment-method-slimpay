@@ -52,9 +52,6 @@ public class SlimpayHttpClient {
 
     // Messages
     private static final String EMPTY_RESPONSE_MESSAGE = "response is empty";
-    private static final String REL_NOT_FOUND_MESSAGE = "Rel not found";
-    private static final String PARTNER_CONFIGURATION_ERROR = "Partner configuration must not be null";
-    private static final String PARTNER_CONFIGURATION_FIELD = "request.partnerConfiguration";
 
     // URL parameters keys
     private static final String CREDITOR_REFERENCE = "creditorReference";
@@ -105,14 +102,15 @@ public class SlimpayHttpClient {
      * Create the request to call a #create-orders http request
      *
      * @param partnerConfiguration The {@link PartnerConfiguration} data
+     * @param contractConfiguration The {@link ContractConfiguration} data
      * @param body The body of the http request
      * @return
      * @throws PluginTechnicalException
      */
-    public SlimpayOrderResponse testConnection( PartnerConfiguration partnerConfiguration, JsonBody body) throws PluginTechnicalException {
-        if( partnerConfiguration == null ){
-            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
-        }
+    public SlimpayOrderResponse testConnection( PartnerConfiguration partnerConfiguration,
+            ContractConfiguration contractConfiguration, JsonBody body) throws PluginTechnicalException {
+        this.checkConfig( partnerConfiguration, contractConfiguration );
+
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_CREATE_ORDER);
         Follow follow = new Follow.Builder(rel)
@@ -120,7 +118,7 @@ public class SlimpayHttpClient {
                 .setMethod(Method.POST)
                 .build();
 
-        Resource response = this.sendRequest( partnerConfiguration, follow );
+        Resource response = this.sendRequest( partnerConfiguration, contractConfiguration, follow );
         if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.testConnection");
         }
@@ -128,18 +126,18 @@ public class SlimpayHttpClient {
         return SlimpayOrderResponse.fromJson(response.getState().toString());
     }
 
-
     /**
      * Create the request to call a #create-orders http request
      *
      * @param partnerConfiguration The {@link PartnerConfiguration} data
+     * @param contractConfiguration The {@link ContractConfiguration} data
      * @param body    the body of the http request
      * @throws PluginTechnicalException
      */
-    public SlimpayResponse createOrder( PartnerConfiguration partnerConfiguration, JsonBody body) throws PluginTechnicalException {
-        if( partnerConfiguration == null ){
-            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
-        }
+    public SlimpayResponse createOrder( PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration,
+                                        JsonBody body) throws PluginTechnicalException {
+        this.checkConfig( partnerConfiguration, contractConfiguration );
+
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_CREATE_ORDER);
         Follow follow = new Follow.Builder(rel)
@@ -147,7 +145,7 @@ public class SlimpayHttpClient {
                 .setMethod(Method.POST)
                 .build();
 
-        Resource response = this.sendRequest(partnerConfiguration, follow);
+        Resource response = this.sendRequest(partnerConfiguration, contractConfiguration, follow);
 
         if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.createOrder");
@@ -178,13 +176,14 @@ public class SlimpayHttpClient {
      * Create the request to call a #create-payout http request
      *
      * @param partnerConfiguration The {@link PartnerConfiguration} data
+     * @param contractConfiguration The {@link ContractConfiguration} data
      * @param body    the body of the http request
      * @throws PluginTechnicalException
      */
-    public SlimpayResponse createPayout(PartnerConfiguration partnerConfiguration, JsonBody body) throws PluginTechnicalException {
-        if( partnerConfiguration == null ){
-            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
-        }
+    public SlimpayResponse createPayout(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration,
+                                        JsonBody body) throws PluginTechnicalException {
+        this.checkConfig( partnerConfiguration, contractConfiguration );
+
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_CREATE_PAYOUT);
         Follow follow = new Follow.Builder(rel)
@@ -192,7 +191,7 @@ public class SlimpayHttpClient {
                 .setMethod(Method.POST)
                 .build();
 
-        Resource response = this.sendRequest(partnerConfiguration, follow);
+        Resource response = this.sendRequest(partnerConfiguration, contractConfiguration, follow);
 
         if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.createPayout");
@@ -213,14 +212,10 @@ public class SlimpayHttpClient {
      * @param contractConfiguration The {@link ContractConfiguration} data
      * @throws PluginTechnicalException
      */
-    public SlimpayResponse getOrder(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration, String orderReference)
-            throws PluginTechnicalException {
-        if( partnerConfiguration == null ){
-            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
-        }
-        if( contractConfiguration == null ){
-            throw new InvalidDataException("Contract configuration must not be null", "request.contractConfiguration");
-        }
+    public SlimpayResponse getOrder(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration,
+                                    String orderReference) throws PluginTechnicalException {
+        this.checkConfig( partnerConfiguration, contractConfiguration );
+
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_GET_ORDER);
 
@@ -230,7 +225,7 @@ public class SlimpayHttpClient {
                 .setUrlVariable(REFERENCE, orderReference)
                 .build();
 
-        Resource response = this.sendRequest(partnerConfiguration, follow);
+        Resource response = this.sendRequest(partnerConfiguration, contractConfiguration, follow);
 
         if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getOrder");
@@ -248,13 +243,14 @@ public class SlimpayHttpClient {
      * Find a Slimpay Payment from its id
      *
      * @param partnerConfiguration The {@link PartnerConfiguration} data
+     * @param contractConfiguration The {@link ContractConfiguration} data
      * @return A Slimpay payment
      * @throws PluginTechnicalException
      */
-    public SlimpayResponse getPayment(PartnerConfiguration partnerConfiguration, String paymentId) throws PluginTechnicalException {
-        if( partnerConfiguration == null ){
-            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
-        }
+    public SlimpayResponse getPayment(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration,
+                                      String paymentId) throws PluginTechnicalException {
+        this.checkConfig( partnerConfiguration, contractConfiguration );
+
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_GET_PAYMENT);
 
@@ -263,7 +259,7 @@ public class SlimpayHttpClient {
                 .setUrlVariable(ID, paymentId)
                 .build();
 
-        Resource payment = this.sendRequest(partnerConfiguration, follow);
+        Resource payment = this.sendRequest(partnerConfiguration, contractConfiguration, follow);
 
         if (payment == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getPayment");
@@ -300,12 +296,8 @@ public class SlimpayHttpClient {
      */
     public SlimpayResponse searchPayment(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration,
                                          String paymentReference, String mandateReference, String subscriberReference ) throws PluginTechnicalException {
-        if( partnerConfiguration == null ){
-            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
-        }
-        if( contractConfiguration == null ){
-            throw new InvalidDataException("Contract configuration must not be null", "request.contractConfiguration");
-        }
+        this.checkConfig( partnerConfiguration, contractConfiguration );
+
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_SEARCH_PAYMENTS);
 
@@ -319,7 +311,7 @@ public class SlimpayHttpClient {
                 .setUrlVariable(DIRECTION, "IN")
                 .build();
 
-        Resource response = this.sendRequest(partnerConfiguration, follow);
+        Resource response = this.sendRequest(partnerConfiguration, contractConfiguration, follow);
 
         if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.searchPayment");
@@ -349,14 +341,15 @@ public class SlimpayHttpClient {
      * Find reject reason of a payment.
      *
      * @param partnerConfiguration The {@link PartnerConfiguration} data
+     * @param contractConfiguration The {@link ContractConfiguration} data
      * @param paymentId the payment id
      * @return String the reject return reasonCode
      * @throws PluginTechnicalException
      */
-    public String getPaymentRejectReason(PartnerConfiguration partnerConfiguration, String paymentId) throws PluginTechnicalException {
-        if( partnerConfiguration == null ){
-            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
-        }
+    public String getPaymentRejectReason(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration,
+                                         String paymentId) throws PluginTechnicalException {
+        this.checkConfig( partnerConfiguration, contractConfiguration );
+
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel rel = new CustomRel(ns + API_REL_GET_PAYMENT_ISSUES);
         String url = partnerConfiguration.getProperty( SlimpayConstants.API_URL_KEY );
@@ -366,7 +359,7 @@ public class SlimpayHttpClient {
                 .setUrlVariable(ID, paymentId)
                 .build();
 
-        Resource response = this.sendRequest(partnerConfiguration, follow, entryPointUrl);
+        Resource response = this.sendRequest(partnerConfiguration, contractConfiguration, follow, entryPointUrl);
 
         if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.getPaymentRejectReason");
@@ -398,15 +391,16 @@ public class SlimpayHttpClient {
      * Cancel a payment
      *
      * @param partnerConfiguration The {@link PartnerConfiguration} data
+     * @param contractConfiguration The {@link ContractConfiguration} data
      * @param paymentId The payment Id.
      * @param body
      * @return
      * @throws PluginTechnicalException
      */
-    public SlimpayResponse cancelPayment(PartnerConfiguration partnerConfiguration, String paymentId, JsonBody body) throws PluginTechnicalException {
-        if( partnerConfiguration == null ){
-            throw new InvalidDataException(PARTNER_CONFIGURATION_ERROR, PARTNER_CONFIGURATION_FIELD);
-        }
+    public SlimpayResponse cancelPayment(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration,
+                                         String paymentId, JsonBody body) throws PluginTechnicalException {
+        this.checkConfig( partnerConfiguration, contractConfiguration );
+
         String ns = partnerConfiguration.getProperty( SlimpayConstants.API_NS_KEY );
         CustomRel relCancelPayment = new CustomRel(ns + API_REL_CANCEL_PAYMENT);
 
@@ -418,7 +412,7 @@ public class SlimpayHttpClient {
                 .setMessageBody(body)
                 .build();
 
-        Resource response = this.sendRequest(partnerConfiguration, follow, entryPointUrl);
+        Resource response = this.sendRequest(partnerConfiguration, contractConfiguration, follow, entryPointUrl);
 
         if (response == null) {
             throw new HttpCallException(EMPTY_RESPONSE_MESSAGE, "SlimpayHttpClient.cancelPayment");
@@ -435,30 +429,32 @@ public class SlimpayHttpClient {
      * Build the HttpClient and Call the SlimPay API using the Slimpay hapiclient
      *
      * @param partnerConfiguration The {@link PartnerConfiguration} containing information required to access the partner API
+     * @param contractConfiguration The {@link ContractConfiguration} containing the information required to access the partner API
      * @param follow
      * @return The resulting resource.
      * @throws SlimpayHttpException
      */
-    Resource sendRequest(PartnerConfiguration partnerConfiguration, Follow follow)
+    Resource sendRequest(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration, Follow follow)
             throws PluginTechnicalException {
-        return sendRequest( partnerConfiguration, follow, null );
+        return sendRequest( partnerConfiguration, contractConfiguration, follow, null );
     }
 
     /**
      * Build the HttpClient and Call the SlimPay API using the Slimpay hapiclient
      *
      * @param partnerConfiguration The {@link PartnerConfiguration} containing information required to access the partner API
+     * @param contractConfiguration The {@link ContractConfiguration} containing the information required to access the partner API
      * @param follow
      * @param entryPoint
      * @return The resulting resource.
      * @throws SlimpayHttpException
      */
-    Resource sendRequest(PartnerConfiguration partnerConfiguration, Follow follow, String entryPoint)
-            throws PluginTechnicalException {
+    Resource sendRequest(PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration,
+                         Follow follow, String entryPoint) throws PluginTechnicalException {
         Oauth2BasicAuthentication authentication = new Oauth2BasicAuthentication.Builder()
                 .setTokenEndPointUrl( API_ENDPOINT_TOKEN )
-                .setUserid( partnerConfiguration.getProperty( SlimpayConstants.APP_KEY ))
-                .setPassword( partnerConfiguration.getProperty( SlimpayConstants.APP_SECRET ))
+                .setUserid( contractConfiguration.getProperty( SlimpayConstants.APP_KEY ).getValue() )
+                .setPassword( contractConfiguration.getProperty( SlimpayConstants.APP_SECRET ).getValue() )
                 .build();
 
         HapiClient.Builder hapiClientBuilder = new HapiClient.Builder()
@@ -509,5 +505,15 @@ public class SlimpayHttpClient {
         }
 
         return response;
+    }
+
+    private void checkConfig( PartnerConfiguration partnerConfiguration, ContractConfiguration contractConfiguration )
+            throws InvalidDataException {
+        if( partnerConfiguration == null ){
+            throw new InvalidDataException("Partner configuration must not be null", "request.partnerConfiguration");
+        }
+        if( contractConfiguration == null ){
+            throw new InvalidDataException("Contract configuration must not be null", "request.contractConfiguration");
+        }
     }
 }

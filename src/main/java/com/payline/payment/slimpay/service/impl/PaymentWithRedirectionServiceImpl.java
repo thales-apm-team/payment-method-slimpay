@@ -173,7 +173,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 // Payment is rejected: we need to get the reasons
                 case PaymentExecutionStatus.REJECTED:
                     LOGGER.error("Payment rejected");
-                    String slimpayRejectReason  = httpClient.getPaymentRejectReason(partnerConfiguration, paymentId);
+                    String slimpayRejectReason  = httpClient.getPaymentRejectReason(partnerConfiguration, contractConfiguration, paymentId);
                     FailureCause failureCause  = SlimpayErrorMapper.handleSlimpayPaymentError(slimpayRejectReason);
                     return PaymentResponseFailure.PaymentResponseFailureBuilder
                             .aPaymentResponseFailure()

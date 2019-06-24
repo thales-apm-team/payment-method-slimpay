@@ -34,7 +34,8 @@ public class RefundServiceImpl implements RefundService {
         try {
             // Get the payment data
             PaymentResponseSuccessAdditionalData additionalData = PaymentResponseSuccessAdditionalData.fromJson(refundRequest.getTransactionAdditionalData());
-            SlimpayResponse paymentResp = httpClient.getPayment(refundRequest.getPartnerConfiguration(), additionalData.getPaymentId());
+            SlimpayResponse paymentResp = httpClient.getPayment(refundRequest.getPartnerConfiguration(),
+                    refundRequest.getContractConfiguration(), additionalData.getPaymentId());
 
             // Response is an error : can't get the payment data
             if( paymentResp instanceof SlimpayFailureResponse ){
@@ -62,7 +63,8 @@ public class RefundServiceImpl implements RefundService {
 
             // Create a payment with direction from creditor to subscriber (payout)
             Payment slimpayPayoutRequest = beanAssembleService.assemblePayout(refundRequest);
-            SlimpayResponse refundResponse = httpClient.createPayout(refundRequest.getPartnerConfiguration(), slimpayPayoutRequest.toJsonBody());
+            SlimpayResponse refundResponse = httpClient.createPayout(refundRequest.getPartnerConfiguration(),
+                    refundRequest.getContractConfiguration(), slimpayPayoutRequest.toJsonBody());
             // Payout creation failed
             if( refundResponse instanceof SlimpayFailureResponse ){
                 SlimpayFailureResponse slimpayPayoutFailureResponse = (SlimpayFailureResponse) refundResponse;

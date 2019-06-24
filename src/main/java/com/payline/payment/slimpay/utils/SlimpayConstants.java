@@ -41,12 +41,17 @@ public class SlimpayConstants {
 
     public static final String API_TEST_MESSAGE_ERROR = "api.test.message.error";
 
-    //PARTNER CONFIGURATION KEY
     public static final String APP_KEY = "appName";
+    public static final String APP_KEY_LABEL = "app.name.label";
+    public static final String APP_KEY_DESCRIPTION = "app.name.description";
     public static final String APP_KEY_MESSAGE_ERROR = "app.name.message.error";
 
     public static final String APP_SECRET = "appSecret";
+    public static final String APP_SECRET_LABEL = "app.secret.label";
+    public static final String APP_SECRET_DESCRIPTION = "app.secret.description";
     public static final String APP_SECRET_MESSAGE_ERROR = "app.secret.message.error";
+
+    //PARTNER CONFIGURATION KEY
     //URLS
     public static final String API_URL_KEY = "apiUrl";
     public static final String API_PROFILE_KEY = "apiProfile";

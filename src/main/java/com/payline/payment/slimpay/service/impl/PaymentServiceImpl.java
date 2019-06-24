@@ -56,7 +56,8 @@ public class PaymentServiceImpl implements PaymentService {
         JsonBody jsonOrderRequest = slimpayOrderRequest.toJsonBody();
         try {
             //Initialise order
-            SlimpayResponse slimpayOrderResponse = httpClient.createOrder(paymentRequest.getPartnerConfiguration(), jsonOrderRequest);
+            SlimpayResponse slimpayOrderResponse = httpClient.createOrder(paymentRequest.getPartnerConfiguration(),
+                    paymentRequest.getContractConfiguration(), jsonOrderRequest);
             if (slimpayOrderResponse == null) {
                 LOGGER.debug("createOrder response is null !");
                 LOGGER.error("Payment is null");

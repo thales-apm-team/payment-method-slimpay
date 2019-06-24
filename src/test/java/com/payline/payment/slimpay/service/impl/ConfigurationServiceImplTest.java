@@ -56,7 +56,7 @@ public class ConfigurationServiceImplTest {
         //Assert we have 5 parameters
         Assertions.assertNotNull(parameters);
 
-        Assertions.assertEquals(5, parameters.size());
+        Assertions.assertEquals(7, parameters.size());
         List<String> result = new ArrayList<>();
         for (AbstractParameter paramter : parameters) {
             result.add(paramter.getKey());
@@ -67,6 +67,8 @@ public class ConfigurationServiceImplTest {
         Assertions.assertTrue(result.contains(SlimpayConstants.PAYMENT_PROCESSOR));
         Assertions.assertTrue(result.contains(SlimpayConstants.FIRST_PAYMENT_SCHEME));
         Assertions.assertTrue(result.contains(SlimpayConstants.SIGNATURE_APPROVAL_METHOD));
+        Assertions.assertTrue(result.contains(SlimpayConstants.APP_KEY));
+        Assertions.assertTrue(result.contains(SlimpayConstants.APP_SECRET));
     }
 
     @Test
@@ -80,7 +82,7 @@ public class ConfigurationServiceImplTest {
 
     @Test
     public void checkOK() throws Exception {
-        when(httpClient.testConnection(any(), any())).thenReturn(BeansUtils.createMockedSlimpayOrderResponse( OrderStatus.OPEN_RUNNING ));
+        when(httpClient.testConnection(any(), any(), any())).thenReturn(BeansUtils.createMockedSlimpayOrderResponse( OrderStatus.OPEN_RUNNING ));
         ContractParametersCheckRequest contractParametersCheckRequest = TestUtils.createContractParametersCheckRequest();
 
         Map<String, String> errors = service.check(contractParametersCheckRequest);
@@ -90,7 +92,7 @@ public class ConfigurationServiceImplTest {
 
     @Test
     public void checkKOEmptyParameters() {
-        final ContractConfiguration contractConfiguration = new ContractConfiguration("Oney", new HashMap<>());
+        final ContractConfiguration contractConfiguration = new ContractConfiguration("Slimpay", new HashMap<>());
         Map<String, String> partnerConfiguration = new HashMap<>();
         Map<String, String> sensitivePartnerConfiguration = new HashMap<>();
 
@@ -117,7 +119,7 @@ public class ConfigurationServiceImplTest {
 
     @Test
     public void checkKOConnectionFails() throws PluginTechnicalException, HttpException {
-        when(httpClient.testConnection(any(), any())).thenThrow(new HttpCallException("401", "bar"));
+        when(httpClient.testConnection(any(), any(), any())).thenThrow(new HttpCallException("401", "bar"));
         ContractParametersCheckRequest contractParametersCheckRequest = TestUtils.createContractParametersCheckRequest();
 
         Map<String, String> errors = service.check(contractParametersCheckRequest);
