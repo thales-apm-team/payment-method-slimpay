@@ -1,9 +1,9 @@
-package com.payline.payment.slimpay.service.impl;
+package com.payline.payment.slimpay.business.impl;
 
 import com.payline.payment.slimpay.bean.common.*;
 import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.exception.InvalidDataException;
-import com.payline.payment.slimpay.service.RequestConfigService;
+import com.payline.payment.slimpay.business.RequestConfigBusiness;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
@@ -20,25 +20,25 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
-public class BeanAssemblerServiceTest {
+public class BeanAssemblerBusinessTest {
 
     @InjectMocks
-    private BeanAssemblerServiceImpl assemblerService;
+    private BeanAssemblerBusinessImpl assemblerService;
 
     @Mock
-    private RequestConfigService requestConfigService;
+    private RequestConfigBusiness requestConfigBusiness;
 
     private PaymentRequest paymentRequest = createCompletePaymentBuilder().build();
     private RefundRequest refundRequest = createRefundRequest("request","400");
 
     @BeforeEach
     public void setUp() throws InvalidDataException {
-        assemblerService = new BeanAssemblerServiceImpl();
+        assemblerService = new BeanAssemblerBusinessImpl();
         MockitoAnnotations.initMocks(this);
 
-        doReturn("Mocked value").when(requestConfigService).getParameterValue( any(PaymentRequest.class), anyString() );
-        doReturn("Mocked value").when(requestConfigService).getParameterValue( any(RefundRequest.class), anyString() );
-        doReturn("Mocked value").when(requestConfigService).getParameterValue( any(ContractParametersCheckRequest.class), anyString() );
+        doReturn("Mocked value").when(requestConfigBusiness).getParameterValue( any(PaymentRequest.class), anyString() );
+        doReturn("Mocked value").when(requestConfigBusiness).getParameterValue( any(RefundRequest.class), anyString() );
+        doReturn("Mocked value").when(requestConfigBusiness).getParameterValue( any(ContractParametersCheckRequest.class), anyString() );
     }
 
     @Test

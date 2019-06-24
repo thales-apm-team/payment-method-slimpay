@@ -52,13 +52,11 @@ public class SlimpayHttpClient {
 
     // Messages
     private static final String EMPTY_RESPONSE_MESSAGE = "response is empty";
-    private static final String REL_NOT_FOUND_MESSAGE = "Rel not found";
     private static final String PARTNER_CONFIGURATION_ERROR = "Partner configuration must not be null";
     private static final String PARTNER_CONFIGURATION_FIELD = "request.partnerConfiguration";
 
     // URL parameters keys
     private static final String CREDITOR_REFERENCE = "creditorReference";
-    private static final String CURRENCY = "currency";
     private static final String DIRECTION = "direction";
     private static final String ID = "id";
     private static final String MANDATE_REFERENCE = "mandateReference";
@@ -71,9 +69,10 @@ public class SlimpayHttpClient {
      * Instantiate a HTTP client with default values.
      */
     private SlimpayHttpClient() {
-        int connectTimeout = Integer.parseInt(ConfigProperties.INSTANCE.get("http.connectTimeout"));
-        int requestTimeout = Integer.parseInt(ConfigProperties.INSTANCE.get("http.writeTimeout"));
-        int readTimeout = Integer.parseInt(ConfigProperties.INSTANCE.get("http.readTimeout"));
+        ConfigProperties configProperties = ConfigProperties.getInstance();
+        int connectTimeout = Integer.parseInt(configProperties.get("http.connectTimeout"));
+        int requestTimeout = Integer.parseInt(configProperties.get("http.writeTimeout"));
+        int readTimeout = Integer.parseInt(configProperties.get("http.readTimeout"));
 
         final RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(connectTimeout * 1000)

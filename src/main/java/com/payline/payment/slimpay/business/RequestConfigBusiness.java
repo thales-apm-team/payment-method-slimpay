@@ -1,4 +1,4 @@
-package com.payline.payment.slimpay.service;
+package com.payline.payment.slimpay.business;
 
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.pmapi.bean.buyer.request.BuyerDetailsRequest;
@@ -16,8 +16,7 @@ import com.payline.pmapi.bean.reset.request.ResetRequest;
 
 import java.util.Map;
 
-public interface RequestConfigService {
-
+public interface RequestConfigBusiness {
 
     /**
      * Use PARAMETERS_MAP to read a property in ContractConfiguration or in PartnerConfiguration.
@@ -110,46 +109,6 @@ public interface RequestConfigService {
      * @return the corresponding String value
      */
     String getParameterValue(BuyerDetailsRequest request, String key) throws InvalidDataException;
-
-    /**
-     * @param partnerConfiguration partner Configuration map
-     * @param key                  property key
-     * @return the corresponding String value
-     */
-    default String safeGetValue(PartnerConfiguration partnerConfiguration, String key) {
-
-        if (partnerConfiguration == null || key == null || key.isEmpty()) {
-            return null;
-        }
-        return partnerConfiguration.getProperty(key);
-    }
-
-    /**
-     * @param contractConfiguration contract Configuration map
-     * @param key                   property key
-     * @return the corresponding String value
-     */
-    default String safeGetValue(ContractConfiguration contractConfiguration, String key) {
-
-        if (contractConfiguration == null || key == null || contractConfiguration.getProperty(key) == null) {
-            return null;
-        }
-        return contractConfiguration.getProperty(key).getValue();
-    }
-
-    /**
-     * @param accountInfo a account info map
-     * @param key         property key
-     * @return the corresponding String value
-     */
-    default String safeGetValue(Map<String, String> accountInfo, String key) {
-
-        if (accountInfo == null || key == null) {
-            return null;
-        }
-        return accountInfo.get(key);
-    }
-
 
 }
 

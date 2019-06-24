@@ -4,6 +4,7 @@ import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayOrderResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayResponse;
+import com.payline.payment.slimpay.business.impl.BeanAssemblerBusinessImpl;
 import com.payline.payment.slimpay.exception.HttpCallException;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
@@ -33,7 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
-    private BeanAssemblerServiceImpl beanAssembleService = BeanAssemblerServiceImpl.getInstance();
+    private BeanAssemblerBusinessImpl beanAssembleService = BeanAssemblerBusinessImpl.getInstance();
     private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
 
     /**

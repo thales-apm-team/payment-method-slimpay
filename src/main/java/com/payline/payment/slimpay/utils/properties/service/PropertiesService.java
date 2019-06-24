@@ -4,44 +4,40 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public interface PropertiesService {
-
-    /**
-     * Get a config property by its name.
-     * Warning, if the property is environment-dependent, use partnerConfiguration instead.
-     *
-     * @param properties : the used Properties object
-     * @param key        The name of the property to recover
-     * @return The property value. Can be null if the property has not been found.
-     */
-    default String getProperty(final Properties properties, final String key) {
-
-        return properties.getProperty(key);
-    }
-
+public abstract class PropertiesService {
 
     /**
      * Get the properties file's name
      *
      * @return the properties file's name
      */
-    String getFilename();
+    protected abstract String getFilename();
 
     /**
      * Get the Properties object
      *
      * @return a Properties object
      */
-    Properties getProperties();
+    protected abstract Properties getProperties();
 
-    default String get(final String key) {
-        return getProperty(getProperties(), key);
+    /**
+     * Get a configuration property by its name.
+     * Warning, if the property is environment-dependent, use partnerConfiguration instead.
+     *
+     * @param key The name/key of the property to get.
+     * @return The property value. Can be null if the property has not been found.
+     */
+    public String get(final String key) {
+        return getProperties().getProperty(key);
     }
 
     /**
-     * Reads the properties file and stores the result.
+     * Read the properties files using the filename returned by the method getFilename(),
+     * then store the result in the {@link Properties} object given in argument.
+     *
+     * @param properties The storage-support object of read properties.
      */
-    default void readProperties(Properties properties) {
+    protected void readProperties(Properties properties) {
 
         String fileName = getFilename();
 
@@ -62,6 +58,12 @@ public interface PropertiesService {
 
     }
 
-    void logError( String message, Throwable t );
+    /**
+     * Log an error. This method is abstract so that subclasses can log messages using their own logger.
+     *
+     * @param message The message to log
+     * @param t The associated exception
+     */
+    protected abstract void logError( String message, Throwable t );
 
 }

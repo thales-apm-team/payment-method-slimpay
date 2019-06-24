@@ -5,6 +5,7 @@ import com.payline.payment.slimpay.bean.response.PaymentResponseSuccessAdditiona
 import com.payline.payment.slimpay.bean.response.SlimpayFailureResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayPaymentResponse;
 import com.payline.payment.slimpay.bean.response.SlimpayResponse;
+import com.payline.payment.slimpay.business.impl.BeanAssemblerBusinessImpl;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.SlimpayErrorMapper;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
@@ -23,7 +24,8 @@ import static com.payline.payment.slimpay.utils.PluginUtils.truncateError;
 public class RefundServiceImpl implements RefundService {
 
     private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
-    private BeanAssemblerServiceImpl beanAssembleService = BeanAssemblerServiceImpl.getInstance();
+
+    private BeanAssemblerBusinessImpl beanAssembleService = BeanAssemblerBusinessImpl.getInstance();
     private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
 
 

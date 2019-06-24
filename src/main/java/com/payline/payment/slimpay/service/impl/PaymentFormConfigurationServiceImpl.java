@@ -15,12 +15,6 @@ import java.util.Locale;
  */
 public class PaymentFormConfigurationServiceImpl extends DefaultPaymentFormConfigurationService {
 
-    private I18nService i18n;
-
-    public PaymentFormConfigurationServiceImpl() {
-        i18n = I18nService.getInstance();
-    }
-
     @Override
     public PaymentFormConfigurationResponse getPaymentFormConfiguration(PaymentFormConfigurationRequest request) {
         Locale locale = request.getLocale();

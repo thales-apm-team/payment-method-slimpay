@@ -22,7 +22,8 @@ import static com.payline.payment.slimpay.utils.properties.constants.LogoConstan
 public abstract class DefaultPaymentFormConfigurationService implements PaymentFormConfigurationService {
 
     private static final Logger LOGGER = LogManager.getLogger(DefaultPaymentFormConfigurationService.class);
-    private static final I18nService i18n = I18nService.getInstance();
+    protected I18nService i18n = I18nService.getInstance();
+    private LogoProperties logoProperties = LogoProperties.getInstance();
 
     @Override
     public PaymentFormLogoResponse getPaymentFormLogo(PaymentFormLogoRequest paymentFormLogoRequest) {
@@ -30,17 +31,17 @@ public abstract class DefaultPaymentFormConfigurationService implements PaymentF
         Locale locale = paymentFormLogoRequest.getLocale();
 
         return PaymentFormLogoResponseFile.PaymentFormLogoResponseFileBuilder.aPaymentFormLogoResponseFile()
-                .withHeight(Integer.valueOf(LogoProperties.INSTANCE.get(LOGO_HEIGHT)))
-                .withWidth(Integer.valueOf(LogoProperties.INSTANCE.get(LOGO_WIDTH)))
-                .withTitle(i18n.getMessage(LogoProperties.INSTANCE.get(LOGO_TITLE), locale))
-                .withAlt(i18n.getMessage(LogoProperties.INSTANCE.get(LOGO_ALT), locale))
+                .withHeight(Integer.valueOf(logoProperties.get(LOGO_HEIGHT)))
+                .withWidth(Integer.valueOf(logoProperties.get(LOGO_WIDTH)))
+                .withTitle(i18n.getMessage(logoProperties.get(LOGO_TITLE), locale))
+                .withAlt(i18n.getMessage(logoProperties.get(LOGO_ALT), locale))
                 .build();
     }
 
     @Override
     public PaymentFormLogo getLogo(String s, Locale locale) {
 
-        String fileName = LogoProperties.INSTANCE.get(LOGO_FILE_NAME);
+        String fileName = logoProperties.get(LOGO_FILE_NAME);
         InputStream input = DefaultPaymentFormConfigurationService.class.getClassLoader().getResourceAsStream(fileName);
         if (input == null) {
             LOGGER.error("Unable to load the logo {}", LOGO_FILE_NAME);
@@ -52,11 +53,11 @@ public abstract class DefaultPaymentFormConfigurationService implements PaymentF
 
             // Recover byte array from image
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(logo, LogoProperties.INSTANCE.get(LOGO_FORMAT), baos);
+            ImageIO.write(logo, logoProperties.get(LOGO_FORMAT), baos);
 
             return PaymentFormLogo.PaymentFormLogoBuilder.aPaymentFormLogo()
                     .withFile(baos.toByteArray())
-                    .withContentType(LogoProperties.INSTANCE.get(LOGO_CONTENT_TYPE))
+                    .withContentType(logoProperties.get(LOGO_CONTENT_TYPE))
                     .build();
         } catch (IOException e) {
             LOGGER.error("Unable to load the logo", e);

@@ -8,9 +8,6 @@ import org.apache.logging.log4j.Logger;
 
 public class SlimpayHttpException extends PluginTechnicalException {
 
-    private static final Logger LOGGER = LogManager.getLogger(SlimpayHttpException.class);
-
-
     /**
      * @param e the original catched Exception
      */

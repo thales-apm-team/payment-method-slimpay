@@ -1,4 +1,4 @@
-package com.payline.payment.slimpay.utils.service;
+package com.payline.payment.slimpay.utils.properties.service;
 
 import com.payline.payment.slimpay.utils.properties.constants.ConfigurationConstants;
 import com.payline.payment.slimpay.utils.properties.service.PropertiesService;
@@ -10,7 +10,7 @@ import java.util.Properties;
 
 class ReleasePropertiesTest {
 
-    private PropertiesService service = ReleaseProperties.INSTANCE;
+    private ReleaseProperties service = ReleaseProperties.getInstance();
 
     @Test
     void getFilename() {
@@ -20,7 +20,6 @@ class ReleasePropertiesTest {
 
     @Test
     void getProperties() {
-
         Properties properties = service.getProperties();
         Assertions.assertNotNull(properties);
         Assertions.assertFalse(properties.isEmpty());
