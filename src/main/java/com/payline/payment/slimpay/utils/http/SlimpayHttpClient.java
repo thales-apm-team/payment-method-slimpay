@@ -34,7 +34,7 @@ import java.util.List;
 public class SlimpayHttpClient {
     private static final Logger LOGGER = LogManager.getLogger(SlimpayHttpClient.class);
 
-    private static HttpClientBuilder httpClientBuilder;
+    private static HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
     // API Endpoints
     private static final String API_ENDPOINT_TOKEN = "/oauth/token";
@@ -79,7 +79,6 @@ public class SlimpayHttpClient {
                 .setConnectionRequestTimeout(requestTimeout * 1000)
                 .setSocketTimeout(readTimeout * 1000).build();
 
-        httpClientBuilder = HttpClientBuilder.create();
         httpClientBuilder.useSystemProperties()
                 .setDefaultRequestConfig(requestConfig)
                 .setDefaultCredentialsProvider(new BasicCredentialsProvider())

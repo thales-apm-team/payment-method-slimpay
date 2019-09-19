@@ -1,8 +1,6 @@
 package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
-import com.payline.payment.slimpay.business.BeanAssemblerBusiness;
-import com.payline.payment.slimpay.business.RequestConfigBusiness;
 import com.payline.payment.slimpay.business.impl.BeanAssemblerBusinessImpl;
 import com.payline.payment.slimpay.business.impl.RequestConfigBusinessImpl;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;

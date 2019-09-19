@@ -3,9 +3,10 @@ package com.payline.payment.slimpay.business.impl;
 import com.payline.payment.slimpay.bean.common.*;
 import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
 import com.payline.payment.slimpay.bean.response.PaymentResponseSuccessAdditionalData;
-import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.payment.slimpay.business.BeanAssemblerBusiness;
 import com.payline.payment.slimpay.business.RequestConfigBusiness;
+import com.payline.payment.slimpay.exception.InvalidDataException;
+import com.payline.payment.slimpay.utils.DateUtils;
 import com.payline.payment.slimpay.utils.PluginUtils;
 import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.common.Buyer;
@@ -14,7 +15,6 @@ import com.payline.pmapi.bean.payment.Environment;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import static com.payline.payment.slimpay.utils.PluginUtils.createStringAmount;
@@ -39,7 +39,6 @@ public class BeanAssemblerBusinessImpl implements BeanAssemblerBusiness {
     }
 
     private static final String CREATE = "create";
-    private static final String DATE_FORMAT_ISO = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     private static final String EMPTY_REQUEST_ERROR_MESSAGE = "PaymentRequest is null or empty";
     private static final String FOO = "foo";
     private static final String IS_NULL = "PaymentRequest is null";
@@ -74,7 +73,7 @@ public class BeanAssemblerBusinessImpl implements BeanAssemblerBusiness {
                 .withLabel(paymentRequest.getSoftDescriptor());
 
         if( paymentRequest.getDifferedActionDate() != null ){
-            paymentBuilder.withExecutionDate( new SimpleDateFormat(DATE_FORMAT_ISO).format( paymentRequest.getDifferedActionDate()) );
+            paymentBuilder.withExecutionDate( DateUtils.format( paymentRequest.getDifferedActionDate()) );
         }
 
         return paymentBuilder.build();

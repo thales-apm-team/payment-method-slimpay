@@ -3,9 +3,7 @@ package com.payline.payment.slimpay.business;
 import com.payline.payment.slimpay.exception.InvalidDataException;
 import com.payline.pmapi.bean.buyer.request.BuyerDetailsRequest;
 import com.payline.pmapi.bean.capture.request.CaptureRequest;
-import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
-import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
@@ -13,8 +11,6 @@ import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationReques
 import com.payline.pmapi.bean.paymentform.request.PaymentFormLogoRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.reset.request.ResetRequest;
-
-import java.util.Map;
 
 public interface RequestConfigBusiness {
 
