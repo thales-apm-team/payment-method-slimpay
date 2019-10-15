@@ -10,6 +10,8 @@ public class CountryToPhonePrefix {
 
     private static Map<String, String> map = new HashMap<>();
 
+    CountryToPhonePrefix(){}
+
     public static String prefixFor(String iso2CountryCode) {
         String result = map.get(iso2CountryCode);
         if (result == null) {

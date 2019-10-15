@@ -1,7 +1,6 @@
 package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.service.DefaultPaymentFormConfigurationService;
-import com.payline.payment.slimpay.utils.i18n.I18nService;
 import com.payline.payment.slimpay.utils.properties.constants.ConfigurationConstants;
 import com.payline.pmapi.bean.paymentform.bean.form.NoFieldForm;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
@@ -14,12 +13,6 @@ import java.util.Locale;
  * Created on 27/08/2018.
  */
 public class PaymentFormConfigurationServiceImpl extends DefaultPaymentFormConfigurationService {
-
-    private I18nService i18n;
-
-    public PaymentFormConfigurationServiceImpl() {
-        i18n = I18nService.getInstance();
-    }
 
     @Override
     public PaymentFormConfigurationResponse getPaymentFormConfiguration(PaymentFormConfigurationRequest request) {

@@ -1,5 +1,6 @@
 package com.payline.payment.slimpay.integration;
 
+import com.payline.payment.slimpay.business.impl.BeanAssemblerBusinessImpl;
 import com.payline.payment.slimpay.service.impl.ConfigurationServiceImpl;
 import com.payline.payment.slimpay.service.impl.PaymentServiceImpl;
 import com.payline.payment.slimpay.service.impl.PaymentWithRedirectionServiceImpl;
@@ -135,7 +136,7 @@ public class CancelIT extends AbstractPaymentIntegration {
     /**
      * For the cancel test to pass, for now, it is necessary to play it in debug and set the field executionDate
      * on the {@link com.payline.payment.slimpay.bean.common.Payment} bean
-     * in {@link com.payline.payment.slimpay.service.impl.BeanAssemblerServiceImpl#assemblePayin(PaymentRequest)}.
+     * in {@link BeanAssemblerBusinessImpl#assemblePayin(PaymentRequest)}.
      *
      * The first block of code in this test case provide the string to pass to the method
      * {@link com.payline.payment.slimpay.bean.common.Payment.Builder#withExecutionDate(String)}, before the objet is built.

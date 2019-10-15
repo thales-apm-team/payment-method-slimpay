@@ -14,6 +14,8 @@ public class PluginUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(PluginUtils.class);
 
+    PluginUtils(){}
+
     public static boolean isEmpty(String s) {
         return s == null || s.isEmpty();
     }
