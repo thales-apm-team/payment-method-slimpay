@@ -81,12 +81,11 @@ public class TestUtils {
 
 
     public static final Map<String, String> SENSITIVE_PARTNER_CONFIGURATION_MAP = new HashMap<String, String>() {{
-        put(APP_SECRET, "n32cXdaS0ZOACV8688ltKovAO6lquL4wKjZHnvyO");
-
+        put(APP_SECRET, "4KcfEYKBKL4woXt1rkD29c7bRJwehCCbE0szzhD7");
     }};
 
     public static final ContractConfiguration CONTRACT_CONFIGURATION = new ContractConfiguration(MDP_IDENTIFIER, new HashMap<String, ContractProperty>() {{
-        put(CREDITOR_REFERENCE_KEY, new ContractProperty("paylinemerchanttest1"));
+        put(CREDITOR_REFERENCE_KEY, new ContractProperty("paylinemerchanttest2"));
         put(FIRST_PAYMENT_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
         put(MANDATE_PAYIN_SCHEME, new ContractProperty("SEPA.DIRECT_DEBIT.CORE"));
         put(MANDATE_STANDARD_KEY, new ContractProperty("SEPA"));

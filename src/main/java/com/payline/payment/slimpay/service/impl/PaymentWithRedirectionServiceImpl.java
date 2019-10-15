@@ -2,6 +2,7 @@ package com.payline.payment.slimpay.service.impl;
 
 
 import com.payline.payment.slimpay.bean.response.*;
+import com.payline.payment.slimpay.business.impl.BeanAssemblerBusinessImpl;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.SlimpayErrorMapper;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
@@ -28,13 +29,13 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
     private static final Logger LOGGER = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
 
-    private static final String SUCCESS_MESSAGE = "COMMANDE_OK";
     private static final String CANCELLATION_CLIENT_MESSAGE = "Cancelled by client";
     private static final String CANCELLATION_SERVER_MESSAGE = "Cancelled by server";
     private static final String NOT_PROCESSED_PAYMENT = "Payment not processed";
+    private static final String SUCCESS_MESSAGE = "COMMANDE_OK";
 
     private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
-    private BeanAssemblerServiceImpl beanAssembleService = BeanAssemblerServiceImpl.getInstance();
+    private BeanAssemblerBusinessImpl beanAssembleService = BeanAssemblerBusinessImpl.getInstance();
 
     @Override
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {

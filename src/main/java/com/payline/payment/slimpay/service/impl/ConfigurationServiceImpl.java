@@ -1,6 +1,8 @@
 package com.payline.payment.slimpay.service.impl;
 
 import com.payline.payment.slimpay.bean.request.SlimpayOrderRequest;
+import com.payline.payment.slimpay.business.impl.BeanAssemblerBusinessImpl;
+import com.payline.payment.slimpay.business.impl.RequestConfigBusinessImpl;
 import com.payline.payment.slimpay.exception.PluginTechnicalException;
 import com.payline.payment.slimpay.utils.PluginUtils;
 import com.payline.payment.slimpay.utils.http.SlimpayHttpClient;
@@ -24,22 +26,19 @@ import static com.payline.payment.slimpay.utils.SlimpayConstants.*;
 
 public class ConfigurationServiceImpl implements ConfigurationService {
 
-    private I18nService i18n;
-    private RequestConfigServiceImpl requestConfigService;
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationServiceImpl.class);
+
+    private static final String FORBIDDEN = "403";
+    private static final String OTP = "otp";
+    private static final String SLIMPAY = "Slimpay";
     private static final String SDD_CORE = "SEPA.DIRECT_DEBIT.CORE";
     private static final String UNAUTHORIZED = "401";
-    private static final String FORBIDDEN = "403";
-    private static final String SLIMPAY = "Slimpay";
-    private static final String OTP = "otp";
 
+    private I18nService i18n = I18nService.getInstance();
+    private RequestConfigBusinessImpl requestConfigService = RequestConfigBusinessImpl.getInstance();
+    private BeanAssemblerBusinessImpl beanAssemblerBusiness = BeanAssemblerBusinessImpl.getInstance();
     private SlimpayHttpClient httpClient = SlimpayHttpClient.getInstance();
 
-
-    public ConfigurationServiceImpl() {
-        i18n = I18nService.getInstance();
-        requestConfigService = RequestConfigServiceImpl.INSTANCE;
-    }
 
     @Override
     public List<AbstractParameter> getParameters(Locale locale) {
@@ -154,7 +153,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
             if (errors.size() == 0) {
                 // test a create order and call the API
-                SlimpayOrderRequest request = new BeanAssemblerServiceImpl().assembleSlimPayOrderRequest(contractParametersCheckRequest);
+                SlimpayOrderRequest request = beanAssemblerBusiness.assembleSlimPayOrderRequest(contractParametersCheckRequest);
                 httpClient.testConnection(contractParametersCheckRequest.getPartnerConfiguration(), request.toJsonBody());
             }
 
@@ -177,18 +176,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public ReleaseInformation getReleaseInformation() {
+        ReleaseProperties releaseProperties = ReleaseProperties.getInstance();
 
-        LocalDate date = LocalDate.parse(ReleaseProperties.INSTANCE.get(ConfigurationConstants.RELEASE_DATE),
+        LocalDate date = LocalDate.parse(releaseProperties.get(ConfigurationConstants.RELEASE_DATE),
                 DateTimeFormatter.ofPattern(ConfigurationConstants.RELEASE_DATE_FORMAT));
+
         return ReleaseInformation.ReleaseBuilder.aRelease()
                 .withDate(date)
-                .withVersion(ReleaseProperties.INSTANCE.get(ConfigurationConstants.RELEASE_VERSION))
+                .withVersion(releaseProperties.get(ConfigurationConstants.RELEASE_VERSION))
                 .build();
     }
 
     @Override
     public String getName(Locale locale) {
-
         return this.i18n.getMessage(ConfigurationConstants.PAYMENT_METHOD_NAME, locale);
     }
 }

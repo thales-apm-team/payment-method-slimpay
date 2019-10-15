@@ -1,4 +1,4 @@
-package com.payline.payment.slimpay.utils.service;
+package com.payline.payment.slimpay.utils.properties.service;
 
 import com.payline.payment.slimpay.utils.properties.constants.LogoConstants;
 import com.payline.payment.slimpay.utils.properties.service.LogoProperties;
@@ -10,7 +10,7 @@ import java.util.Properties;
 
 class LogoPropertiesTest {
 
-    private PropertiesService service = LogoProperties.INSTANCE;
+    private LogoProperties service = LogoProperties.getInstance();
 
     @Test
     void getFilename() {
@@ -20,7 +20,6 @@ class LogoPropertiesTest {
 
     @Test
     void getProperties() {
-
         Properties properties = service.getProperties();
         Assertions.assertNotNull(properties);
         Assertions.assertFalse(properties.isEmpty());

@@ -17,6 +17,7 @@ import com.slimpay.hapiclient.http.JsonBody;
 import com.slimpay.hapiclient.http.Method;
 
 import javax.json.Json;
+import java.util.Date;
 
 public class BeansUtils {
 
@@ -137,11 +138,13 @@ public class BeansUtils {
         return SlimpayFailureResponse.fromJson(jsonError);
     }
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentIn(String executionStatus)  throws MalformedResponseException{
-        return createMockedSlimpayPaymentIn( executionStatus, null );
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentIn(String executionStatus)
+            throws MalformedResponseException{
+        return createMockedSlimpayPaymentIn( executionStatus, new Date(), null );
     }
 
-    public static SlimpayPaymentResponse createMockedSlimpayPaymentIn(String executionStatus, Boolean cancellable)  throws MalformedResponseException{
+    public static SlimpayPaymentResponse createMockedSlimpayPaymentIn(String executionStatus, Date executionDate,
+            Boolean cancellable) throws MalformedResponseException {
         return SlimpayPaymentResponse.fromJson(" {  " +
                 " \"id\": \"8212f471-3432-11e9-ad8f-000000000000\",\n" +
                 "   \"scheme\": \"SEPA.DIRECT_DEBIT.CORE\",\n" +
@@ -154,7 +157,7 @@ public class BeansUtils {
                 "   \"state\": \"accepted\",\n" +
                 "   \"executionStatus\": \"" + executionStatus + "\",\n" +
                 "   \"replayCount\": 0,\n" +
-                "   \"executionDate\": \"2019-02-20T23:00:00.000+0000\",\n" +
+                "   \"executionDate\": \"" + DateUtils.format( executionDate ) +"\",\n" +
                 "   \"dateCreated\": \"2019-02-19T10:38:35.000+0000\",\n" +
                 "   \"confirmed\": false" +
                 "}", cancellable );
